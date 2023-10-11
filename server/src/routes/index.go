@@ -8,6 +8,9 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine, userController *controllers.UserController) {
-	router.POST("/register", userController.RegisterUser)
-	router.POST("/login", userController.LoginUser)
+	userRoutes := router.Group("/user")
+	{
+		userRoutes.POST("/register", userController.RegisterUser)
+		userRoutes.POST("/login", userController.LoginUser)
+	}
 }

@@ -33,7 +33,6 @@ func (s *userService) RegisterUser(dto *dto.UserRegisterDTO) error {
 		Account:  dto.Account,
 		Password: string(hashedPassword),
 	}
-
 	return s.userRepository.CreateUser(user)
 }
 
@@ -43,7 +42,7 @@ func (s *userService) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserResponseDT
 		Account: loginDto.Account,
 	}
 
-	u, err := s.userRepository.GetUserByEmail(user.Account)
+	u, err := s.userRepository.GetUserByAccount(user.Account)
 	if err != nil {
 		return nil, err
 	}

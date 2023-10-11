@@ -3,6 +3,7 @@ package controllers
 
 import (
 	"ImChat/src/dto"
+	"ImChat/src/handlers"
 	"ImChat/src/services"
 
 	"github.com/gin-gonic/gin"
@@ -18,24 +19,27 @@ func NewUserController(userService services.UserService) *UserController {
 
 func (c *UserController) RegisterUser(ctx *gin.Context) {
 	var userRegisterDTO dto.UserRegisterDTO
-	if err := ctx.ShouldBindJSON(&userRegisterDTO); err != nil {
+	if err := ctx.ShouldBind(&userRegisterDTO); err != nil {
 		// 处理验证错误
 		// 返回错误响应
+		handlers.Error(ctx, err.Error())
 		return
 	}
 
 	if err := c.userService.RegisterUser(&userRegisterDTO); err != nil {
 		// 处理注册错误
 		// 返回错误响应
+		handlers.Error(ctx, err.Error())
 		return
 	}
 }
 
 func (c *UserController) LoginUser(ctx *gin.Context) {
 	var userLoginDTO dto.UserLoginDTO
-	if err := ctx.ShouldBindJSON(&userLoginDTO); err != nil {
+	if err := ctx.ShouldBind(&userLoginDTO); err != nil {
 		// 处理验证错误
 		// 返回错误响应
+		handlers.Error(ctx, err.Error())
 		return
 	}
 
@@ -43,6 +47,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 	if err != nil {
 		// 处理登录错误
 		// 返回错误响应
+		handlers.Error(ctx, err.Error())
 		return
 	}
 
