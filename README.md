@@ -11,7 +11,7 @@
 7. 支持消息置顶
 
 ## 技术选型
-- Go + Gin + GORM + Mysql + OSS
+- Go + Gin + GORM + Mysql + Websoket + OSS
 
 ## 功能实现
 1. 登录

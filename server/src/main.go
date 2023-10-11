@@ -1,11 +1,21 @@
 package main
 
 import (
-	db "ImChat/src/DB"
 	_ "ImChat/src/config"
-	"fmt"
+	"ImChat/src/controllers"
+	"ImChat/src/db"
+	"ImChat/src/repositories"
+	"ImChat/src/routes"
+	"ImChat/src/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	fmt.Println(db.DB)
+	r := gin.Default()
+	userRepo := repositories.NewUserRepository(db.DB)
+	userService := services.NewUserService(userRepo)
+	userController := controllers.NewUserController(userService)
+	routes.SetupRoutes(r, userController)
+	r.Run(":8080")
 }
