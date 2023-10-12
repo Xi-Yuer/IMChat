@@ -20,3 +20,31 @@ func Success(ctx *gin.Context, msg string, data interface{}) {
 		"data": data,
 	})
 }
+
+func NoAuth(ctx *gin.Context) {
+	ctx.JSON(http.StatusUnauthorized, gin.H{
+		"msg":  "未登录",
+		"code": http.StatusUnauthorized,
+	})
+}
+
+func NoPermission(ctx *gin.Context) {
+	ctx.JSON(http.StatusForbidden, gin.H{
+		"msg":  "无权限",
+		"code": http.StatusForbidden,
+	})
+}
+
+func NotFound(ctx *gin.Context) {
+	ctx.JSON(http.StatusNotFound, gin.H{
+		"msg":  "未找到",
+		"code": http.StatusNotFound,
+	})
+}
+
+func ServerError(ctx *gin.Context) {
+	ctx.JSON(http.StatusInternalServerError, gin.H{
+		"msg":  "服务器错误",
+		"code": http.StatusInternalServerError,
+	})
+}
