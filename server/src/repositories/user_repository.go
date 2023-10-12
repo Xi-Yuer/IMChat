@@ -3,6 +3,7 @@ package repositories
 
 import (
 	"ImChat/src/models"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -11,7 +12,7 @@ type UserRepository interface {
 	CreateUser(user *models.User) error
 	GetUserByAccount(account string) (*models.User, error)
 	GetUserList() ([]*models.User, error)
-	Logout(account string, time int64) error
+	Logout(account string, time time.Time) error
 }
 
 type userRepository struct {
@@ -35,7 +36,7 @@ func (r *userRepository) GetUserByAccount(account string) (*models.User, error) 
 }
 
 // 退出登陆
-func (r *userRepository) Logout(account string, time int64) error {
+func (r *userRepository) Logout(account string, time time.Time) error {
 	return r.db.Model(&models.User{}).Where("account = ?", account).Update("last_login", time).Error
 }
 

@@ -16,7 +16,7 @@ type UserService interface {
 	RegisterUser(dto *dto.UserRegisterDTO) error
 	LoginUser(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
-	Logout(account string, time int64) error
+	Logout(account string, time time.Time) error
 }
 
 type userService struct {
@@ -76,7 +76,7 @@ func (s *userService) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginRespo
 	}, nil
 }
 
-func (s *userService) Logout(account string, time int64) error {
+func (s *userService) Logout(account string, time time.Time) error {
 	err := s.userRepository.Logout(account, time)
 	if err != nil {
 		return err

@@ -58,7 +58,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 
 func (c *UserController) Logout(ctx *gin.Context) {
 	account, _ := ctx.Get("account")
-	time := time.Now().Unix()
+	time := time.Now()
 	err := c.userService.Logout(account.(string), time)
 	if err != nil {
 		// 处理退出错误

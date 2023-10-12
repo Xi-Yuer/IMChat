@@ -14,6 +14,7 @@ func SetupRoutes(router *gin.Engine, userController *controllers.UserController)
 		userRoutes.POST("/register", userController.RegisterUser)
 		userRoutes.POST("/login", userController.LoginUser)
 		userRoutes.GET("/list", middlewares.Auth(), userController.GetUserList)
+		userRoutes.POST("/logout", middlewares.Auth(), userController.Logout)
 	}
 
 }
