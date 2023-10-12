@@ -18,6 +18,7 @@ func NewUserController(userService services.UserService) *UserController {
 	return &UserController{userService}
 }
 
+// 注册
 func (c *UserController) RegisterUser(ctx *gin.Context) {
 	var userRegisterDTO dto.UserRegisterDTO
 	if err := ctx.ShouldBind(&userRegisterDTO); err != nil {
@@ -35,6 +36,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 	}
 }
 
+// 登陆
 func (c *UserController) LoginUser(ctx *gin.Context) {
 	var userLoginDTO dto.UserLoginDTO
 	if err := ctx.ShouldBind(&userLoginDTO); err != nil {
@@ -56,9 +58,10 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 	ctx.JSON(200, userResponse)
 }
 
+// 登出
 func (c *UserController) Logout(ctx *gin.Context) {
 	account, _ := ctx.Get("account")
-	time := time.Now().Unix()
+	time := time.Now()
 	err := c.userService.Logout(account.(string), time)
 	if err != nil {
 		// 处理退出错误
@@ -70,6 +73,7 @@ func (c *UserController) Logout(ctx *gin.Context) {
 	handlers.Success(ctx, "退出成功", nil)
 }
 
+// 请求用户列表
 func (c *UserController) GetUserList(ctx *gin.Context) {
 	userInfo, err := c.userService.GetUserList()
 	if err != nil {

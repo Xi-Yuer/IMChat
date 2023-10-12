@@ -16,7 +16,7 @@ type UserService interface {
 	RegisterUser(dto *dto.UserRegisterDTO) error
 	LoginUser(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
-	Logout(account string, time int64) error
+	Logout(account string, time time.Time) error
 }
 
 type userService struct {
@@ -27,6 +27,7 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 	return &userService{userRepository}
 }
 
+// 登陆
 func (s *userService) RegisterUser(dto *dto.UserRegisterDTO) error {
 
 	password, err := utils.HashPassword(dto.Password)
@@ -40,6 +41,7 @@ func (s *userService) RegisterUser(dto *dto.UserRegisterDTO) error {
 	return s.userRepository.CreateUser(user)
 }
 
+// 注册
 func (s *userService) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error) {
 
 	user := &models.User{
@@ -76,7 +78,8 @@ func (s *userService) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginRespo
 	}, nil
 }
 
-func (s *userService) Logout(account string, time int64) error {
+// 登出
+func (s *userService) Logout(account string, time time.Time) error {
 	err := s.userRepository.Logout(account, time)
 	if err != nil {
 		return err
@@ -84,6 +87,7 @@ func (s *userService) Logout(account string, time int64) error {
 	return nil
 }
 
+// 获取用户列表
 func (s *userService) GetUserList() ([]*dto.UserResponseDTO, error) {
 	users, err := s.userRepository.GetUserList()
 	if err != nil {

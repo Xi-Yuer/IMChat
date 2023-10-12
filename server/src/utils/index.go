@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// 密码加密
 func HashPassword(password string) (string, error) {
 	// 生成密码哈希
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -18,6 +19,7 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
+// 密码验证
 func IsPasswordValid(inputPassword, storedHashedPassword string) error {
 	// 将数据库中存储的哈希密码字符串转换为字节数组
 	storedHashedPasswordBytes := []byte(storedHashedPassword)
@@ -27,6 +29,7 @@ func IsPasswordValid(inputPassword, storedHashedPassword string) error {
 	return err
 }
 
+// 生成随机的密钥(全局Secret)
 func GenerateRandomKey(length int) (string, error) {
 	key := make([]byte, length)
 	_, err := rand.Read(key)
