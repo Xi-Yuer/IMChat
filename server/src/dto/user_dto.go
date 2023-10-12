@@ -11,8 +11,16 @@ type UserLoginDTO struct {
 	Password string `form:"password" binding:"required"`
 }
 
+type UserLoginResponseDTO struct {
+	ID      string `json:"id"`
+	Account string `json:"account"`
+	Token   string `json:"token"`
+	// 其他字段...
+}
+
 type UserResponseDTO struct {
 	ID      string `json:"id"`
 	Account string `json:"account"`
-	// 其他字段...
+	Gender  string `json:"gender"`
+	Bio     string `json:"bio"`
 }

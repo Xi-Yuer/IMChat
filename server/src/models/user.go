@@ -12,7 +12,7 @@ type User struct {
 	ID             string `gorm:"primaryKey;type:char(36)"`
 	Account        string `gorm:"unique;not null"`
 	Password       string `gorm:"not null"`
-	Gender         string
+	Gender         string 
 	Bio            string
 	ProfilePicture string
 	LastLogin      *time.Time

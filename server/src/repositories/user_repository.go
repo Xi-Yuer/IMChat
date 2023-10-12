@@ -10,6 +10,8 @@ import (
 type UserRepository interface {
 	CreateUser(user *models.User) error
 	GetUserByAccount(account string) (*models.User, error)
+	GetUserList() ([]*models.User, error)
+	Logout(account string, time int64) error
 }
 
 type userRepository struct {
@@ -32,3 +34,15 @@ func (r *userRepository) GetUserByAccount(account string) (*models.User, error) 
 	return &user, nil
 }
 
+// 退出登陆
+func (r *userRepository) Logout(account string, time int64) error {
+	return r.db.Model(&models.User{}).Where("account = ?", account).Update("last_login", time).Error
+}
+
+func (r *userRepository) GetUserList() ([]*models.User, error) {
+	var userList []*models.User
+	if err := r.db.Find(&userList).Error; err != nil {
+		return nil, err
+	}
+	return userList, nil
+}

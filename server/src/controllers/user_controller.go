@@ -5,6 +5,7 @@ import (
 	"ImChat/src/dto"
 	"ImChat/src/handlers"
 	"ImChat/src/services"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,4 +54,30 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 
 	// 返回登录成功的用户响应
 	ctx.JSON(200, userResponse)
+}
+
+func (c *UserController) Logout(ctx *gin.Context) {
+	account, _ := ctx.Get("account")
+	time := time.Now().Unix()
+	err := c.userService.Logout(account.(string), time)
+	if err != nil {
+		// 处理退出错误
+		// 返回错误响应
+		handlers.Error(ctx, err.Error())
+		return
+	}
+	// 返回退出成功的响应
+	handlers.Success(ctx, "退出成功", nil)
+}
+
+func (c *UserController) GetUserList(ctx *gin.Context) {
+	userInfo, err := c.userService.GetUserList()
+	if err != nil {
+		// 处理获取用户信息错误
+		// 返回错误响应
+		handlers.Error(ctx, err.Error())
+		return
+	}
+	// 返回用户信息响应
+	ctx.JSON(200, userInfo)
 }
