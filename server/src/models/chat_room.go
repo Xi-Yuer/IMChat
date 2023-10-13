@@ -11,7 +11,8 @@ type ChatRoom struct {
 	Name        string `gorm:"type:varchar(255)"`
 	Description string `gorm:"type:varchar(255)"`
 	AdminID     string `gorm:"type:char(36)"`
-    Admin       *User   `gorm:"foreignKey:AdminID"`
+
+	Admin User `gorm:"foreignKey:AdminID"`
 }
 
 func (ChatRoom) TabelName() string {
