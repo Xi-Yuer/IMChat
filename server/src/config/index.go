@@ -32,6 +32,7 @@ func init() {
 		fmt.Println("获取工作目录失败:", err)
 		return
 	}
+
 	// 构建配置文件的绝对路径
 	configPath := filepath.Join(wd, "config", "config.yaml")
 	// 初始化Viper配置

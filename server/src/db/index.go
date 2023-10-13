@@ -47,7 +47,7 @@ func init() {
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
 	// 数据库迁移
-	err = db.AutoMigrate(&models.User{})
+	err = db.AutoMigrate(&models.User{}, &models.ChatRoom{})
 	if err != nil {
 		panic("failed to migrate")
 	}
