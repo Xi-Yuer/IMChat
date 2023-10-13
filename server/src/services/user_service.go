@@ -27,7 +27,7 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 	return &userService{userRepository}
 }
 
-// 登陆
+// 注册
 func (s *userService) RegisterUser(dto *dto.UserRegisterDTO) error {
 
 	password, err := utils.HashPassword(dto.Password)
@@ -41,7 +41,7 @@ func (s *userService) RegisterUser(dto *dto.UserRegisterDTO) error {
 	return s.userRepository.CreateUser(user)
 }
 
-// 注册
+// 登陆
 func (s *userService) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error) {
 
 	user := &models.User{
