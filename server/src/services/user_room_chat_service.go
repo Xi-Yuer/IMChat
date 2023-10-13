@@ -3,6 +3,7 @@ package services
 import (
 	"ImChat/src/models"
 	"ImChat/src/repositories"
+	"errors"
 )
 
 type UserChatRoomService interface {
@@ -27,7 +28,16 @@ func (u *userChatRoomService) JoinChatRoom(userId string, chatRoomId string) err
 		UserID:     userId,
 		ChatRoomID: chatRoomId,
 	}
-	return u.userChatRoomRepository.JoinChatRoom(userRoomChatRecord)
+	err := u.FindChatRoomUser(userRoomChatRecord)
+	if err != nil {
+		return u.userChatRoomRepository.JoinChatRoom(userRoomChatRecord)
+	}
+	// 已加入群聊
+	return errors.New("already join the chat room")
+}
+
+func (u *userChatRoomService) FindChatRoomUser(record *models.UserChatRoom) error {
+	return u.userChatRoomRepository.FindChatRoomUser(record)
 }
 
 // func (u *userChatRoomService) LeaveChatRoom(userId string, chatRoomId string) error {

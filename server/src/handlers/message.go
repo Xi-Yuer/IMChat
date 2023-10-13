@@ -42,9 +42,9 @@ func NotFound(ctx *gin.Context) {
 	})
 }
 
-func ServerError(ctx *gin.Context) {
+func ServerError(ctx *gin.Context, msg string) {
 	ctx.JSON(http.StatusInternalServerError, gin.H{
-		"msg":  "服务器错误",
+		"msg":  msg,
 		"code": http.StatusInternalServerError,
 	})
 }

@@ -24,7 +24,7 @@ func (c *UserRoomChatController) JoinChatRoom(ctx *gin.Context) {
 	}
 	err := c.userRoomChatService.JoinChatRoom(userID.(string), roomID)
 	if err != nil {
-		handlers.ServerError(ctx)
+		handlers.ServerError(ctx, err.Error())
 		return
 	}
 	handlers.Success(ctx, "成功加入群聊", nil)
