@@ -19,7 +19,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-// var Clients = make(map[*websocket.Conn]bool)
 // 用户信息
 type User struct {
 	UserID string
@@ -27,8 +26,8 @@ type User struct {
 	Conn   *websocket.Conn
 }
 
-var users = make(map[*websocket.Conn]User) // 用于跟踪连接的用户
-var userMutex sync.Mutex
+var users = make(map[*websocket.Conn]User)                  // 用于跟踪连接的用户
+var userMutex sync.Mutex                                    // 互斥锁
 var messageStorageChannel = make(chan *models.Message, 100) // 创建一个消息存储通道
 
 // 用户连接
@@ -89,46 +88,22 @@ func HandleWebSocketConnections(c *gin.Context) {
 // 处理消息
 func handleReceivedData(data dto.MessageTypeData, UserID string) {
 	// 在这里进行相应的逻辑处理，例如将消息存储到数据库或广播给其他用户
-	// 你也可以向客户端发送响应数据，如果需要的话
 	// 广播接收到的消息给所有在线客户端
 	// 构建要发送的响应数据
-	userRepository := repositories.NewUserRepository(db.DB)
-	user, err := userRepository.GetUserDetailByUserID(UserID)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	userResponse := &dto.UserResponseDTO{
-		ID:             user.ID,
-		Account:        user.Account,
-		Gender:         user.Gender,
-		Bio:            user.Bio,
-		ProfilePicture: user.ProfilePicture,
-		LastLogin:      user.LastLogin,
-	}
-	messageReponse := &dto.MessageDTO{
-		Content:     data.Message,
-		MessageType: data.MessageType,
-		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
-	}
-	response := &dto.MessageResponseDTO{
+	userResponse := getUserResponse(UserID)       // 发送者
+	messageReponse := getMessageDTO(data, UserID) // 消息
+	response := &dto.MessageResponseDTO{          // 响应体
 		User:    userResponse,
 		Message: messageReponse,
 	}
-	messageDTO := &models.Message{
-		Content:     data.Message,
-		MessageType: data.MessageType,
-		SenderID:    UserID,
-		ChatRoomID:  data.GroupID,
-	}
+	messageDTO := getMessageResponse(data, UserID) // 写入消息
+	// 将消息发送到消息管道中
 	messageStorageChannel <- messageDTO
-	// 启动单独的 goroutine 处理消息存储
-	go func(messageDTO *models.Message) {
-		for message := range messageStorageChannel {
-			storageMessage(message)
-		}
-	}(messageDTO)
 
+	// 开启一个单独的线程存储消息到数据库中
+	go messageStorageWorker(messageDTO)
+
+	// 广播消息
 	responseJSON, _ := json.Marshal(response)
 	for conn, user := range users {
 		if GroupInUser(user, data.GroupID) {
@@ -150,7 +125,48 @@ func GroupInUser(user User, group string) bool {
 	return found
 }
 
+func getUserResponse(userID string) *dto.UserResponseDTO {
+	user, err := repositories.NewUserRepository(db.DB).GetUserDetailByUserID(userID)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	return &dto.UserResponseDTO{
+		ID:             user.ID,
+		Account:        user.Account,
+		Gender:         user.Gender,
+		Bio:            user.Bio,
+		ProfilePicture: user.ProfilePicture,
+		LastLogin:      user.LastLogin,
+	}
+}
+
+func getMessageResponse(data dto.MessageTypeData, UserID string) *models.Message {
+	return &models.Message{
+		Content:     data.Message,
+		MessageType: data.MessageType,
+		SenderID:    UserID,
+		ChatRoomID:  data.GroupID,
+	}
+}
+
+func getMessageDTO(data dto.MessageTypeData, userID string) *dto.MessageDTO {
+	return &dto.MessageDTO{
+		Content:     data.Message,
+		MessageType: data.MessageType,
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+	}
+}
+
 // 将消息存储到数据库
 func storageMessage(message *models.Message) {
 	db.DB.Create(message)
+}
+
+// 启动单独的 goroutine 处理消息存储
+func messageStorageWorker(messageDTO *models.Message) {
+	for message := range messageStorageChannel {
+		storageMessage(message)
+	}
 }
