@@ -23,15 +23,15 @@ type ChatRoomService interface {
 	// JoinChatRoom(id string) error
 }
 
-type chatRoomService struct {
+type ChatRoomServiceImpl struct {
 	chatRoomRepository repositories.ChatRoomRepository
 }
 
 func NewChatRoomService(chatRoomRepository repositories.ChatRoomRepository) ChatRoomService {
-	return &chatRoomService{chatRoomRepository}
+	return &ChatRoomServiceImpl{chatRoomRepository}
 }
 
-func (s *chatRoomService) CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID string) error {
+func (s *ChatRoomServiceImpl) CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID string) error {
 	chatRoom := &models.ChatRoom{
 		Name:        dto.Name,
 		Description: dto.Description,

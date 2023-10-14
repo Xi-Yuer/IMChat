@@ -15,15 +15,15 @@ type UserChatRoomService interface {
 	// FindChatRoomMembers(chatRoomId string) ([]string, error)
 }
 
-type userChatRoomService struct {
+type UserChatRoomServiceImpl struct {
 	userChatRoomRepository repositories.UserRoomChatRepository
 }
 
 func NewUserChatRoomService(userChatRoomRepository repositories.UserRoomChatRepository) UserChatRoomService {
-	return &userChatRoomService{userChatRoomRepository}
+	return &UserChatRoomServiceImpl{userChatRoomRepository}
 }
 
-func (u *userChatRoomService) JoinChatRoom(userId string, chatRoomId string) error {
+func (u *UserChatRoomServiceImpl) JoinChatRoom(userId string, chatRoomId string) error {
 	userRoomChatRecord := &models.UserChatRoom{
 		UserID:     userId,
 		ChatRoomID: chatRoomId,
@@ -36,13 +36,13 @@ func (u *userChatRoomService) JoinChatRoom(userId string, chatRoomId string) err
 	return errors.New("already join the chat room")
 }
 
-func (u *userChatRoomService) FindChatRoomUser(record *models.UserChatRoom) error {
+func (u *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) error {
 	return u.userChatRoomRepository.FindChatRoomUser(record)
 }
 
-// func (u *userChatRoomService) LeaveChatRoom(userId string, chatRoomId string) error {
+// func (u *UserChatRoomServiceImpl) LeaveChatRoom(userId string, chatRoomId string) error {
 // 	return u.userChatRoomRepository.LeaveChatRoom(userId, chatRoomId)
 // }
-// func (u *userChatRoomService) FindChatRoomMembers(chatRoomId string) ([]string, error) {
+// func (u *UserChatRoomServiceImpl) FindChatRoomMembers(chatRoomId string) ([]string, error) {
 // 	return u.userChatRoomRepository.FindChatRoomMembers(chatRoomId)
 // }

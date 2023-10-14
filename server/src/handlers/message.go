@@ -48,3 +48,10 @@ func ServerError(ctx *gin.Context, msg string) {
 		"code": http.StatusInternalServerError,
 	})
 }
+
+func Conflict(ctx *gin.Context, msg string) {
+	ctx.JSON(http.StatusConflict, gin.H{
+		"msg":  msg,
+		"code": http.StatusConflict,
+	})
+}
