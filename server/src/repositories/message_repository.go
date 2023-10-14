@@ -1,9 +1,8 @@
 package repositories
 
 import (
+	"ImChat/src/db"
 	"ImChat/src/models"
-
-	"gorm.io/gorm"
 )
 
 type MessageRepository interface {
@@ -11,13 +10,8 @@ type MessageRepository interface {
 }
 
 type MessageRepositoryImpl struct {
-	db *gorm.DB
-}
-
-func NewMessageRepositoryImpl(db *gorm.DB) MessageRepository {
-	return &MessageRepositoryImpl{db}
 }
 
 func (r *MessageRepositoryImpl) CreateMessage(message *models.Message) error {
-	return r.db.Create(message).Error
+	return db.DB.Create(message).Error
 }

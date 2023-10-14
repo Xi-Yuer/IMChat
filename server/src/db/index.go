@@ -3,7 +3,6 @@ package db
 import (
 	"ImChat/src/config"
 	"ImChat/src/models"
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -32,9 +31,8 @@ func init() {
 	})
 	if err != nil {
 		panic("failed to connect database")
-	} else {
-		fmt.Println("数据库连接成功")
 	}
+
 	sqlDB, err := db.DB()
 	if err != nil {
 		panic("failed to get DB instanc")

@@ -34,10 +34,6 @@ func SetupRoutes(router *gin.Engine) {
 		userRoomChatService := services.NewUserChatRoomService(userRoomChatRepo)
 		userRoomChatController := controllers.NewUserRoomChatController(userRoomChatService)
 		chatRoomRoutes.POST("/join", userRoomChatController.JoinChatRoom)
-
-		messageRepo := repositories.NewMessageRepositoryImpl(db.DB)
-		messageService := services.NewMessageService(messageRepo)
-		messageController := controllers.NewMessageController(messageService)
-		chatRoomRoutes.POST("/send", messageController.CreateMessage)
 	}
+
 }
