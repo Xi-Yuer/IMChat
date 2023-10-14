@@ -12,6 +12,7 @@ type UserRepository interface {
 	CreateUser(user *models.User) error
 	GetUserByAccount(account string) (*models.User, error)
 	GetUserList() ([]*models.User, error)
+	GetUserDetailByUserID(userID string) (*models.User, error)
 	Logout(account string, time time.Time) error
 }
 
@@ -32,6 +33,15 @@ func (r *userRepository) CreateUser(user *models.User) error {
 func (r *userRepository) GetUserByAccount(account string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("account = ?", account).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+// 查询用户详情
+func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, error){
+	var user models.User
+	if err := r.db.Where("id = ?", userID).First(&user).Error; err != nil {
 		return nil, err
 	}
 	return &user, nil

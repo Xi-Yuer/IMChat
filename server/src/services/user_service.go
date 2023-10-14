@@ -17,6 +17,7 @@ type UserService interface {
 	LoginUser(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
 	Logout(account string, time time.Time) error
+	GetUserDetailByUserID(userID string) (*dto.UserResponseDTO, error)
 }
 
 type UserServiceImpl struct {
@@ -101,4 +102,15 @@ func (s *UserServiceImpl) GetUserList() ([]*dto.UserResponseDTO, error) {
 		}
 	}
 	return list, nil
+}
+
+func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO, error) {
+	user, err := s.userRepository.GetUserDetailByUserID(id)
+	if err != nil {
+		return nil, err
+	}
+	return &dto.UserResponseDTO{
+		ID:      user.ID,
+		Account: user.Account,
+	}, nil
 }

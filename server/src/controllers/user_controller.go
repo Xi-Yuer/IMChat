@@ -85,3 +85,16 @@ func (c *UserController) GetUserList(ctx *gin.Context) {
 	// 返回用户信息响应
 	ctx.JSON(200, userInfo)
 }
+
+func (c *UserController) GetUserDetailByID(ctx *gin.Context) {
+	userID := ctx.Param("id")
+	userInfo, err := c.userService.GetUserDetailByUserID(userID)
+	if err != nil {
+		// 处理获取用户信息错误
+		// 返回错误响应
+		handlers.Error(ctx, err.Error())
+		return
+	}
+	// 返回用户信息响应
+	ctx.JSON(200, userInfo)
+}

@@ -36,4 +36,8 @@ func SetupRoutes(router *gin.Engine) {
 		chatRoomRoutes.POST("/join", userRoomChatController.JoinChatRoom)
 	}
 
+	wsRoutes := router.Group("/ws")
+	wsRoutes.GET("",func(ctx *gin.Context) {
+		
+	})
 }

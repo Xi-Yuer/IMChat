@@ -4,11 +4,13 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/models"
+	"ImChat/src/repositories"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -28,7 +30,7 @@ type User struct {
 
 var users = make(map[*websocket.Conn]User) // 用于跟踪连接的用户
 var userMutex sync.Mutex
-var messageStorageChannel = make(chan *models.Message, 10) // 创建一个消息存储通道
+var messageStorageChannel = make(chan *models.Message, 100) // 创建一个消息存储通道
 
 // 用户连接
 func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
@@ -93,11 +95,28 @@ func handleReceivedData(data struct {
 	// 你也可以向客户端发送响应数据，如果需要的话
 	// 广播接收到的消息给所有在线客户端
 	// 构建要发送的响应数据
-	response := &dto.CreateMessageDTO{
+	userRepository := repositories.NewUserRepository(db.DB)
+	user, err := userRepository.GetUserDetailByUserID(data.UserID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	userResponse := &dto.UserResponseDTO{
+		ID:             user.ID,
+		Account:        user.Account,
+		Gender:         user.Gender,
+		Bio:            user.Bio,
+		ProfilePicture: user.ProfilePicture,
+		LastLogin:      user.LastLogin,
+	}
+	messageReponse := &dto.MessageDTO{
 		Content:     data.Message,
 		MessageType: data.MessageType,
-		ReceiverID:  data.GroupID,
-		UserID:      data.UserID,
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+	}
+	response := &dto.MessageResponseDTO{
+		User:    userResponse,
+		Message: messageReponse,
 	}
 	messageDTO := &models.Message{
 		Content:     data.Message,
