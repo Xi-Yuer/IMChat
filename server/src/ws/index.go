@@ -65,7 +65,12 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 
 		// 在这里处理接收到的 JSON 数据
 		if messageType == websocket.TextMessage {
-			var data map[string]interface{}
+			var data struct {
+				Message     string `json:"message"`
+				UserID      string `json:"user_id"`
+				MessageType string `json:"message_type"`
+				GroupID     string `json:"group"`
+			}
 			if err := json.Unmarshal(p, &data); err != nil {
 				log.Println(err)
 			} else {
@@ -78,29 +83,27 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 // 处理消息
-func handleReceivedData(data map[string]interface{}) {
-	// 在这里执行处理数据的逻辑
-	// 你可以访问 data 中的键值对，例如 data["username"] 和 data["message"]
-	userID := data["user_id"].(string)
-	message := data["message"].(string)
-	messageType := data["message_type"].(string)
-	group := data["group"].(string)
-
+func handleReceivedData(data struct {
+	Message     string `json:"message"`
+	UserID      string `json:"user_id"`
+	MessageType string `json:"message_type"`
+	GroupID     string `json:"group"`
+}) {
 	// 在这里进行相应的逻辑处理，例如将消息存储到数据库或广播给其他用户
 	// 你也可以向客户端发送响应数据，如果需要的话
 	// 广播接收到的消息给所有在线客户端
 	// 构建要发送的响应数据
 	response := &dto.CreateMessageDTO{
-		Content:     message,
-		MessageType: messageType,
-		ReceiverID:  group,
-		UserID:      userID,
+		Content:     data.Message,
+		MessageType: data.MessageType,
+		ReceiverID:  data.GroupID,
+		UserID:      data.UserID,
 	}
 	messageDTO := &models.Message{
-		Content:     message,
-		MessageType: messageType,
-		SenderID:    userID,
-		ChatRoomID:  group,
+		Content:     data.Message,
+		MessageType: data.MessageType,
+		SenderID:    data.UserID,
+		ChatRoomID:  data.GroupID,
 	}
 	messageStorageChannel <- messageDTO
 	// 启动单独的 goroutine 处理消息存储
@@ -112,7 +115,7 @@ func handleReceivedData(data map[string]interface{}) {
 
 	responseJSON, _ := json.Marshal(response)
 	for conn, user := range users {
-		if GroupInUser(user, group) {
+		if GroupInUser(user, data.GroupID) {
 			// 发送响应数据给用户所在群组的所有用户
 			conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
 		}
