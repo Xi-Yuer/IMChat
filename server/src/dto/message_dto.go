@@ -12,6 +12,12 @@ type MessageResponseDTO struct {
 	Message *MessageDTO      `json:"message"`
 }
 
+type MessageTypeData struct {
+	Message     string `json:"message"`
+	MessageType string `json:"message_type"`
+	GroupID     string `json:"group"`
+}
+
 type MessageDTO struct {
 	Content     string `json:"content"`
 	MessageType string `json:"message_type"`

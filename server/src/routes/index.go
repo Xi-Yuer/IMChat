@@ -7,6 +7,7 @@ import (
 	"ImChat/src/middlewares"
 	"ImChat/src/repositories"
 	"ImChat/src/services"
+	"ImChat/src/ws"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,8 +37,6 @@ func SetupRoutes(router *gin.Engine) {
 		chatRoomRoutes.POST("/join", userRoomChatController.JoinChatRoom)
 	}
 
-	wsRoutes := router.Group("/ws")
-	wsRoutes.GET("",func(ctx *gin.Context) {
-		
-	})
+	wsRoutes := router.Group("/ws", middlewares.Auth())
+	wsRoutes.GET("", ws.HandleWebSocketConnections)
 }

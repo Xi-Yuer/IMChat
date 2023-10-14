@@ -7,11 +7,10 @@ import (
 	"ImChat/src/repositories"
 	"encoding/json"
 	"log"
-	"net/http"
-	"strings"
 	"sync"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -33,9 +32,9 @@ var userMutex sync.Mutex
 var messageStorageChannel = make(chan *models.Message, 100) // 创建一个消息存储通道
 
 // 用户连接
-func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
+func HandleWebSocketConnections(c *gin.Context) {
 	// 将 HTTP 连接升级为 WebSocket 连接
-	ws, err := upgrader.Upgrade(w, r, nil)
+	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
 		return
@@ -45,13 +44,21 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 	// 将连接添加到客户端列表
 	// 添加用户到连接映射
 	// 从 WebSocket 请求头中获取用户信息
-	Username := r.Header.Get("X-Username")
-	Groups := r.Header.Get("X-Groups")
-	GroupsArr := strings.Split(Groups, ",")
+	UserID, _ := c.Get("id")
+	chatRoomRepository := repositories.NewUserRoomChatRepository(db.DB)
+	userChatRoom, err := chatRoomRepository.FindUserChatRoom(UserID.(string))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	userGroups := make([]string, 10)
+	for _, v := range userChatRoom {
+		userGroups = append(userGroups, v.ChatRoomID)
+	}
 	userMutex.Lock()
 	users[ws] = User{
-		UserID: Username,  // 示例用户名
-		Groups: GroupsArr, // 示例群组
+		UserID: UserID.(string), // 用户名
+		Groups: userGroups,      // 群组
 		Conn:   ws,
 	}
 	userMutex.Unlock()
@@ -67,17 +74,12 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 
 		// 在这里处理接收到的 JSON 数据
 		if messageType == websocket.TextMessage {
-			var data struct {
-				Message     string `json:"message"`
-				UserID      string `json:"user_id"`
-				MessageType string `json:"message_type"`
-				GroupID     string `json:"group"`
-			}
+			var data dto.MessageTypeData
 			if err := json.Unmarshal(p, &data); err != nil {
 				log.Println(err)
 			} else {
 				// 处理接收到的数据
-				handleReceivedData(data)
+				handleReceivedData(data, UserID.(string))
 			}
 		}
 
@@ -85,18 +87,13 @@ func HandleWebSocketConnections(w http.ResponseWriter, r *http.Request) {
 }
 
 // 处理消息
-func handleReceivedData(data struct {
-	Message     string `json:"message"`
-	UserID      string `json:"user_id"`
-	MessageType string `json:"message_type"`
-	GroupID     string `json:"group"`
-}) {
+func handleReceivedData(data dto.MessageTypeData, UserID string) {
 	// 在这里进行相应的逻辑处理，例如将消息存储到数据库或广播给其他用户
 	// 你也可以向客户端发送响应数据，如果需要的话
 	// 广播接收到的消息给所有在线客户端
 	// 构建要发送的响应数据
 	userRepository := repositories.NewUserRepository(db.DB)
-	user, err := userRepository.GetUserDetailByUserID(data.UserID)
+	user, err := userRepository.GetUserDetailByUserID(UserID)
 	if err != nil {
 		log.Println(err)
 		return
@@ -121,7 +118,7 @@ func handleReceivedData(data struct {
 	messageDTO := &models.Message{
 		Content:     data.Message,
 		MessageType: data.MessageType,
-		SenderID:    data.UserID,
+		SenderID:    UserID,
 		ChatRoomID:  data.GroupID,
 	}
 	messageStorageChannel <- messageDTO

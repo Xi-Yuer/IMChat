@@ -9,6 +9,7 @@ import (
 type UserRoomChatRepository interface {
 	JoinChatRoom(record *models.UserChatRoom) error
 	FindChatRoomUser(record *models.UserChatRoom) error
+	FindUserChatRoom(id string) ([]models.UserChatRoom, error)
 }
 
 func NewUserRoomChatRepository(db *gorm.DB) UserRoomChatRepository {
@@ -25,4 +26,10 @@ func (r *userRoomChatRepository) JoinChatRoom(record *models.UserChatRoom) error
 
 func (r *userRoomChatRepository) FindChatRoomUser(record *models.UserChatRoom) error {
 	return r.db.Where(record).First(record).Error
+}
+
+func (r *userRoomChatRepository) FindUserChatRoom(id string) ([]models.UserChatRoom, error) {
+	var records []models.UserChatRoom
+	err := r.db.Where("user_id = ?", id).Find(&records).Error
+	return records, err
 }
