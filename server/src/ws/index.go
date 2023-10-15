@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"log"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -20,6 +21,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
+var connectionMutex sync.Mutex
 var userMutex sync.Mutex // 互斥锁
 
 // 创建WebSocket连接
@@ -83,5 +85,34 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 		}
 	default:
 		// 处理其他消息类型
+	}
+}
+
+// 函数用于检查连接并关闭已断开的连接
+func CheckAndCloseDisconnectedConnections() {
+	for conn, user := range models.Connection {
+		// 检查连接状态
+		if err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(5*time.Second)); err != nil {
+			// 发送Ping消息失败，表示连接已断开
+			// 关闭连接
+			conn.Close()
+			// 从映射中移除用户
+			delete(models.Connection, conn)
+			// 通知其他用户该用户已下线
+			connectionMutex.Lock()
+			defer connectionMutex.Unlock()
+			// for conn, user := range models.Connection {
+			// 	go controllers.SendGroupChatNumber(conn)
+			// 	for _, group := range user.Groups {
+			// 		// 通知其他用户该用户已下线
+			// 		for _, usergroup := range user.Groups {
+			// 			if usergroup == group {
+			// 				// 该用户需要重新请求群聊天人数
+			// 			}
+			// 		}
+			// 	}
+			// }
+			log.Printf("Connection with UserID %s closed due to disconnect.\n", user.UserID)
+		}
 	}
 }

@@ -10,6 +10,7 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/services"
 	"ImChat/src/ws"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -51,6 +52,14 @@ func SetupRoutes(router *gin.Engine) {
 				return
 			}
 			defer webSocketInstance.Close()
+			// 启动定时检查用户的连接状态
+			go func() {
+				for {
+					// 定期检查断开的连接
+					ws.CheckAndCloseDisconnectedConnections()
+					time.Sleep(10 * time.Second) // 调整检查间隔
+				}
+			}()
 
 			// 处理用户信息和添加到连接映射
 			if err := ws.HandleUserInfoAndAddToConnection(webSocketInstance, c); err != nil {
