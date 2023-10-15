@@ -8,11 +8,16 @@ type CreateMessageDTO struct {
 }
 
 type MessageResponseDTO struct {
+	Type string                 `json:"type"`
+	Data ChatMessageResponseDTO `json:"data"`
+}
+type ChatMessageResponseDTO struct {
 	User    *UserResponseDTO `json:"user"`
 	Message *MessageDTO      `json:"message"`
 }
 
-type MessageTypeData struct {
+type MessageToRoomDTO struct {
+	Type        string `json:"type" binding:"required"`
 	Message     string `json:"message"`
 	MessageType string `json:"message_type"`
 	GroupID     string `json:"group"`
