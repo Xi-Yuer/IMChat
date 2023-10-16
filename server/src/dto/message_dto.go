@@ -11,6 +11,9 @@ type MessageResponseDTO struct {
 	Type string                 `json:"type"`
 	Data ChatMessageResponseDTO `json:"data"`
 }
+type BaseMessageResponseDTO struct {
+	Type string `json:"type"`
+}
 type ChatMessageResponseDTO struct {
 	User    *UserResponseDTO `json:"user"`
 	Message *MessageDTO      `json:"message"`

@@ -5,6 +5,7 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
+	"ImChat/src/handlers"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"encoding/json"
@@ -21,7 +22,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-var connectionMutex sync.Mutex
 var userMutex sync.Mutex // 互斥锁
 
 // 创建WebSocket连接
@@ -63,7 +63,12 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 // 处理接收到的消息
 func HandleReceivedMessage(p []byte, c *gin.Context) {
 	// 在这里处理接收到的 JSON 数据
-	id, _ := c.Get("id") // 用户携带 token 之后就会有 id 信息
+	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
+
+	if !ok {
+		handlers.NoPermission(c)
+		return
+	}
 
 	// 获取传递过来的数据 type 值
 	var MessageType struct {
@@ -88,31 +93,28 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 	}
 }
 
-// 函数用于检查连接并关闭已断开的连接
-func CheckAndCloseDisconnectedConnections() {
-	for conn, user := range models.Connection {
-		// 检查连接状态
-		if err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(5*time.Second)); err != nil {
-			// 发送Ping消息失败，表示连接已断开
-			// 关闭连接
-			conn.Close()
-			// 从映射中移除用户
-			delete(models.Connection, conn)
-			// 通知其他用户该用户已下线
-			connectionMutex.Lock()
-			defer connectionMutex.Unlock()
-			// for conn, user := range models.Connection {
-			// 	go controllers.SendGroupChatNumber(conn)
-			// 	for _, group := range user.Groups {
-			// 		// 通知其他用户该用户已下线
-			// 		for _, usergroup := range user.Groups {
-			// 			if usergroup == group {
-			// 				// 该用户需要重新请求群聊天人数
-			// 			}
-			// 		}
-			// 	}
-			// }
-			log.Printf("Connection with UserID %s closed due to disconnect.\n", user.UserID)
+// 检测客户端连接状态
+func CheckHeartbeat(conn *websocket.Conn) {
+loop:
+	for {
+		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
+		err := conn.WriteControl(websocket.PingMessage, []byte("ping"), time.Time{})
+		if err != nil {
+			log.Printf("发送Ping失败：%v", err)
+			log.Println("客户端离线")
+			controllers.SendGroupChatNumber(conn)
+			RemoveConnection(conn)
+			break loop
 		}
 	}
+}
+
+// 删除连接
+func RemoveConnection(conn *websocket.Conn) {
+	// 关闭WebSocket连接
+	conn.Close()
+	// 从连接池中移除连接
+	userMutex.Lock()
+	delete(models.Connection, conn)
+	userMutex.Unlock()
 }

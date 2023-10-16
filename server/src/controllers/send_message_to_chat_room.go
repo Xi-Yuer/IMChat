@@ -47,12 +47,16 @@ func HandleReceivedData(data dto.MessageToRoomDTO, UserID string) {
 }
 
 // 通知群在线用户获取最新群在线人数信息
-func SendGroupChatNumber(conn *websocket.Conn) {
-	response := &dto.MessageResponseDTO{
+func SendGroupChatNumber(outConn *websocket.Conn) {
+	response := &dto.BaseMessageResponseDTO{
 		Type: enum.GroupMemberUpdate, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
-	conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+
+	for conn := range models.Connection {
+		// 发送响应数据给用户所在群组的所有用户
+		conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+	}
 }
 
 // 是否将消息广播给该连接用户
