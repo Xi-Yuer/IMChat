@@ -29,3 +29,17 @@ func (c *ChatRoomController) CreateChatRoom(ctx *gin.Context) {
 	}
 	handlers.Success(ctx, "创建成功", nil)
 }
+
+func (c *ChatRoomController) GetChatRoomUsers(ctx *gin.Context) {
+	chatRoomID, ok := ctx.Get("chat_room_id")
+	if !ok {
+		handlers.Error(ctx, "参数错误")
+		return
+	}
+	users, err := c.chatRoomService.GetChatRoomUsers(chatRoomID.(string))
+	if err != nil {
+		handlers.Error(ctx, err.Error())
+		return
+	}
+	handlers.Success(ctx, "获取成功", users)
+}
