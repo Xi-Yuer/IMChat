@@ -38,3 +38,23 @@ func GenerateRandomKey(length int) (string, error) {
 	}
 	return base64.StdEncoding.EncodeToString(key), nil
 }
+
+// 判断第一个数据是否存在于第二个数组中
+func FirstArrayInLastArray(firstArray, lastArray []string) bool {
+	//  创建一个map用于存储第一个数组的元素
+	elementMap := make(map[string]bool)
+
+	// 将第一个数组的元素添加到map中
+	for _, v := range firstArray {
+		elementMap[v] = true
+	}
+
+	// 遍历第二个数组的元素，检查是否存在于map中
+	for _, v := range lastArray {
+		if elementMap[v] {
+			return true
+		}
+	}
+
+	return false
+}

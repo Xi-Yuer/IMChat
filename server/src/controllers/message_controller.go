@@ -11,3 +11,6 @@ type MessageController struct {
 func NewMessageController(messageService services.MessageService) *MessageController {
 	return &MessageController{messageService}
 }
+
+func (controller *MessageController) NotifyAllConnectionUpdateGroupMember(group string) {
+}

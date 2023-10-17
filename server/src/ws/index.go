@@ -3,7 +3,6 @@ package ws
 import (
 	"ImChat/src/controllers"
 	"ImChat/src/db"
-	"ImChat/src/dto"
 	"ImChat/src/enum"
 	"ImChat/src/handlers"
 	"ImChat/src/models"
@@ -50,11 +49,13 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 	}
 
 	userMutex.Lock()
-	models.Connection[ws] = models.UserConnection{
+	conn := models.UserConnection{
 		UserID: UserID.(string), // 用户名
 		Groups: userGroups,      // 群组
 		Conn:   ws,
 	}
+	models.Connection[ws] = conn
+	go controllers.UserOnline(conn)
 	userMutex.Unlock()
 
 	return nil
@@ -80,30 +81,28 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 	}
 
 	switch MessageType.Type {
+	// 群消息
 	case enum.GroupMessage:
-		var data dto.MessageToRoomDTO
-		if err := json.Unmarshal(p, &data); err != nil {
-			log.Println(err)
-		} else {
-			// 处理接收到的数据
-			controllers.HandleReceivedData(data, id.(string))
-		}
+		controllers.HandleReceivedData(p, id.(string))
 	default:
 		// 处理其他消息类型
 	}
 }
 
 // 检测客户端连接状态
-func CheckHeartbeat(conn *websocket.Conn) {
+func CheckHeartbeat(conn *websocket.Conn, c *gin.Context) {
 loop:
 	for {
-		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
+		time.Sleep(time.Second * 5) // 每20秒发送一次Ping消息
 		err := conn.WriteControl(websocket.PingMessage, []byte("ping"), time.Time{})
 		if err != nil {
 			log.Printf("发送Ping失败：%v", err)
 			log.Println("客户端离线")
-			controllers.SendGroupChatNumber(conn)
+			// 处理客户端离线业务
+			controllers.SendGroupChatNumber(conn, c)
+			// 删除连接维护
 			RemoveConnection(conn)
+			// 停止循环，不再发送 ping
 			break loop
 		}
 	}

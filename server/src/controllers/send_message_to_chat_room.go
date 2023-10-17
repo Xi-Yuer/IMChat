@@ -4,22 +4,30 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
+	"ImChat/src/handlers"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
+	"ImChat/src/utils"
 	"encoding/json"
 	"log"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
 var messageStorageChannel = make(chan *models.Message, 100) // 创建一个消息存储通道
 
 // 处理消息
-func HandleReceivedData(data dto.MessageToRoomDTO, UserID string) {
+func HandleReceivedData(p []byte, UserID string) {
 	// 在这里进行相应的逻辑处理，例如将消息存储到数据库或广播给其他用户
 	// 广播接收到的消息给所有在线客户端
 	// 构建要发送的响应数据
+	var data dto.MessageToRoomDTO
+	if err := json.Unmarshal(p, &data); err != nil {
+		log.Println(err)
+		return
+	}
 	userResponse := getUserResponse(UserID)       // 发送者
 	messageReponse := getMessageDTO(data, UserID) // 消息
 	response := &dto.MessageResponseDTO{
@@ -34,7 +42,7 @@ func HandleReceivedData(data dto.MessageToRoomDTO, UserID string) {
 	messageStorageChannel <- messageDTO
 
 	// 开启一个单独的线程存储消息到数据库中
-	go messageStorageWorker(messageDTO)
+	go messageStorageWorker()
 
 	// 广播消息
 	responseJSON, _ := json.Marshal(response)
@@ -47,15 +55,39 @@ func HandleReceivedData(data dto.MessageToRoomDTO, UserID string) {
 }
 
 // 通知群在线用户获取最新群在线人数信息
-func SendGroupChatNumber(outConn *websocket.Conn) {
+func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context) {
+	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
+
+	if !ok {
+		handlers.NoPermission(c)
+		return
+	}
 	response := &dto.BaseMessageResponseDTO{
-		Type: enum.GroupMemberUpdate, // 响应体
+		Type: enum.UserOffline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
-
-	for conn := range models.Connection {
+	userRepo := repositories.NewUserRepository(db.DB)
+	time := time.Now()
+	userRepo.Logout(id.(string), time)
+	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
-		conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+		// TOODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
+		v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+	}
+}
+
+// 用户上线
+func UserOnline(conn models.UserConnection) {
+	// 通知群在线用户获取最新群在线人数信息
+	response := &dto.BaseMessageResponseDTO{
+		Type: enum.UserOnline, // 响应体
+	}
+	responseJSON, _ := json.Marshal(response)
+	for _, v := range models.Connection {
+		if utils.FirstArrayInLastArray(v.Groups, conn.Groups) {
+			// 发送响应数据给用户所在群组的所有用户
+			v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+		}
 	}
 }
 
@@ -106,14 +138,14 @@ func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 	}
 }
 
-// 将消息存储到数据库
-func storageMessage(message *models.Message) {
-	db.DB.Create(message)
-}
-
 // 启动单独的 goroutine 处理消息存储
-func messageStorageWorker(messageDTO *models.Message) {
+func messageStorageWorker() {
 	for message := range messageStorageChannel {
 		storageMessage(message)
 	}
+}
+
+// 将消息存储到数据库
+func storageMessage(message *models.Message) {
+	db.DB.Create(message)
 }
