@@ -3,7 +3,6 @@ package ws
 import (
 	"ImChat/src/controllers"
 	"ImChat/src/db"
-	"ImChat/src/dto"
 	"ImChat/src/enum"
 	"ImChat/src/handlers"
 	"ImChat/src/models"
@@ -80,14 +79,9 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 	}
 
 	switch MessageType.Type {
+	// 群消息
 	case enum.GroupMessage:
-		var data dto.MessageToRoomDTO
-		if err := json.Unmarshal(p, &data); err != nil {
-			log.Println(err)
-		} else {
-			// 处理接收到的数据
-			controllers.HandleReceivedData(data, id.(string))
-		}
+		controllers.HandleReceivedData(p, id.(string))
 	default:
 		// 处理其他消息类型
 	}
@@ -97,13 +91,16 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 func CheckHeartbeat(conn *websocket.Conn) {
 loop:
 	for {
-		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
+		time.Sleep(time.Second * 5) // 每20秒发送一次Ping消息
 		err := conn.WriteControl(websocket.PingMessage, []byte("ping"), time.Time{})
 		if err != nil {
 			log.Printf("发送Ping失败：%v", err)
 			log.Println("客户端离线")
+			// 处理客户端离线业务
 			controllers.SendGroupChatNumber(conn)
+			// 删除连接维护
 			RemoveConnection(conn)
+			// 停止循环，不再发送 ping
 			break loop
 		}
 	}
