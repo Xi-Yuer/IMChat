@@ -6,13 +6,12 @@ import (
 )
 
 type ChatRoom struct {
-	gorm.Model
-	ID          string `gorm:"primaryKey;type:char(36)"`
-	Name        string `gorm:"type:varchar(255)"`
-	Description string `gorm:"type:varchar(255)"`
-	AdminID     string `gorm:"type:char(36)"`
+	BaseModel
+	Name        string `json:"name" gorm:"type:varchar(255)"`
+	Description string `json:"description" gorm:"type:varchar(255)"`
+	AdminID     string `json:"admin_id" gorm:"type:char(36)"`
 
-	Admin User `gorm:"foreignKey:AdminID"`
+	Admin User `json:"admin" gorm:"foreignKey:AdminID"`
 }
 
 func (ChatRoom) TabelName() string {

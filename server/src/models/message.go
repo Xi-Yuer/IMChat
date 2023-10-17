@@ -6,8 +6,7 @@ import (
 )
 
 type Message struct {
-	gorm.Model
-	ID          string `gorm:"primaryKey;type:char(36)"`
+	BaseModel
 	SenderID    string
 	Content     string
 	MessageType string

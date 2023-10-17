@@ -31,12 +31,12 @@ func (c *ChatRoomController) CreateChatRoom(ctx *gin.Context) {
 }
 
 func (c *ChatRoomController) GetChatRoomUsers(ctx *gin.Context) {
-	chatRoomID, ok := ctx.Get("chat_room_id")
-	if !ok {
+	chatRoomID := ctx.Query("chat_room_id")
+	if chatRoomID == "" {
 		handlers.Error(ctx, "参数错误")
 		return
 	}
-	users, err := c.chatRoomService.GetChatRoomUsers(chatRoomID.(string))
+	users, err := c.chatRoomService.GetChatRoomUsers(chatRoomID)
 	if err != nil {
 		handlers.Error(ctx, err.Error())
 		return

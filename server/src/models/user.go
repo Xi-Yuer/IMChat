@@ -8,16 +8,15 @@ import (
 )
 
 type User struct {
-	gorm.Model
-	ID             string `gorm:"primaryKey;type:char(36)"`
-	Account        string `gorm:"unique;not null"`
-	Password       string `gorm:"not null"`
-	Gender         string 
-	Bio            string
-	ProfilePicture string
-	LastLogin      *time.Time
-	Active         bool
-	IsAdmin        bool `gorm:"default:false"`
+	BaseModel
+	Account        string     `json:"account" gorm:"unique;not null"`
+	Password       string     `json:"password" gorm:"not null"`
+	Gender         string     `json:"gender"`
+	Bio            string     `json:"bio"`
+	ProfilePicture string     `json:"profile_picture"`
+	LastLogin      *time.Time `json:"last_login"`
+	Active         bool       `json:"active"`
+	IsAdmin        bool       `json:"is_admin" gorm:"default:false"`
 }
 
 func (User) TabelName() string {

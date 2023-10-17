@@ -25,5 +25,6 @@ func (r *chatRoomRepository) CreateChatRoom(chatRoom *models.ChatRoom) error {
 }
 
 func (r *chatRoomRepository) GetChatRoomUsers(chatRoomId string) ([]models.User, error) {
-	return make([]models.User, 0), nil
+
+	return nil, nil
 }
