@@ -49,11 +49,13 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 	}
 
 	userMutex.Lock()
-	models.Connection[ws] = models.UserConnection{
+	conn := models.UserConnection{
 		UserID: UserID.(string), // 用户名
 		Groups: userGroups,      // 群组
 		Conn:   ws,
 	}
+	models.Connection[ws] = conn
+	go controllers.UserOnline(conn)
 	userMutex.Unlock()
 
 	return nil

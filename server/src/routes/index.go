@@ -52,7 +52,6 @@ func SetupRoutes(router *gin.Engine) {
 			}
 			defer webSocketInstance.Close()
 			go ws.CheckHeartbeat(webSocketInstance)
-
 			// 处理用户信息和添加到连接映射
 			if err := ws.HandleUserInfoAndAddToConnection(webSocketInstance, c); err != nil {
 				// 处理用户信息和添加到连接映射失败

@@ -6,6 +6,7 @@ import (
 	"ImChat/src/enum"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
+	"ImChat/src/utils"
 	"encoding/json"
 	"log"
 	"time"
@@ -54,13 +55,28 @@ func HandleReceivedData(p []byte, UserID string) {
 // 通知群在线用户获取最新群在线人数信息
 func SendGroupChatNumber(outConn *websocket.Conn) {
 	response := &dto.BaseMessageResponseDTO{
-		Type: enum.GroupMemberUpdate, // 响应体
+		Type: enum.UserOffline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
 	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
 		// TOODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
 		v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+	}
+}
+
+// 用户上线
+func UserOnline(conn models.UserConnection) {
+	// 通知群在线用户获取最新群在线人数信息
+	response := &dto.BaseMessageResponseDTO{
+		Type: enum.UserOnline, // 响应体
+	}
+	responseJSON, _ := json.Marshal(response)
+	for _, v := range models.Connection {
+		if utils.FirstArrayInLastArray(v.Groups, conn.Groups) {
+			// 发送响应数据给用户所在群组的所有用户
+			v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+		}
 	}
 }
 
