@@ -4,6 +4,7 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
+	"ImChat/src/handlers"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
@@ -11,6 +12,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
 
@@ -53,11 +55,20 @@ func HandleReceivedData(p []byte, UserID string) {
 }
 
 // 通知群在线用户获取最新群在线人数信息
-func SendGroupChatNumber(outConn *websocket.Conn) {
+func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context) {
+	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
+
+	if !ok {
+		handlers.NoPermission(c)
+		return
+	}
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOffline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
+	userRepo := repositories.NewUserRepository(db.DB)
+	time := time.Now()
+	userRepo.Logout(id.(string), time)
 	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
 		// TOODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户

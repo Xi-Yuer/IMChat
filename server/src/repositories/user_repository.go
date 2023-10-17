@@ -49,7 +49,7 @@ func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, err
 
 // 登出
 func (r *userRepository) Logout(account string, time time.Time) error {
-	return r.db.Model(&models.User{}).Where("account = ?", account).Update("last_login", time).Error
+	return r.db.Model(&models.User{}).Where("id = ?", account).Update("last_login", time).Error
 }
 
 // 获取用户列表
