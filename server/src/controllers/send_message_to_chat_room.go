@@ -98,6 +98,7 @@ func getMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Messag
 }
 
 func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
+	// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
 	return &dto.MessageDTO{
 		Content:     data.Message,
 		MessageType: data.MessageType,
