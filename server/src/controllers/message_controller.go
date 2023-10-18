@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"ImChat/src/dto"
 	"ImChat/src/handlers"
 	"ImChat/src/services"
 
@@ -15,14 +16,8 @@ func NewMessageController(messageService services.MessageService) *MessageContro
 	return &MessageController{messageService}
 }
 
-type GetMessageDTO struct {
-	ChatRoomID string `form:"chat_room_id" json:"chat_room_id"`
-	Limit      int    `form:"limit" json:"limit"`
-	Offset     int    `form:"offset" json:"offset"`
-}
-
 func (c *MessageController) GetChatRoomMessageList(ctx *gin.Context) {
-	var dto GetMessageDTO
+	var dto dto.GetMessageDTO
 	if err := ctx.ShouldBind(&dto); err != nil {
 		handlers.Error(ctx, err.Error())
 		return

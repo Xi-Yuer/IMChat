@@ -34,3 +34,9 @@ type MessageDTO struct {
 type MessageListResponseDTO struct {
 	Messages []MessageResponseDTO `json:"messages"`
 }
+
+type GetMessageDTO struct {
+	ChatRoomID string `form:"chat_room_id" json:"chat_room_id"`
+	Limit      int    `form:"limit" json:"limit"`
+	Offset     int    `form:"offset" json:"offset"`
+}
