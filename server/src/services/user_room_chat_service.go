@@ -9,6 +9,8 @@ import (
 type UserChatRoomService interface {
 	// 用户加入聊天室
 	JoinChatRoom(userId string, chatRoomId string) error
+	// 获取聊天室成员
+	GetChatRoomUsers(id string) ([]models.User, error)
 	// 用户离开聊天室
 	// LeaveChatRoom(userId string, chatRoomId string) error
 	// 查找聊天室的成员
@@ -36,8 +38,12 @@ func (u *UserChatRoomServiceImpl) JoinChatRoom(userId string, chatRoomId string)
 	return errors.New("already join the chat room")
 }
 
-func (u *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) error {
-	return u.userChatRoomRepository.FindChatRoomUser(record)
+func (s *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) error {
+	return s.userChatRoomRepository.FindChatRoomUser(record)
+}
+
+func (s *UserChatRoomServiceImpl) GetChatRoomUsers(id string) ([]models.User, error) {
+	return s.userChatRoomRepository.GetChatRoomUsers(id)
 }
 
 // func (u *UserChatRoomServiceImpl) LeaveChatRoom(userId string, chatRoomId string) error {

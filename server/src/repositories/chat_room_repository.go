@@ -8,7 +8,6 @@ import (
 
 type ChatRoomRepository interface {
 	CreateChatRoom(*models.ChatRoom) error
-	GetChatRoomUsers(chatRoomId string) ([]models.User, error)
 }
 
 type chatRoomRepository struct {
@@ -22,9 +21,4 @@ func NewChatRoomReposotory(db *gorm.DB) ChatRoomRepository {
 func (r *chatRoomRepository) CreateChatRoom(chatRoom *models.ChatRoom) error {
 	// 创建聊天室
 	return r.db.Create(chatRoom).Error
-}
-
-func (r *chatRoomRepository) GetChatRoomUsers(chatRoomId string) ([]models.User, error) {
-
-	return nil, nil
 }

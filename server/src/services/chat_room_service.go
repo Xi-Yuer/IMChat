@@ -16,9 +16,6 @@ type ChatRoomService interface {
 	// 创建聊天室
 	CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID string) error
 
-	// 获取聊天室成员
-	GetChatRoomUsers(id string) ([]models.User, error)
-
 	// 删除聊天室
 	// DeleteChatRoom(id string) error
 
@@ -41,8 +38,4 @@ func (s *ChatRoomServiceImpl) CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID
 		AdminID:     adminID,
 	}
 	return s.chatRoomRepository.CreateChatRoom(chatRoom)
-}
-
-func (s *ChatRoomServiceImpl) GetChatRoomUsers(id string) ([]models.User, error) {
-	return s.chatRoomRepository.GetChatRoomUsers(id)
 }
