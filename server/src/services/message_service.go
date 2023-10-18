@@ -8,6 +8,7 @@ import (
 
 type MessageService interface {
 	CreateMessage(message *dto.CreateMessageDTO, senderID string) error
+	GetChatRoomMessageList(chatRoomID string, limit, page int) ([]*dto.ChatMessageResponseDTO, error)
 }
 
 type MessageServiceImpl struct {
@@ -26,4 +27,30 @@ func (m MessageServiceImpl) CreateMessage(message *dto.CreateMessageDTO, senderI
 		ChatRoomID:  message.ReceiverID,
 	}
 	return m.messageRepository.CreateMessage(record)
+}
+
+func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, page int) ([]*dto.ChatMessageResponseDTO, error) {
+	messages, err := m.messageRepository.GetChatRoomMessageList(chatRoomID, limit, page)
+	if err != nil {
+		return nil, err
+	}
+	var chatMessageResponseDTOs []*dto.ChatMessageResponseDTO
+	for _, message := range messages {
+		chatMessageResponseDTO := &dto.ChatMessageResponseDTO{
+			User: &dto.UserResponseDTO{
+				ID:             message.SenderID,
+				Account:        message.Sender.Account,
+				Gender:         message.Sender.Gender,
+				Bio:            message.Sender.Bio,
+				ProfilePicture: message.Sender.ProfilePicture,
+			},
+			Message: &dto.MessageDTO{
+				Content:     message.Content,
+				MessageType: message.MessageType,
+			},
+		}
+
+		chatMessageResponseDTOs = append(chatMessageResponseDTOs, chatMessageResponseDTO)
+	}
+	return chatMessageResponseDTOs, nil
 }

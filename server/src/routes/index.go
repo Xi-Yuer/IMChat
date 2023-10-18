@@ -40,6 +40,13 @@ func SetupRoutes(router *gin.Engine) {
 		chatRoomRoutes.POST("/join", userRoomChatController.JoinChatRoom)
 		chatRoomRoutes.GET("/user_list", userRoomChatController.FindChatRoomUsers)
 	}
+	messageRoutes := router.Group("/message")
+	{
+		messageRepo := repositories.NewMessageRepository(db.DB)
+		messageService := services.NewMessageService(messageRepo)
+		messageController := controllers.NewMessageController(messageService)
+		messageRoutes.GET("/list", messageController.GetChatRoomMessageList)
+	}
 
 	wsRoutes := router.Group("/ws", middlewares.Auth())
 	{

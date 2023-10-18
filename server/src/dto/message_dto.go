@@ -20,7 +20,6 @@ type ChatMessageResponseDTO struct {
 }
 
 type MessageToRoomDTO struct {
-	Type        string `json:"type" binding:"required"`
 	Message     string `json:"message"`
 	MessageType string `json:"message_type"`
 	GroupID     string `json:"group"`
