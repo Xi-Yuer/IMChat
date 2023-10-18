@@ -71,7 +71,7 @@ func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context) {
 	userRepo.Logout(id.(string), time)
 	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
-		// TOODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
+		// TODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
 		v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
 	}
 }

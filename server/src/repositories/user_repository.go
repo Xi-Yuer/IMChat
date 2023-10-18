@@ -13,6 +13,7 @@ type UserRepository interface {
 	GetUserByAccount(account string) (*models.User, error)
 	GetUserList() ([]*models.User, error)
 	GetUserDetailByUserID(userID string) (*models.User, error)
+	Login(account string) error
 	Logout(account string, time time.Time) error
 }
 
@@ -39,7 +40,7 @@ func (r *userRepository) GetUserByAccount(account string) (*models.User, error) 
 }
 
 // 查询用户详情
-func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, error){
+func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, error) {
 	var user models.User
 	if err := r.db.Where("id = ?", userID).First(&user).Error; err != nil {
 		return nil, err
@@ -49,7 +50,12 @@ func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, err
 
 // 登出
 func (r *userRepository) Logout(account string, time time.Time) error {
-	return r.db.Model(&models.User{}).Where("id = ?", account).Update("last_login", time).Error
+	return r.db.Model(&models.User{}).Where("id = ?", account).Update("last_login", time).Update("active", false).Error
+}
+
+// 登录
+func (r *userRepository) Login(account string) error {
+	return r.db.Model(&models.User{}).Where("account = ?", account).Update("active", true).Error
 }
 
 // 获取用户列表

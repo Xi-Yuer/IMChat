@@ -37,7 +37,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 }
 
 // 登陆
-func (c *UserController) LoginUser(ctx *gin.Context) {
+func (c *UserController) Login(ctx *gin.Context) {
 	var userLoginDTO dto.UserLoginDTO
 	if err := ctx.ShouldBind(&userLoginDTO); err != nil {
 		// 处理验证错误
@@ -46,7 +46,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	userResponse, err := c.userService.LoginUser(&userLoginDTO)
+	userResponse, err := c.userService.Login(&userLoginDTO)
 	if err != nil {
 		// 处理登录错误
 		// 返回错误响应

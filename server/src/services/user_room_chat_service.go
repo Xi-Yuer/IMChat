@@ -1,6 +1,7 @@
 package services
 
 import (
+	"ImChat/src/dto"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"errors"
@@ -9,12 +10,10 @@ import (
 type UserChatRoomService interface {
 	// 用户加入聊天室
 	JoinChatRoom(userId string, chatRoomId string) error
-	// 获取聊天室成员
-	GetChatRoomUsers(id string) ([]models.User, error)
-	// 用户离开聊天室
-	// LeaveChatRoom(userId string, chatRoomId string) error
 	// 查找聊天室的成员
-	// FindChatRoomMembers(chatRoomId string) ([]string, error)
+	FindChatRoomUsers(id string) ([]dto.ChatRoomUserListResponseDTO, error)
+	// 用户退出聊天室
+	// LeaveChatRoom(userId string, chatRoomId string) error
 }
 
 type UserChatRoomServiceImpl struct {
@@ -42,13 +41,10 @@ func (s *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) 
 	return s.userChatRoomRepository.FindChatRoomUser(record)
 }
 
-func (s *UserChatRoomServiceImpl) GetChatRoomUsers(id string) ([]models.User, error) {
-	return s.userChatRoomRepository.GetChatRoomUsers(id)
+func (s *UserChatRoomServiceImpl) FindChatRoomUsers(id string) ([]dto.ChatRoomUserListResponseDTO, error) {
+	return s.userChatRoomRepository.FindChatRoomUsers(id)
 }
 
 // func (u *UserChatRoomServiceImpl) LeaveChatRoom(userId string, chatRoomId string) error {
 // 	return u.userChatRoomRepository.LeaveChatRoom(userId, chatRoomId)
-// }
-// func (u *UserChatRoomServiceImpl) FindChatRoomMembers(chatRoomId string) ([]string, error) {
-// 	return u.userChatRoomRepository.FindChatRoomMembers(chatRoomId)
 // }

@@ -14,7 +14,7 @@ import (
 
 type UserService interface {
 	RegisterUser(dto *dto.UserRegisterDTO) error
-	LoginUser(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
+	Login(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
 	Logout(account string, time time.Time) error
 	GetUserDetailByUserID(userID string) (*dto.UserResponseDTO, error)
@@ -43,7 +43,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) error {
 }
 
 // 登陆
-func (s *UserServiceImpl) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error) {
+func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error) {
 
 	user := &models.User{
 		Account: loginDto.Account,
@@ -72,6 +72,7 @@ func (s *UserServiceImpl) LoginUser(loginDto *dto.UserLoginDTO) (*dto.UserLoginR
 	if err != nil {
 		return nil, err
 	}
+	go s.userRepository.Login(user.Account)
 	return &dto.UserLoginResponseDTO{
 		ID:      u.ID,
 		Account: u.Account,

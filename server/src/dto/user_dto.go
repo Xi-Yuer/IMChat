@@ -29,3 +29,14 @@ type UserResponseDTO struct {
 	ProfilePicture string     `json:"profile_picture"`
 	LastLogin      *time.Time `json:"last_login"`
 }
+
+type ChatRoomUserListResponseDTO struct {
+	ID             string     `json:"id"`
+	Account        string     `json:"account"`
+	Gender         string     `json:"gender"`
+	Bio            string     `json:"bio"`
+	ProfilePicture string     `json:"profile_picture"`
+	LastLogin      *time.Time `json:"last_login"`
+	Active         bool       `json:"active"`
+	IsAdmin        bool       `json:"is_admin"`
+}

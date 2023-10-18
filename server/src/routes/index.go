@@ -22,7 +22,7 @@ func SetupRoutes(router *gin.Engine) {
 		userService := services.NewUserService(userRepo)
 		userController := controllers.NewUserController(userService)
 		userRoutes.POST("/register", userController.RegisterUser)
-		userRoutes.POST("/login", userController.LoginUser)
+		userRoutes.POST("/login", userController.Login)
 		userRoutes.GET("/list", middlewares.Auth(), userController.GetUserList)
 		userRoutes.POST("/logout", middlewares.Auth(), userController.Logout)
 	}
@@ -38,7 +38,7 @@ func SetupRoutes(router *gin.Engine) {
 		userRoomChatService := services.NewUserChatRoomService(userRoomChatRepo)
 		userRoomChatController := controllers.NewUserRoomChatController(userRoomChatService)
 		chatRoomRoutes.POST("/join", userRoomChatController.JoinChatRoom)
-		chatRoomRoutes.GET("/user_list", userRoomChatController.GetChatRoomUsers)
+		chatRoomRoutes.GET("/user_list", userRoomChatController.FindChatRoomUsers)
 	}
 
 	wsRoutes := router.Group("/ws", middlewares.Auth())
