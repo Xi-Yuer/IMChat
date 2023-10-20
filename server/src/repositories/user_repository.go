@@ -13,7 +13,7 @@ type UserRepository interface {
 	GetUserByAccount(account string) (*models.User, error)
 	GetUserList() ([]*models.User, error)
 	GetUserDetailByUserID(userID string) (*models.User, error)
-	Login(account string) error
+	Login(id string) error
 	Logout(account string, time time.Time) error
 }
 
@@ -55,7 +55,7 @@ func (r *userRepository) Logout(account string, time time.Time) error {
 
 // 登录
 func (r *userRepository) Login(account string) error {
-	return r.db.Model(&models.User{}).Where("account = ?", account).Update("active", true).Error
+	return r.db.Model(&models.User{}).Where("id = ?", account).Update("active", true).Error
 }
 
 // 获取用户列表

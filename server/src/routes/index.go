@@ -48,6 +48,14 @@ func SetupRoutes(router *gin.Engine) {
 		messageRoutes.GET("/list", messageController.GetChatRoomMessageList)
 	}
 
+	fileRoutes := router.Group("/file", middlewares.Auth())
+	{
+		fileRepo := repositories.NewFileRepository(db.DB)
+		fileService := services.NewFileService(fileRepo)
+		fileController := controllers.NewFileController(fileService)
+		fileRoutes.POST("/upload", fileController.UploadFile)
+	}
+
 	wsRoutes := router.Group("/ws", middlewares.Auth())
 	{
 		wsRoutes.GET("", func(c *gin.Context) {

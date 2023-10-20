@@ -72,7 +72,7 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO) (*dto.UserLoginRespo
 	if err != nil {
 		return nil, err
 	}
-	go s.userRepository.Login(user.Account)
+	go s.userRepository.Login(user.ID)
 	return &dto.UserLoginResponseDTO{
 		ID:      u.ID,
 		Account: u.Account,
