@@ -45,8 +45,9 @@ func (c *UserController) Login(ctx *gin.Context) {
 		handlers.Error(ctx, err.Error())
 		return
 	}
-
-	userResponse, err := c.userService.Login(&userLoginDTO)
+	// 获取用户的 IP 地址
+	ip := ctx.ClientIP()
+	userResponse, err := c.userService.Login(&userLoginDTO, ip)
 	if err != nil {
 		// 处理登录错误
 		// 返回错误响应

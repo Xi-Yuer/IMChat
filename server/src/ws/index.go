@@ -65,7 +65,6 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 func HandleReceivedMessage(p []byte, c *gin.Context) {
 	// 在这里处理接收到的 JSON 数据
 	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
-
 	if !ok {
 		handlers.NoPermission(c)
 		return

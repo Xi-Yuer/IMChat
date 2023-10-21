@@ -26,7 +26,11 @@ type Config struct {
 		BucketName      string `mapstructure:"BucketName"`
 		BucketURL       string `mapstructure:"BucketURL"`
 	}
-	Key string
+	Key      string
+	IPSearch struct {
+		URL   string `mapstructure:"URL"`
+		Query string `mapstructure:"Query"`
+	}
 }
 
 var AppConfig Config

@@ -13,7 +13,7 @@ type UserRepository interface {
 	GetUserByAccount(account string) (*models.User, error)
 	GetUserList() ([]*models.User, error)
 	GetUserDetailByUserID(userID string) (*models.User, error)
-	Login(id string) error
+	Login(id string, location string) error
 	Logout(account string, time time.Time) error
 }
 
@@ -49,13 +49,13 @@ func (r *userRepository) GetUserDetailByUserID(userID string) (*models.User, err
 }
 
 // 登出
-func (r *userRepository) Logout(account string, time time.Time) error {
-	return r.db.Model(&models.User{}).Where("id = ?", account).Update("last_login", time).Update("active", false).Error
+func (r *userRepository) Logout(id string, time time.Time) error {
+	return r.db.Model(&models.User{}).Where("id = ?", id).Update("last_login", time).Update("active", false).Error
 }
 
 // 登录
-func (r *userRepository) Login(account string) error {
-	return r.db.Model(&models.User{}).Where("id = ?", account).Update("active", true).Error
+func (r *userRepository) Login(id string, location string) error {
+	return r.db.Model(&models.User{}).Where("id = ?", id).Update("active", true).Update("origin", location).Error
 }
 
 // 获取用户列表

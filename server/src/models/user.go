@@ -16,6 +16,7 @@ type User struct {
 	ProfilePicture string     `json:"profile_picture"`
 	LastLogin      *time.Time `json:"last_login"`
 	Active         bool       `json:"active"`
+	Origin         string     `json:"origin"`
 	IsAdmin        bool       `json:"is_admin" gorm:"default:false"`
 }
 

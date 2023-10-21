@@ -26,6 +26,7 @@ type UserResponseDTO struct {
 	Account        string     `json:"account"`
 	Gender         string     `json:"gender"`
 	Bio            string     `json:"bio"`
+	Origin         string     `json:"origin"`
 	ProfilePicture string     `json:"profile_picture"`
 	LastLogin      *time.Time `json:"last_login"`
 }
@@ -39,4 +40,12 @@ type ChatRoomUserListResponseDTO struct {
 	LastLogin      *time.Time `json:"last_login"`
 	Active         bool       `json:"active"`
 	IsAdmin        bool       `json:"is_admin"`
+}
+
+type OriginData struct {
+	Data []Origin `json:"data"`
+}
+
+type Origin struct {
+	Location string `json:"location"`
 }

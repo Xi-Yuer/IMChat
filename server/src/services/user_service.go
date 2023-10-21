@@ -4,6 +4,7 @@ package services
 import (
 	"ImChat/src/config"
 	"ImChat/src/dto"
+	"ImChat/src/https"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
@@ -14,7 +15,7 @@ import (
 
 type UserService interface {
 	RegisterUser(dto *dto.UserRegisterDTO) error
-	Login(dto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error)
+	Login(dto *dto.UserLoginDTO, ip string) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
 	Logout(account string, time time.Time) error
 	GetUserDetailByUserID(userID string) (*dto.UserResponseDTO, error)
@@ -43,7 +44,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) error {
 }
 
 // 登陆
-func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO) (*dto.UserLoginResponseDTO, error) {
+func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.UserLoginResponseDTO, error) {
 
 	user := &models.User{
 		Account: loginDto.Account,
@@ -72,7 +73,8 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO) (*dto.UserLoginRespo
 	if err != nil {
 		return nil, err
 	}
-	go s.userRepository.Login(user.ID)
+	locationStr := https.GetUserOriginByIP(ip)
+	go s.userRepository.Login(u.ID, locationStr)
 	return &dto.UserLoginResponseDTO{
 		ID:      u.ID,
 		Account: u.Account,

@@ -43,6 +43,7 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 				Gender:         message.Sender.Gender,
 				Bio:            message.Sender.Bio,
 				ProfilePicture: message.Sender.ProfilePicture,
+				Origin:         message.Sender.Origin,
 			},
 			Message: &dto.MessageDTO{
 				Content:     message.Content,
