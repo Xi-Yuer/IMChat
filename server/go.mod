@@ -3,6 +3,7 @@ module ImChat
 go 1.21.0
 
 require (
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.9+incompatible
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.1
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/aliyun/aliyun-oss-go-sdk v2.2.9+incompatible // indirect
 	github.com/bytedance/sonic v1.10.2 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect

@@ -24,6 +24,7 @@ type Config struct {
 		AccessKeySecret string `mapstructure:"AccessKeySecret"`
 		Endpoint        string `mapstructure:"Endpoint"`
 		BucketName      string `mapstructure:"BucketName"`
+		BucketURL       string `mapstructure:"BucketURL"`
 	}
 	Key string
 }
