@@ -5,6 +5,7 @@ import (
 	"ImChat/src/dto"
 	"ImChat/src/handlers"
 	"ImChat/src/services"
+	"ImChat/src/utils"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -98,4 +99,33 @@ func (c *UserController) GetUserDetailByID(ctx *gin.Context) {
 	}
 	// 返回用户信息响应
 	ctx.JSON(200, userInfo)
+}
+
+// 修改用户资料
+func (c *UserController) UpdateUser(ctx *gin.Context) {
+	id, ok := ctx.Get("id")
+	if !ok {
+		handlers.Error(ctx, "非法操作")
+		return
+	}
+	var updateUserDTO dto.UpdateUserRequestDTO
+	if err := ctx.ShouldBind(&updateUserDTO); err != nil {
+		// 处理参数校验错误
+		// 返回错误响应
+		handlers.Error(ctx, err.Error())
+		return
+	}
+
+	if !utils.IsUserSelf(ctx, id.(string)) {
+		// 处理参数校验错误
+		// 返回错误响应
+		handlers.Error(ctx, "非法操作")
+		return
+	}
+	err := c.userService.UpdateUserDetail(&updateUserDTO, id.(string))
+
+	if err != nil {
+		handlers.Error(ctx, err.Error())
+	}
+	handlers.Success(ctx, "修改成功", nil)
 }

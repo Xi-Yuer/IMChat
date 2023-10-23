@@ -49,3 +49,12 @@ type OriginData struct {
 type Origin struct {
 	Location string `json:"location"`
 }
+
+
+type UpdateUserRequestDTO struct {
+	Account        string `form:"account"`
+	Gender         string `form:"gender"`
+	Bio            string `form:"bio"`
+	Password       string `form:"password"`
+	ProfilePicture string `form:"profile_picture"`
+}

@@ -25,6 +25,7 @@ func SetupRoutes(router *gin.Engine) {
 		userRoutes.POST("/login", userController.Login)
 		userRoutes.GET("/list", middlewares.Auth(), userController.GetUserList)
 		userRoutes.POST("/logout", middlewares.Auth(), userController.Logout)
+		userRoutes.POST("/update", middlewares.Auth(), userController.UpdateUser)
 	}
 
 	chatRoomRoutes := router.Group("/chatroom", middlewares.Auth())

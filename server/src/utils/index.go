@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -56,5 +57,17 @@ func FirstArrayInLastArray(firstArray, lastArray []string) bool {
 		}
 	}
 
+	return false
+}
+
+// 判断是否是用户自己
+func IsUserSelf(ctx *gin.Context, operationID string) bool {
+	userID, ok := ctx.Get("id")
+	if !ok {
+		return false
+	}
+	if userID == operationID {
+		return true
+	}
 	return false
 }
