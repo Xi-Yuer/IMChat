@@ -92,7 +92,7 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 func CheckHeartbeat(conn *websocket.Conn, c *gin.Context) {
 loop:
 	for {
-		time.Sleep(time.Second * 5) // 每20秒发送一次Ping消息
+		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
 		err := conn.WriteControl(websocket.PingMessage, []byte("ping"), time.Time{})
 		if err != nil {
 			log.Printf("发送Ping失败：%v", err)

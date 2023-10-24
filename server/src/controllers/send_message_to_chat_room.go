@@ -117,6 +117,7 @@ func getUserResponse(userID string) *dto.UserResponseDTO {
 		Bio:            user.Bio,
 		ProfilePicture: user.ProfilePicture,
 		LastLogin:      user.LastLogin,
+		Origin:         user.Origin,
 	}
 }
 
