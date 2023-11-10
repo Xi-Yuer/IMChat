@@ -15,6 +15,7 @@ type UserRepository interface {
 	GetUserDetailByUserID(userID string) (*models.User, error)
 	Login(id string, location string) error
 	Logout(account string, time time.Time) error
+	UpdateUserDetail(user *models.User) error
 }
 
 type userRepository struct {
@@ -65,4 +66,8 @@ func (r *userRepository) GetUserList() ([]*models.User, error) {
 		return nil, err
 	}
 	return userList, nil
+}
+
+func (r *userRepository) UpdateUserDetail(user *models.User) error {
+	return r.db.Model(&models.User{}).Where("id = ?", user.ID).Updates(user).Error
 }

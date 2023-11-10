@@ -36,6 +36,7 @@ func Auth() gin.HandlerFunc {
 	}
 }
 
+// 限流
 func Limiter(lmt *limiter.Limiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		httpError := tollbooth.LimitByRequest(lmt, c.Writer, c.Request)

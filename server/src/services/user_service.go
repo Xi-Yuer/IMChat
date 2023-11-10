@@ -19,6 +19,7 @@ type UserService interface {
 	GetUserList() ([]*dto.UserResponseDTO, error)
 	Logout(account string, time time.Time) error
 	GetUserDetailByUserID(userID string) (*dto.UserResponseDTO, error)
+	UpdateUserDetail(userDetail *dto.UpdateUserRequestDTO, id string) error
 }
 
 type UserServiceImpl struct {
@@ -116,4 +117,37 @@ func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO
 		ID:      user.ID,
 		Account: user.Account,
 	}, nil
+}
+
+// 修改用户资料
+func (s *UserServiceImpl) UpdateUserDetail(user *dto.UpdateUserRequestDTO, id string) error {
+
+	u, err := s.userRepository.GetUserDetailByUserID(id)
+	if err != nil {
+		return err
+	}
+	// 有值就修改，没有就保持原值
+	if user.Account != "" {
+		u.Account = user.Account
+	}
+	if user.Password != "" {
+		password, err := utils.HashPassword(user.Password)
+		if err != nil {
+			return err
+		}
+		u.Password = password
+	}
+	if user.Gender != "" {
+		u.Gender = user.Gender
+	}
+	if user.Bio != "" {
+		u.Bio = user.Bio
+	}
+	if user.ProfilePicture != "" {
+		u.ProfilePicture = user.ProfilePicture
+	}
+	if err := s.userRepository.UpdateUserDetail(u); err != nil {
+		return err
+	}
+	return nil
 }
