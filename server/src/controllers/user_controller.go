@@ -35,6 +35,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 		handlers.Error(ctx, err.Error())
 		return
 	}
+	handlers.Success(ctx, "注册成功", nil)
 }
 
 // 登陆
@@ -57,7 +58,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 	}
 
 	// 返回登录成功的用户响应
-	ctx.JSON(200, userResponse)
+	handlers.Success(ctx, "登录成功", userResponse)
 }
 
 // 登出

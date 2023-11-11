@@ -1,12 +1,16 @@
 import { memo } from 'react'
-import { RenderRoutes } from './routes'
+import { Provider } from 'react-redux'
 import { HashRouter } from 'react-router-dom'
+import { RenderRoutes } from './routes'
+import { store } from './store'
 
 const App = memo(() => {
   return (
     <div>
       <HashRouter>
-        <RenderRoutes />
+        <Provider store={store}>
+          <RenderRoutes />
+        </Provider>
       </HashRouter>
     </div>
   )
