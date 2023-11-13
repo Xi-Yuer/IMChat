@@ -20,7 +20,7 @@ const Profile = memo(() => {
 
   const chatRoomList = () => {
     return (
-      <div className="flex flex-col gap-4 max-h-48 scrollbar-w-2 overflow-y-scroll">
+      <div className="flex flex-col gap-2 max-h-48 scrollbar-w-2 overflow-y-scroll">
         {roomList.map((room) => (
           <RoomPanel {...room} />
         ))}

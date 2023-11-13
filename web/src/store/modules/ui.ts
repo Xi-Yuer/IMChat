@@ -1,14 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   fold: true,
-};
+}
 
 export const UIStore = createSlice({
-  name: "uiStore",
+  name: 'uiStore',
   initialState,
   reducers: {},
-});
+})
 
-export const { } = UIStore.actions;
-export default UIStore.reducer;
+export const {} = UIStore.actions
+export default UIStore.reducer

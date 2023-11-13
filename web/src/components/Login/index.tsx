@@ -9,6 +9,7 @@ import {
   registerRequest,
 } from '../../server/apis/user'
 import { userLogin } from '../../store/modules/user'
+import { avatarImgList } from './constant'
 
 export interface OpenModal {
   open: () => void
@@ -16,6 +17,7 @@ export interface OpenModal {
 const Loggin = forwardRef<OpenModal>((_, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRegister, setisRegister] = useState(false)
+  const [currentAvatar, setCurrentAvatar] = useState(avatarImgList[0])
   const dispatch = useDispatch()
   const handleOk = () => {}
   const handleCancel = () => setIsModalOpen(false)
@@ -46,32 +48,18 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
 
   const avatarList = () => {
     return (
-      <div className='flex gap-2'>
-        <Avatar
-          size={50}
-          src={<img src={''} alt="avatar" />}
-          className=" border border-gray-200 cursor-pointer"
-        />
-        <Avatar
-          size={50}
-          src={<img src={''} alt="avatar" />}
-          className=" border border-gray-200 cursor-pointer"
-        />
-        <Avatar
-          size={50}
-          src={<img src={''} alt="avatar" />}
-          className=" border border-gray-200 cursor-pointer"
-        />
-        <Avatar
-          size={50}
-          src={<img src={''} alt="avatar" />}
-          className=" border border-gray-200 cursor-pointer"
-        />
-        <Avatar
-          size={50}
-          src={<img src={''} alt="avatar" />}
-          className=" border border-gray-200 cursor-pointer"
-        />
+      <div className=" flex-nowrap flex gap-2 py-2 overflow-x-scroll w-[300px]">
+        {avatarImgList.map((img) => {
+          return (
+            <div onClick={() => setCurrentAvatar(img)}>
+              <Avatar
+                size={50}
+                src={<img src={img} alt="avatar" />}
+                className="border border-gray-200 cursor-pointer w-[180px] h-[80px] flex-1"
+              />
+            </div>
+          )
+        })}
       </div>
     )
   }
@@ -83,73 +71,81 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
   return (
     <>
       <Modal
-        className=" animate-fade-in-down"
+        className=" animate-fade-in-down select-none"
         open={isModalOpen}
         onOk={handleOk}
         width={350}
         onCancel={handleCancel}
         footer={[]}
       >
-        <h1 className=" text-center my-2 font-bold text-2xl">
-          {isRegister ? '注册' : '登录'}
-        </h1>
-        <Popover
-          trigger="click"
-          placement="bottom"
-          content={avatarList()}
-          arrow={{ pointAtCenter: true }}
-        >
-          <div className="flex justify-center items-center h-[70px]">
-            <Avatar
-              size={50}
-              src={<img src={''} alt="avatar" />}
-              className=" border border-gray-200 cursor-pointer"
-            />
-          </div>
-        </Popover>
-
-        <Form
-          name="login"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 18 }}
-          layout="horizontal"
-          style={{ maxWidth: 600 }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item<FieldType>
-            label="账号"
-            name="account"
-            rules={[{ required: true, message: '请输入用户名!' }]}
+        <div className="transition-all duration-700">
+          <h1 className=" text-center my-2 font-bold text-2xl">
+            {isRegister ? '注册' : '登录'}
+          </h1>
+          {isRegister && (
+            <div className="flex justify-center items-center h-[70px]">
+              <Popover
+                trigger="click"
+                placement="bottom"
+                content={avatarList()}
+                arrow={{ pointAtCenter: true }}
+              >
+                <div className="relative rounded-full overflow-hidden group">
+                  <Avatar
+                    size={50}
+                    src={<img src={currentAvatar} alt="avatar" />}
+                    className=" border border-gray-200 cursor-pointer"
+                  />
+                  <SwapOutlined className="hidden cursor-pointer absolute bottom-[-20px] left-0 text-sm text-center bg-black bg-opacity-50 w-full h-[40px] text-gray-100 group-hover:block">
+                    更换
+                  </SwapOutlined>
+                </div>
+              </Popover>
+            </div>
+          )}
+          <Form
+            name="login"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 18 }}
+            layout="horizontal"
+            style={{ maxWidth: 600 }}
+            onFinish={onFinish}
+            autoComplete="off"
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item<FieldType>
-            label="密码"
-            name="password"
-            rules={[{ required: true, message: '请输入密码!' }]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-            <Button type="dashed" ghost htmlType="submit">
-              {isRegister ? '立即注册' : '立即登录'}
-            </Button>
-          </Form.Item>
-          <div
-            className=" text-center mt-[-15px] cursor-pointer hover:text-blue-500 transition-all"
-            onClick={switchMethod}
-          >
-            <Tooltip
-              title={isRegister ? '切换登录' : '切换注册'}
-              placement="bottom"
+            <Form.Item<FieldType>
+              label="账号"
+              name="account"
+              rules={[{ required: true, message: '请输入用户名!' }]}
             >
-              <SwapOutlined />
-            </Tooltip>
-          </div>
-        </Form>
+              <Input />
+            </Form.Item>
+
+            <Form.Item<FieldType>
+              label="密码"
+              name="password"
+              rules={[{ required: true, message: '请输入密码!' }]}
+            >
+              <Input.Password />
+            </Form.Item>
+
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type="dashed" ghost htmlType="submit">
+                {isRegister ? '立即注册' : '立即登录'}
+              </Button>
+            </Form.Item>
+            <div
+              className=" text-center mt-[-15px] cursor-pointer hover:text-blue-500 transition-all"
+              onClick={switchMethod}
+            >
+              <Tooltip
+                title={isRegister ? '切换登录' : '切换注册'}
+                placement="bottom"
+              >
+                <SwapOutlined />
+              </Tooltip>
+            </div>
+          </Form>
+        </div>
       </Modal>
     </>
   )

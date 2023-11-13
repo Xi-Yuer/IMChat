@@ -7,31 +7,36 @@ export const iconWrapStyle =
 
 export const roomList: IRoomPanelProps[] = [
   {
-    roomAvatar: '',
+    roomAvatar:
+      'https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png',
     roomName: '群聊名称',
     currentMsg: '最新消息',
     time: '12:43',
   },
   {
-    roomAvatar: '',
+    roomAvatar:
+      'https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png',
     roomName: '群聊名称',
     currentMsg: '最新消息',
     time: '12:43',
   },
   {
-    roomAvatar: '',
+    roomAvatar:
+      'https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png',
     roomName: '群聊名称',
     currentMsg: '最新消息',
     time: '12:43',
   },
   {
-    roomAvatar: '',
+    roomAvatar:
+      'https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png',
     roomName: '群聊名称',
     currentMsg: '最新消息',
     time: '12:43',
   },
   {
-    roomAvatar: '',
+    roomAvatar:
+      'https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png',
     roomName: '群聊名称',
     currentMsg: '最新消息',
     time: '12:43',

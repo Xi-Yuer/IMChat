@@ -10,7 +10,7 @@ export interface IRoomPanelProps {
 const RoomPanel: FC<IRoomPanelProps> = memo(
   ({ roomAvatar, roomName, currentMsg, time }) => {
     return (
-      <div className="flex justify-between items-center gap-4 px-2">
+      <div className="flex transition-all duration-200 justify-between items-center gap-2 cursor-pointer bg-gray-400 p-2 mr-2 rounded-lg hover:bg-gray-300">
         <div>
           <img
             src={roomAvatar}
@@ -18,9 +18,9 @@ const RoomPanel: FC<IRoomPanelProps> = memo(
             alt=""
           />
         </div>
-        <div className="flex flex-col justify-between w-[100px] text-xs">
+        <div className="flex flex-col justify-between w-[100px]">
           <span className=" font-bold">{roomName}</span>
-          <span className="truncate text-gray-600">{currentMsg}</span>
+          <span className="truncate text-white text-xs">{currentMsg}</span>
         </div>
         <div>
           <span className="text-xs">{time}</span>

@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           headerBg: '#a7b1c0',
         },
         Popover: {
-          colorBgElevated: '#a7b1c0',
+          colorBgElevated: '#717984',
         },
       },
     }}
