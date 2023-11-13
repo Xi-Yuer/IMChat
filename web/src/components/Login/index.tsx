@@ -1,5 +1,5 @@
 import { SwapOutlined } from '@ant-design/icons'
-import { Button, Form, Input, Modal, Tooltip } from 'antd'
+import { Avatar, Button, Form, Input, Modal, Popover, Tooltip } from 'antd'
 import { forwardRef, memo, useImperativeHandle, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Md5 } from 'ts-md5'
@@ -44,6 +44,38 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
     })
   }
 
+  const avatarList = () => {
+    return (
+      <div className='flex gap-2'>
+        <Avatar
+          size={50}
+          src={<img src={''} alt="avatar" />}
+          className=" border border-gray-200 cursor-pointer"
+        />
+        <Avatar
+          size={50}
+          src={<img src={''} alt="avatar" />}
+          className=" border border-gray-200 cursor-pointer"
+        />
+        <Avatar
+          size={50}
+          src={<img src={''} alt="avatar" />}
+          className=" border border-gray-200 cursor-pointer"
+        />
+        <Avatar
+          size={50}
+          src={<img src={''} alt="avatar" />}
+          className=" border border-gray-200 cursor-pointer"
+        />
+        <Avatar
+          size={50}
+          src={<img src={''} alt="avatar" />}
+          className=" border border-gray-200 cursor-pointer"
+        />
+      </div>
+    )
+  }
+
   useImperativeHandle(ref, () => ({
     open: () => setIsModalOpen(true),
   }))
@@ -61,6 +93,21 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
         <h1 className=" text-center my-2 font-bold text-2xl">
           {isRegister ? '注册' : '登录'}
         </h1>
+        <Popover
+          trigger="click"
+          placement="bottom"
+          content={avatarList()}
+          arrow={{ pointAtCenter: true }}
+        >
+          <div className="flex justify-center items-center h-[70px]">
+            <Avatar
+              size={50}
+              src={<img src={''} alt="avatar" />}
+              className=" border border-gray-200 cursor-pointer"
+            />
+          </div>
+        </Popover>
+
         <Form
           name="login"
           labelCol={{ span: 4 }}
