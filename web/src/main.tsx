@@ -14,6 +14,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           contentBg: '#a7b1c0',
           headerBg: '#a7b1c0',
         },
+        Popover: {
+          colorBgElevated: '#a7b1c0',
+        },
       },
     }}
   >
