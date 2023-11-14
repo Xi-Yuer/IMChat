@@ -10,7 +10,7 @@ export interface IRoomPanelProps {
 const RoomPanel: FC<IRoomPanelProps> = memo(
   ({ roomAvatar, roomName, currentMsg, time }) => {
     return (
-      <div className="flex transition-all duration-200 justify-between items-center bg-gray-600 h-[55px] rounded-md px-2 cursor-pointer hover:bg-gray-500">
+      <div className="flex text-gray-900 transition-all duration-700 justify-between items-center dark:bg-gray-600 h-[55px] rounded-md px-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-500">
         <div>
           <img
             src={roomAvatar}
@@ -18,12 +18,18 @@ const RoomPanel: FC<IRoomPanelProps> = memo(
             alt=""
           />
         </div>
-        <div className="flex flex-col justify-between w-[100px] text-xs ml-[-20px]">
-          <span className=" font-bold">{roomName}</span>
-          <span className="truncate text-gray-400">{currentMsg}</span>
+        <div className="flex flex-col justify-between w-[100px] ml-[-20px]">
+          <span className="font-bold text-sm dark:text-gray-200 ">
+            {roomName}
+          </span>
+          <span className="truncate text-xs dark:text-gray-400 transition-all duration-700">
+            {currentMsg}
+          </span>
         </div>
         <div>
-          <span className="text-xs">{time}</span>
+          <span className="text-xs dark:text-gray-200 transition-all duration-700">
+            {time}
+          </span>
         </div>
       </div>
     )

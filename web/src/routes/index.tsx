@@ -1,6 +1,7 @@
+import { LoadingOutlined } from '@ant-design/icons'
+import { Spin } from 'antd'
+import React, { Suspense } from 'react'
 import { RouteObject, useRoutes } from 'react-router-dom'
-import { Suspense } from 'react'
-import React from 'react'
 
 const Home = React.lazy(() => import('../views/Home'))
 
@@ -13,5 +14,16 @@ export const routes: RouteObject[] = [
 
 export const RenderRoutes = () => {
   const element = useRoutes(routes)
-  return <Suspense fallback={'loading'}>{element}</Suspense>
+  return (
+    <Suspense
+      fallback={
+        <Spin
+          fullscreen
+          indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
+        />
+      }
+    >
+      {element}
+    </Suspense>
+  )
 }

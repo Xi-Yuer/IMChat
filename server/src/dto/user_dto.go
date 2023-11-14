@@ -6,6 +6,7 @@ import "time"
 type UserRegisterDTO struct {
 	Account  string `form:"account" binding:"required"`
 	Password string `form:"password" binding:"required"`
+	AvatarID int `form:"avatar_id" binding:"required"`
 }
 
 type UserLoginDTO struct {
@@ -49,7 +50,6 @@ type OriginData struct {
 type Origin struct {
 	Location string `json:"location"`
 }
-
 
 type UpdateUserRequestDTO struct {
 	Account        string `form:"account"`

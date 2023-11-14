@@ -1,6 +1,7 @@
 import { FC, memo } from 'react'
 
 export interface IRoomPanelProps {
+  id: number
   roomName: string
   currentMsg: string
   roomAvatar: string
@@ -10,7 +11,7 @@ export interface IRoomPanelProps {
 const RoomPanel: FC<IRoomPanelProps> = memo(
   ({ roomAvatar, roomName, currentMsg, time }) => {
     return (
-      <div className="flex transition-all duration-200 justify-between items-center gap-2 cursor-pointer bg-gray-400 p-2 mr-2 rounded-lg hover:bg-gray-300">
+      <div className="flex transition-all duration-200 justify-between items-center bg-gray-100 dark:bg-gray-600 gap-2 cursor-pointer p-2 mr-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-500">
         <div>
           <img
             src={roomAvatar}
@@ -19,8 +20,10 @@ const RoomPanel: FC<IRoomPanelProps> = memo(
           />
         </div>
         <div className="flex flex-col justify-between w-[100px]">
-          <span className=" font-bold">{roomName}</span>
-          <span className="truncate text-white text-xs">{currentMsg}</span>
+          <span className=" font-bold text-xs">{roomName}</span>
+          <span className="truncate inline-block mt-1 text-xs">
+            {currentMsg}
+          </span>
         </div>
         <div>
           <span className="text-xs">{time}</span>

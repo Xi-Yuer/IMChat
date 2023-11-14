@@ -48,7 +48,7 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
 
   const avatarList = () => {
     return (
-      <div className=" flex-nowrap flex gap-2 py-2 overflow-x-scroll w-[300px]">
+      <div className=" flex-nowrap flex gap-2 py-2 overflow-x-scroll w-[300px] select-none">
         {avatarImgList.map((img) => {
           return (
             <div onClick={() => setCurrentAvatar(img)}>
@@ -96,9 +96,7 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
                     src={<img src={currentAvatar} alt="avatar" />}
                     className=" border border-gray-200 cursor-pointer"
                   />
-                  <SwapOutlined className="hidden cursor-pointer absolute bottom-[-20px] left-0 text-sm text-center bg-black bg-opacity-50 w-full h-[40px] text-gray-100 group-hover:block">
-                    更换
-                  </SwapOutlined>
+                  <SwapOutlined className="hidden cursor-pointer absolute bottom-[-20px] left-0 text-sm text-center bg-black bg-opacity-50 w-full h-[40px] text-gray-100 group-hover:block" />
                 </div>
               </Popover>
             </div>
@@ -129,19 +127,19 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="dashed" ghost htmlType="submit">
+              <Button type="dashed" htmlType="submit">
                 {isRegister ? '立即注册' : '立即登录'}
               </Button>
             </Form.Item>
             <div
-              className=" text-center mt-[-15px] cursor-pointer hover:text-blue-500 transition-all"
+              className=" text-center mt-[-15px] hover:text-blue-500 transition-all"
               onClick={switchMethod}
             >
               <Tooltip
                 title={isRegister ? '切换登录' : '切换注册'}
                 placement="bottom"
               >
-                <SwapOutlined />
+                <SwapOutlined className="cursor-pointer" />
               </Tooltip>
             </div>
           </Form>
