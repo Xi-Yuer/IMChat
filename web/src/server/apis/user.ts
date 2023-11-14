@@ -17,6 +17,8 @@ export interface ILoginResponse {
   id: string
   token: string
   profile_picture: string
+  gender: number | string
+  bio: string
 }
 export const loginRequest = (params: IRegisterParmas) => {
   return request.post<AxiosResponse<ILoginResponse>>({

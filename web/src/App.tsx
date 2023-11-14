@@ -8,14 +8,15 @@ import { themeChange } from './store/modules/ui'
 import { customDarkAlgorithm } from './theme/dark'
 import { customLightAlgorithm } from './theme/light'
 
-const App = memo(() => {
+const Root = memo(() => {
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const dispatch = useDispatch()
+
   useEffect(() => {
     dispatch(themeChange(theme))
   }, [])
   return (
-    <div>
+    <>
       <HashRouter>
         <ThemeProvider
           themeMode={theme}
@@ -30,8 +31,8 @@ const App = memo(() => {
           <RenderRoutes />
         </ThemeProvider>
       </HashRouter>
-    </div>
+    </>
   )
 })
 
-export default App
+export default Root

@@ -15,7 +15,7 @@ const reducers = combineReducers({
   UserReducer,
 })
 
-const persistedReducer = persistReducer(persistConfig, reducers)
+export const persistedReducer = persistReducer(persistConfig, reducers)
 export const store = configureStore({
   reducer: persistedReducer,
   devTools: true,

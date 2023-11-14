@@ -16,8 +16,20 @@ export const UserStore = createSlice({
     userLogin(state, action) {
       state.user = action.payload
     },
+    userLogOut(state) {
+      state.user.account = ''
+      state.user.token = ''
+      state.user.account = ''
+      state.user.bio = ''
+      state.user.profile_picture = ''
+      state.user.id = ''
+      state.user.gender = '1'
+    },
+    changeUserProfile(state, action) {
+      state.user = action.payload
+    },
   },
 })
 
-export const { userLogin } = UserStore.actions
+export const { userLogin, userLogOut, changeUserProfile } = UserStore.actions
 export default UserStore.reducer

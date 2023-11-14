@@ -2,8 +2,9 @@ import { message } from 'antd'
 import axios, {
   type AxiosInstance,
   type AxiosResponse,
-  type CancelTokenSource
+  type CancelTokenSource,
 } from 'axios'
+import { store } from '../../store'
 import type { InterceptorType, RequestConfig } from './type'
 
 class Request {
@@ -66,7 +67,7 @@ class Request {
         cancelToken: this.cancelTokenSource.token,
       })
         .then((res: any) => {
-          if (res.response.status >= 400) {
+          if (res.code !== 200) {
             reject(res.data)
           } else {
             resolve(res as any)
@@ -113,10 +114,15 @@ class Request {
     return this.request<T>({ method: 'CONNECT', ...config })
   }
 }
+
 export default new Request('/api', 10000, {
   requestInterceptor: {
     onFulfilled(config) {
       console.log('实例请求成功拦截')
+      const token = store.getState().UserReducer?.user?.token
+      if (token) {
+        config.headers.Authorization = token
+      }
       return config
     },
     onRejected(error) {

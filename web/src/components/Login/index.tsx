@@ -18,9 +18,9 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRegister, setisRegister] = useState(false)
   const [currentAvatar, setCurrentAvatar] = useState(0)
+  const [loginLoading, setLoginLoading] = useState(false)
   const dispatch = useDispatch()
   const handleOk = () => {}
-  const handleCancel = () => setIsModalOpen(false)
 
   type FieldType = {
     account: string
@@ -28,21 +28,26 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
   }
   const switchMethod = () => setisRegister(!isRegister)
   const onFinish = (value: FieldType) => {
+    setLoginLoading(true)
     value.password = Md5.hashStr(value.password)
     // 注册
     if (isRegister) {
-      registerRequest({ ...value, avatar_id: currentAvatar }).then(() => {
-        setisRegister(false)
-      })
+      registerRequest({ ...value, avatar_id: currentAvatar })
+        .then(() => {
+          setisRegister(false)
+        })
+        .finally(() => setLoginLoading(false))
     }
     // 登录
     if (!isRegister) {
-      loginRequest(value).then((res) => {
-        setIsModalOpen(false)
-        if (res.data) {
-          dispatch(userLogin(res.data as ILoginResponse))
-        }
-      })
+      loginRequest(value)
+        .then((res) => {
+          setIsModalOpen(false)
+          if (res.data) {
+            dispatch(userLogin(res.data as ILoginResponse))
+          }
+        })
+        .finally(() => setLoginLoading(false))
     }
   }
 
@@ -71,11 +76,11 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
   return (
     <>
       <Modal
-        className=" animate-fade-in-down select-none"
+        className="animate-fade-in-down select-none"
         open={isModalOpen}
         onOk={handleOk}
         width={350}
-        onCancel={handleCancel}
+        onCancel={() => setIsModalOpen(false)}
         footer={[]}
       >
         <div className="transition-all duration-700">
@@ -129,7 +134,7 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button type="dashed" htmlType="submit">
+              <Button type="dashed" htmlType="submit" loading={loginLoading}>
                 {isRegister ? '立即注册' : '立即登录'}
               </Button>
             </Form.Item>

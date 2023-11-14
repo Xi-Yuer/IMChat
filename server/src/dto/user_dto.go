@@ -18,6 +18,8 @@ type UserLoginResponseDTO struct {
 	ID             string `json:"id"`
 	Account        string `json:"account"`
 	Token          string `json:"token"`
+	Gender         string `json:"gender"`
+	Bio            string `json:"bio"`
 	ProfilePicture string `json:"profile_picture"`
 	// 其他字段...
 }

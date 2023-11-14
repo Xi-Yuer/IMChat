@@ -85,9 +85,12 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	locationStr := https.GetUserOriginByIP(ip)
 	go s.userRepository.Login(u.ID, locationStr)
 	return &dto.UserLoginResponseDTO{
-		ID:      u.ID,
-		Account: u.Account,
-		Token:   tokenString,
+		ID:             u.ID,
+		Account:        u.Account,
+		Token:          tokenString,
+		ProfilePicture: u.ProfilePicture,
+		Gender:         u.Gender,
+		Bio:            u.Bio,
 	}, nil
 }
 

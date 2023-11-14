@@ -11,13 +11,15 @@ import { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import darkImg from '../../assets/image/darlk.png'
 import lightImg from '../../assets/image/light.png'
+import { themeChange } from '../../store/modules/ui'
 import Login, { OpenModal } from '../Login'
+import MinePanel from '../MinePanel'
 import RoomPanel from '../RoomPanel-sm'
 import { iconStyle, iconWrapStyle, roomList } from './const'
-import { themeChange } from '../../store/modules/ui'
 
 const Profile = memo(() => {
   const LoginRef = useRef<OpenModal>(null)
+  const ProfilePanelRef = useRef<OpenModal>(null)
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.UserReducer.user)
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
@@ -33,24 +35,25 @@ const Profile = memo(() => {
     )
   }
   const avatarType = () => {
-    return user.profile_picture ? (
+    return user.account ? (
       <Avatar
         size={45}
         src={<img src={user.profile_picture} alt="avatar" />}
         className="cursor-pointer bg-gray-200 text-black"
-        onClick={loginAction}
+        onClick={avatarImgClickHandle}
       />
     ) : (
       <Avatar
         size={45}
         icon={<UserOutlined />}
         className="cursor-pointer bg-gray-200 text-black"
-        onClick={loginAction}
+        onClick={loginImgClickHandle}
       />
     )
   }
 
-  const loginAction = () => LoginRef.current?.open()
+  const avatarImgClickHandle = () => ProfilePanelRef.current?.open()
+  const loginImgClickHandle = () => LoginRef.current?.open()
   const sideBarItemClick = (_: number) => setCurrentActive(_)
   const thmeChangeAction = () => {
     dispatch(themeChange(theme === 'light' ? 'dark' : 'light'))
@@ -101,6 +104,7 @@ const Profile = memo(() => {
         </div>
       </div>
       <Login ref={LoginRef} />
+      <MinePanel ref={ProfilePanelRef} />
     </>
   )
 })
