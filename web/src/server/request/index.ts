@@ -2,7 +2,7 @@ import { message } from 'antd'
 import axios, {
   type AxiosInstance,
   type AxiosResponse,
-  type CancelTokenSource,
+  type CancelTokenSource
 } from 'axios'
 import type { InterceptorType, RequestConfig } from './type'
 
@@ -65,8 +65,12 @@ class Request {
         ...config,
         cancelToken: this.cancelTokenSource.token,
       })
-        .then((res) => {
-          resolve(res as any)
+        .then((res: any) => {
+          if (res.response.status >= 400) {
+            reject(res.data)
+          } else {
+            resolve(res as any)
+          }
         })
         .catch((err) => {
           reject(err)

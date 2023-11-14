@@ -17,7 +17,7 @@ export interface OpenModal {
 const Loggin = forwardRef<OpenModal>((_, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isRegister, setisRegister] = useState(false)
-  const [currentAvatar, setCurrentAvatar] = useState(avatarImgList[0])
+  const [currentAvatar, setCurrentAvatar] = useState(0)
   const dispatch = useDispatch()
   const handleOk = () => {}
   const handleCancel = () => setIsModalOpen(false)
@@ -28,30 +28,30 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
   }
   const switchMethod = () => setisRegister(!isRegister)
   const onFinish = (value: FieldType) => {
-    const fn = isRegister ? registerRequest : loginRequest
-    if (!isRegister) {
-      value.password = Md5.hashAsciiStr(value.password)
-    }
-    fn(value).then((res) => {
-      if (isRegister) {
-        // 注册成功
+    value.password = Md5.hashStr(value.password)
+    // 注册
+    if (isRegister) {
+      registerRequest({ ...value, avatar_id: currentAvatar }).then(() => {
         setisRegister(false)
-      } else {
-        // 登录成功
+      })
+    }
+    // 登录
+    if (!isRegister) {
+      loginRequest(value).then((res) => {
         setIsModalOpen(false)
         if (res.data) {
           dispatch(userLogin(res.data as ILoginResponse))
         }
-      }
-    })
+      })
+    }
   }
 
   const avatarList = () => {
     return (
       <div className=" flex-nowrap flex gap-2 py-2 overflow-x-scroll w-[300px] select-none">
-        {avatarImgList.map((img) => {
+        {avatarImgList.map((img, index) => {
           return (
-            <div onClick={() => setCurrentAvatar(img)}>
+            <div onClick={() => setCurrentAvatar(index)} key={img}>
               <Avatar
                 size={50}
                 src={<img src={img} alt="avatar" />}
@@ -93,7 +93,9 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
                 <div className="relative rounded-full overflow-hidden group">
                   <Avatar
                     size={50}
-                    src={<img src={currentAvatar} alt="avatar" />}
+                    src={
+                      <img src={avatarImgList[currentAvatar]} alt="avatar" />
+                    }
                     className=" border border-gray-200 cursor-pointer"
                   />
                   <SwapOutlined className="hidden cursor-pointer absolute bottom-[-20px] left-0 text-sm text-center bg-black bg-opacity-50 w-full h-[40px] text-gray-100 group-hover:block" />

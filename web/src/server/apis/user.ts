@@ -1,8 +1,10 @@
+import { AxiosResponse } from 'axios'
 import request from '../request'
 
 interface IRegisterParmas {
   account: string
   password: string
+  avatar_id?: number
 }
 export const registerRequest = (params: IRegisterParmas) => {
   return request.post({
@@ -17,7 +19,7 @@ export interface ILoginResponse {
   profile_picture: string
 }
 export const loginRequest = (params: IRegisterParmas) => {
-  return request.post<ILoginResponse>({
+  return request.post<AxiosResponse<ILoginResponse>>({
     url: '/user/login',
     data: params,
   })

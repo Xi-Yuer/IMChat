@@ -6,7 +6,7 @@ import "time"
 type UserRegisterDTO struct {
 	Account  string `form:"account" binding:"required"`
 	Password string `form:"password" binding:"required"`
-	AvatarID int `form:"avatar_id" binding:"required"`
+	AvatarID int64  `form:"avatar_id" default:"1"`
 }
 
 type UserLoginDTO struct {
