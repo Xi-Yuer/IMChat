@@ -1,8 +1,21 @@
 import { RootState } from '@/store'
-import { Button, Form, Input, Modal, Radio } from 'antd'
+import {
+  App,
+  Button,
+  Form,
+  Input,
+  Modal,
+  Radio,
+  Upload,
+  UploadFile,
+} from 'antd'
+import { UploadChangeParam } from 'antd/es/upload'
+import { UploadProps } from 'antd/lib'
+import { RcFile } from 'antd/lib/upload'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { changeUserProfile, userLogOut } from '../../store/modules/user'
+import { getBase64 } from '../../utils/getBase64'
 
 export interface OpenModalProfilePanel {
   open: () => void
@@ -15,9 +28,12 @@ type FieldType = {
 
 const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const { message } = App.useApp()
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.UserReducer.user)
   const [userTemp, setUserTemp] = useState({})
+  const [previewImage, setPreviewImage] = useState('')
+  const [fileList, setFileList] = useState<RcFile>()
   const handleOk = () => {}
   const logOut = () => {
     dispatch(userLogOut())
@@ -29,6 +45,29 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   const modalCancel = () => {
     setIsModalOpen(false)
     dispatch(changeUserProfile({ ...user, ...userTemp }))
+  }
+
+  const uploadProps: UploadProps = {
+    beforeUpload: (file: File) => {
+      const isPNG = file.type === 'image/png' || file.type === 'image/jpeg'
+      if (!isPNG) {
+        message.error(`文件类型不正确`)
+      }
+      return isPNG || Upload.LIST_IGNORE
+    },
+    onChange: async (info: UploadChangeParam<UploadFile>) => {
+      console.log(info)
+      if (info.file.status === 'uploading') {
+        return
+      }
+      if (info.file.status === 'done') {
+        const url = await getBase64(info.file.originFileObj as RcFile)
+        console.log(url)
+      }
+    },
+    action: undefined,
+    maxCount: 1,
+    showUploadList: false,
   }
 
   useImperativeHandle(ref, () => ({
@@ -45,11 +84,13 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
         footer={[]}
       >
         <div className="flex flex-col items-center justify-center">
-          <img
-            className="w-12 h-12 rounded-full"
-            src={user.profile_picture}
-            alt="avatar"
-          />
+          <Upload {...uploadProps}>
+            <img
+              className="w-12 h-12 rounded-full"
+              src={user.profile_picture}
+              alt="avatar"
+            />
+          </Upload>
           <Form
             layout="horizontal"
             labelCol={{ span: 7 }}
