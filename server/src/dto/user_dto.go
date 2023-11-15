@@ -54,9 +54,9 @@ type Origin struct {
 }
 
 type UpdateUserRequestDTO struct {
-	Account        string `form:"account"`
-	Gender         string `form:"gender"`
-	Bio            string `form:"bio"`
-	Password       string `form:"password"`
-	ProfilePicture string `form:"profile_picture"`
+	Account        string `json:"account"`
+	Gender         string `json:"gender"`
+	Bio            string `json:"bio"`
+	Password       string `json:"password"`
+	ProfilePicture string `json:"profile_picture"`
 }

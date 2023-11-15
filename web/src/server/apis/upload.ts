@@ -1,7 +1,6 @@
-import { RcFile } from 'antd/es/upload'
 import request from '../request'
 
-export const uploadFile = (file: RcFile) => {
+export const uploadFile = (file: File) => {
     const formData = new FormData()
     formData.append('file', file)
     return request.post({

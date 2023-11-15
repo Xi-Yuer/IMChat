@@ -1,19 +1,11 @@
 import { RootState } from '@/store'
-import {
-  App,
-  Button,
-  Form,
-  Input,
-  Modal,
-  Radio,
-  Upload,
-  UploadFile,
-} from 'antd'
-import { UploadChangeParam } from 'antd/es/upload'
+import { App, Button, Form, Input, Modal, Radio, Upload } from 'antd'
 import { UploadProps } from 'antd/lib'
 import { RcFile } from 'antd/lib/upload'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { uploadFile } from '../../server/apis/upload'
+import { updateUserRequest } from '../../server/apis/user'
 import { changeUserProfile, userLogOut } from '../../store/modules/user'
 import { getBase64 } from '../../utils/getBase64'
 
@@ -31,9 +23,10 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   const { message } = App.useApp()
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.UserReducer.user)
-  const [userTemp, setUserTemp] = useState({})
+  const [userTemp, setUserTemp] = useState<any>(undefined)
   const [previewImage, setPreviewImage] = useState('')
-  const [fileList, setFileList] = useState<RcFile>()
+  const [spinning, setSpinning] = useState(false)
+  const [file, setFile] = useState<File>()
   const handleOk = () => {}
   const logOut = () => {
     dispatch(userLogOut())
@@ -42,36 +35,59 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   const FormChange = (_: any, allValues: any) => {
     setUserTemp(allValues)
   }
-  const modalCancel = () => {
+  const modalCancel = async () => {
+    await updateUserInfo()
     setIsModalOpen(false)
-    dispatch(changeUserProfile({ ...user, ...userTemp }))
   }
 
   const uploadProps: UploadProps = {
-    beforeUpload: (file: File) => {
+    beforeUpload: async (file: File) => {
       const isPNG = file.type === 'image/png' || file.type === 'image/jpeg'
       if (!isPNG) {
         message.error(`文件类型不正确`)
       }
-      return isPNG || Upload.LIST_IGNORE
-    },
-    onChange: async (info: UploadChangeParam<UploadFile>) => {
-      console.log(info)
-      if (info.file.status === 'uploading') {
-        return
-      }
-      if (info.file.status === 'done') {
-        const url = await getBase64(info.file.originFileObj as RcFile)
-        console.log(url)
-      }
+      const url = await getBase64(file as RcFile)
+      setPreviewImage(url)
+      setFile(file)
+
+      return false
     },
     action: undefined,
     maxCount: 1,
     showUploadList: false,
   }
 
+  const updateUserInfo = async () => {
+    try {
+      if (file || userTemp != undefined) {
+        setSpinning(true)
+        if (file) {
+          const {
+            data: { file_url },
+          } = await uploadFile(file)
+          const { data } = await updateUserRequest({
+            ...userTemp,
+            profile_picture: file_url,
+          })
+          dispatch(changeUserProfile({ ...user, ...data }))
+        } else {
+          const { data } = await updateUserRequest(userTemp)
+          dispatch(changeUserProfile({ ...user, ...data }))
+        }
+      }
+    } catch (error) {
+    } finally {
+      setSpinning(false)
+    }
+  }
+
   useImperativeHandle(ref, () => ({
-    open: () => setIsModalOpen(true),
+    open: () => {
+      setUserTemp(undefined)
+      setPreviewImage('')
+      setFile(undefined)
+      setIsModalOpen(true)
+    },
   }))
   return (
     <>
@@ -81,13 +97,13 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
         onOk={handleOk}
         width={350}
         onCancel={modalCancel}
-        footer={[]}
+        footer={null}
       >
         <div className="flex flex-col items-center justify-center">
           <Upload {...uploadProps}>
             <img
               className="w-12 h-12 rounded-full"
-              src={user.profile_picture}
+              src={previewImage || user.profile_picture}
               alt="avatar"
             />
           </Upload>
@@ -113,7 +129,9 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
             </Form.Item>
           </Form>
           <div className="mt-4">
-            <Button onClick={logOut}>退出登录</Button>
+            <Button onClick={logOut} loading={spinning}>
+              {spinning ? '更新资料...' : '退出登录'}
+            </Button>
           </div>
         </div>
       </Modal>

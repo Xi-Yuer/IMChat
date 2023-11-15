@@ -26,3 +26,17 @@ export const loginRequest = (params: IRegisterParmas) => {
     data: params,
   })
 }
+
+interface IUpdateUserParmas {
+  account?: string
+  gender?: string
+  bio?: string
+  password?: string
+  profile_picture?: string
+}
+export const updateUserRequest = (params: IUpdateUserParmas) => {
+  return request.post({
+    url: '/user/update',
+    data: params
+  })
+}

@@ -125,8 +125,13 @@ func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO
 		return nil, err
 	}
 	return &dto.UserResponseDTO{
-		ID:      user.ID,
-		Account: user.Account,
+		ID:             user.ID,
+		Account:        user.Account,
+		ProfilePicture: user.ProfilePicture,
+		Gender:         user.Gender,
+		Bio:            user.Bio,
+		LastLogin:      user.LastLogin,
+		Origin:         user.Origin,
 	}, nil
 }
 

@@ -115,7 +115,7 @@ class Request {
   }
 }
 
-export default new Request('/api', 10000, {
+export default new Request('/api', 100000, {
   requestInterceptor: {
     onFulfilled(config) {
       console.log('实例请求成功拦截')

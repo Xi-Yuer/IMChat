@@ -6,6 +6,7 @@ import (
 	"ImChat/src/handlers"
 	"ImChat/src/services"
 	"ImChat/src/utils"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -128,5 +129,11 @@ func (c *UserController) UpdateUser(ctx *gin.Context) {
 	if err != nil {
 		handlers.Error(ctx, err.Error())
 	}
-	handlers.Success(ctx, "修改成功", nil)
+	user, err := c.userService.GetUserDetailByUserID(id.(string))
+	fmt.Println(err)
+	if err == nil {
+		handlers.Success(ctx, "修改成功", user)
+	} else {
+		handlers.Success(ctx, "修改成功", nil)
+	}
 }
