@@ -8,7 +8,7 @@ import (
 
 type ChatRoomService interface {
 	// 获取聊天室列表
-	// GetChatRoomList() ([]models.ChatRoom, error)
+	GetUserRoomListID(userID string) ([]models.UserChatRoom, error)
 
 	// 获取聊天室详情
 	// GetChatRoomDetail(id string) (*models.ChatRoom, error)
@@ -38,4 +38,8 @@ func (s *ChatRoomServiceImpl) CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID
 		AdminID:     adminID,
 	}
 	return s.chatRoomRepository.CreateChatRoom(chatRoom)
+}
+
+func (s *ChatRoomServiceImpl) GetUserRoomListID(userID string) ([]models.UserChatRoom, error) {
+	return s.chatRoomRepository.GetUserRoomListID(userID)
 }

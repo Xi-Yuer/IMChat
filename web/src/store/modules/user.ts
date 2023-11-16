@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ILoginResponse } from 'src/server/apis/user'
+import { ILoginResponse, getUserChatRoom } from '../../server/apis/user'
 
 interface IUserStore {
   user: ILoginResponse
@@ -15,6 +15,9 @@ export const UserStore = createSlice({
   reducers: {
     userLogin(state, action) {
       state.user = action.payload
+      getUserChatRoom().then(res => {
+        console.log(res);
+      })
     },
     userLogOut(state) {
       state.user.nick_name = ''

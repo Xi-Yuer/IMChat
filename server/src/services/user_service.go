@@ -14,7 +14,7 @@ import (
 )
 
 type UserService interface {
-	RegisterUser(dto *dto.UserRegisterDTO) (error, *models.User)
+	RegisterUser(dto *dto.UserRegisterDTO) (*models.User, error)
 	Login(dto *dto.UserLoginDTO, ip string) (*dto.UserLoginResponseDTO, error)
 	GetUserList() ([]*dto.UserResponseDTO, error)
 	Logout(account string, time time.Time) error
@@ -31,7 +31,7 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 }
 
 // 注册
-func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (error, *models.User) {
+func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (*models.User, error) {
 	avatarList := [...]string{
 		"system/%E5%A4%B4%E5%83%8F%20%E8%81%8C%E5%9C%BA%E7%94%B7%E5%A3%AB.png",
 		"system/%E5%A4%B4%E5%83%8F%20%E4%B8%AD%E9%95%BF%E5%8F%91%E5%A5%B3%E5%AD%A9.png",
@@ -42,7 +42,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (error, *models
 	}
 	password, err := utils.HashPassword(dto.Password)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	avatarID := *dto.AvatarID
 	user := &models.User{
@@ -51,7 +51,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (error, *models
 		NickName:       dto.NickName,
 		ProfilePicture: avatarList[avatarID],
 	}
-	return s.userRepository.CreateUser(user), user
+	return user, s.userRepository.CreateUser(user)
 }
 
 // 登陆

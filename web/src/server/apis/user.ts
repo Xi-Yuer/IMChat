@@ -50,3 +50,9 @@ export const logout = () => {
     url: '/user/logout',
   })
 }
+
+export const getUserChatRoom = () => {
+  return request.get({
+    url: '/chatroom/list'
+  })
+}

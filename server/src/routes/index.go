@@ -34,6 +34,7 @@ func SetupRoutes(router *gin.Engine) {
 		chatRoomService := services.NewChatRoomService(chatRoomRepo)
 		chatRoomController := controllers.NewChatRoomController(chatRoomService)
 		chatRoomRoutes.POST("/create", chatRoomController.CreateChatRoom)
+		chatRoomRoutes.GET("/list", chatRoomController.GetRoomList)
 
 		userRoomChatRepo := repositories.NewUserRoomChatRepository(db.DB)
 		userRoomChatService := services.NewUserChatRoomService(userRoomChatRepo)

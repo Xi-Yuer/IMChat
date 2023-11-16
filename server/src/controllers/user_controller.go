@@ -10,7 +10,6 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/services"
 	"ImChat/src/utils"
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -34,7 +33,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	err, user := c.userService.RegisterUser(&userRegisterDTO)
+	user, err := c.userService.RegisterUser(&userRegisterDTO)
 	if err != nil {
 		// 处理注册错误
 		// 返回错误响应
@@ -45,10 +44,9 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 		UserID:     user.ID,
 		ChatRoomID: config.AppConfig.System.GroupChatID,
 	}
-	fmt.Println("userRoomChatRecord", &userRoomChatRecord)
 	// 用户注册成功默认添加到官方群聊中
 	userRoomChatRepo := repositories.NewUserRoomChatRepository(db.DB)
-	if err := userRoomChatRepo.JoinChatRoom(userRoomChatRecord); err != nil {
+	if err := userRoomChatRepo.JoinChatRoom(userRoomChatRecord); err == nil {
 		handlers.Success(ctx, "注册成功", nil)
 	}
 
