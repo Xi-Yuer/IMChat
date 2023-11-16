@@ -10,6 +10,7 @@ import (
 type User struct {
 	BaseModel
 	Account        string     `json:"account" gorm:"unique;not null"`
+	NickName       string     `json:"nick_name" gorm:"not null"`
 	Password       string     `json:"password" gorm:"not null"`
 	Gender         string     `json:"gender" gorm:"default:1"`
 	Bio            string     `json:"bio"`

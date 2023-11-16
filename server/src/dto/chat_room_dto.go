@@ -1,6 +1,6 @@
 package dto
 
 type CreateChatRoomDTO struct {
-	Name        string `form:"name" binding:"required"`
-	Description string `form:"description" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }

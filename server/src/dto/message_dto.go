@@ -1,10 +1,10 @@
 package dto
 
 type CreateMessageDTO struct {
-	UserID      string `form:"user_id" binding:"required"`
-	Content     string `form:"content" binding:"required"`
-	MessageType string `form:"message_type" default:"text"`
-	ReceiverID  string `form:"receiver_id" binding:"required"`
+	UserID      string `json:"user_id" binding:"required"`
+	Content     string `json:"content" binding:"required"`
+	MessageType string `json:"message_type" default:"text"`
+	ReceiverID  string `json:"receiver_id" binding:"required"`
 }
 
 type MessageResponseDTO struct {
@@ -36,7 +36,7 @@ type MessageListResponseDTO struct {
 }
 
 type GetMessageDTO struct {
-	ChatRoomID string `form:"chat_room_id" json:"chat_room_id"`
-	Limit      int    `form:"limit" json:"limit"`
-	Offset     int    `form:"offset" json:"offset"`
+	ChatRoomID string `json:"chat_room_id"`
+	Limit      int    `json:"limit"`
+	Offset     int    `json:"offset"`
 }

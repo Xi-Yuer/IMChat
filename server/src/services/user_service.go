@@ -47,6 +47,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) error {
 	user := &models.User{
 		Account:        dto.Account,
 		Password:       password,
+		NickName:       dto.NickName,
 		ProfilePicture: avatarList[dto.AvatarID],
 	}
 	return s.userRepository.CreateUser(user)
@@ -87,6 +88,7 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	return &dto.UserLoginResponseDTO{
 		ID:             u.ID,
 		Account:        u.Account,
+		NickName:       u.NickName,
 		Token:          tokenString,
 		ProfilePicture: u.ProfilePicture,
 		Gender:         u.Gender,
@@ -112,8 +114,12 @@ func (s *UserServiceImpl) GetUserList() ([]*dto.UserResponseDTO, error) {
 	list := make([]*dto.UserResponseDTO, len(users))
 	for i, user := range users {
 		list[i] = &dto.UserResponseDTO{
-			ID:      user.ID,
-			Account: user.Account,
+			ID:             user.ID,
+			Account:        user.Account,
+			NickName:       user.NickName,
+			ProfilePicture: user.ProfilePicture,
+			Gender:         user.Gender,
+			Bio:            user.Bio,
 		}
 	}
 	return list, nil
@@ -127,6 +133,7 @@ func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO
 	return &dto.UserResponseDTO{
 		ID:             user.ID,
 		Account:        user.Account,
+		NickName:       user.NickName,
 		ProfilePicture: user.ProfilePicture,
 		Gender:         user.Gender,
 		Bio:            user.Bio,
@@ -143,8 +150,8 @@ func (s *UserServiceImpl) UpdateUserDetail(user *dto.UpdateUserRequestDTO, id st
 		return err
 	}
 	// 有值就修改，没有就保持原值
-	if user.Account != "" {
-		u.Account = user.Account
+	if user.NickName != "" {
+		u.NickName = user.NickName
 	}
 	if user.Password != "" {
 		password, err := utils.HashPassword(user.Password)

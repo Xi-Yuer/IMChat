@@ -4,19 +4,21 @@ package dto
 import "time"
 
 type UserRegisterDTO struct {
-	Account  string `form:"account" binding:"required"`
-	Password string `form:"password" binding:"required"`
-	AvatarID int64  `form:"avatar_id" default:"1"`
+	Account  string `json:"account" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	NickName string `json:"nick_name" binding:"required"`
+	AvatarID int64  `json:"avatar_id" binding:"required"`
 }
 
 type UserLoginDTO struct {
-	Account  string `form:"account" binding:"required"`
-	Password string `form:"password" binding:"required"`
+	Account  string `json:"account" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type UserLoginResponseDTO struct {
 	ID             string `json:"id"`
 	Account        string `json:"account"`
+	NickName       string `json:"nick_name"`
 	Token          string `json:"token"`
 	Gender         string `json:"gender"`
 	Bio            string `json:"bio"`
@@ -30,6 +32,7 @@ type UserResponseDTO struct {
 	Gender         string     `json:"gender"`
 	Bio            string     `json:"bio"`
 	Origin         string     `json:"origin"`
+	NickName       string     `json:"nick_name"`
 	ProfilePicture string     `json:"profile_picture"`
 	LastLogin      *time.Time `json:"last_login"`
 }
@@ -38,6 +41,7 @@ type ChatRoomUserListResponseDTO struct {
 	ID             string     `json:"id"`
 	Account        string     `json:"account"`
 	Gender         string     `json:"gender"`
+	NickName       string     `json:"nick_name"`
 	Bio            string     `json:"bio"`
 	ProfilePicture string     `json:"profile_picture"`
 	LastLogin      *time.Time `json:"last_login"`
@@ -54,7 +58,7 @@ type Origin struct {
 }
 
 type UpdateUserRequestDTO struct {
-	Account        string `json:"account"`
+	NickName       string `json:"nick_name"`
 	Gender         string `json:"gender"`
 	Bio            string `json:"bio"`
 	Password       string `json:"password"`

@@ -24,6 +24,7 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
 
   type FieldType = {
     account: string
+    nick_name: string
     password: string
   }
   const switchMethod = () => setisRegister(!isRegister)
@@ -82,6 +83,7 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
         width={350}
         onCancel={() => setIsModalOpen(false)}
         footer={[]}
+        destroyOnClose={true}
       >
         <div className="transition-all duration-700">
           <h1 className=" text-center my-2 font-bold text-2xl">
@@ -117,14 +119,22 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
             onFinish={onFinish}
             autoComplete="off"
           >
+            {isRegister && (
+              <Form.Item<FieldType>
+                label="昵称"
+                name="nick_name"
+                rules={[{ required: true, message: '请输入昵称!' }]}
+              >
+                <Input />
+              </Form.Item>
+            )}
             <Form.Item<FieldType>
               label="账号"
               name="account"
-              rules={[{ required: true, message: '请输入用户名!' }]}
+              rules={[{ required: true, message: '请输入账号!' }]}
             >
               <Input />
             </Form.Item>
-
             <Form.Item<FieldType>
               label="密码"
               name="password"

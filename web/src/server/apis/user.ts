@@ -14,6 +14,7 @@ export const registerRequest = (params: IRegisterParmas) => {
 }
 export interface ILoginResponse {
   account: string
+  nick_name:string
   id: string
   token: string
   profile_picture: string
@@ -28,7 +29,7 @@ export const loginRequest = (params: IRegisterParmas) => {
 }
 
 interface IUpdateUserParmas {
-  account?: string
+  nick_name?: string
   gender?: string
   bio?: string
   password?: string

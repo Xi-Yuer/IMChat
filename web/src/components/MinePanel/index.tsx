@@ -13,7 +13,7 @@ export interface OpenModalProfilePanel {
   open: () => void
 }
 type FieldType = {
-  account: string
+  nick_name: string
   gender: string
   bio: string
 }
@@ -115,8 +115,8 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
             initialValues={user}
             onValuesChange={FormChange}
           >
-            <Form.Item<FieldType> label="用户名" name="account">
-              <Input placeholder="请输入用户名" bordered={false} />
+            <Form.Item<FieldType> label="昵称" name="nick_name">
+              <Input placeholder="请输入昵称" bordered={false} />
             </Form.Item>
             <Form.Item<FieldType> label="性别" name="gender">
               <Radio.Group value={user.gender} className="ml-2">
