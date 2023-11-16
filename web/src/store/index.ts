@@ -1,13 +1,13 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import storageSession from 'redux-persist/lib/storage/session'
 import thunk from 'redux-thunk'
 import UIReducer from './modules/ui'
 import UserReducer from './modules/user'
 
 const persistConfig = {
   key: 'root',
-  storage,
+  storage: storageSession,
 }
 
 const reducers = combineReducers({

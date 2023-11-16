@@ -8,7 +8,7 @@ interface IUIState {
 
 const initialState = {
   fold: true,
-  theme: 'light',
+  theme: 'dark',
 } as IUIState
 
 export const UIStore = createSlice({

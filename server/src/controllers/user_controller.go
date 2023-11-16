@@ -2,10 +2,15 @@
 package controllers
 
 import (
+	"ImChat/src/config"
+	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/handlers"
+	"ImChat/src/models"
+	"ImChat/src/repositories"
 	"ImChat/src/services"
 	"ImChat/src/utils"
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -29,13 +34,24 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.userService.RegisterUser(&userRegisterDTO); err != nil {
+	err, user := c.userService.RegisterUser(&userRegisterDTO)
+	if err != nil {
 		// 处理注册错误
 		// 返回错误响应
 		handlers.Error(ctx, err.Error())
 		return
 	}
-	handlers.Success(ctx, "注册成功", nil)
+	userRoomChatRecord := &models.UserChatRoom{
+		UserID:     user.ID,
+		ChatRoomID: config.AppConfig.System.GroupChatID,
+	}
+	fmt.Println("userRoomChatRecord", &userRoomChatRecord)
+	// 用户注册成功默认添加到官方群聊中
+	userRoomChatRepo := repositories.NewUserRoomChatRepository(db.DB)
+	if err := userRoomChatRepo.JoinChatRoom(userRoomChatRecord); err != nil {
+		handlers.Success(ctx, "注册成功", nil)
+	}
+
 }
 
 // 登陆

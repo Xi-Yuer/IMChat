@@ -22,6 +22,9 @@ type Config struct {
 	DoMian struct {
 		URL string `mapstructure:"URL"`
 	}
+	System struct {
+		GroupChatID string `mapstructure:"GroupChatID"`
+	}
 	Aliyun struct {
 		AccessKeyID     string `mapstructure:"AccessKeyID"`
 		AccessKeySecret string `mapstructure:"AccessKeySecret"`
