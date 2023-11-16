@@ -39,7 +39,6 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 		chatMessageResponseDTO := &dto.ChatMessageResponseDTO{
 			User: &dto.UserResponseDTO{
 				ID:             message.SenderID,
-				Account:        message.Sender.Account,
 				Gender:         message.Sender.Gender,
 				Bio:            message.Sender.Bio,
 				ProfilePicture: message.Sender.ProfilePicture,

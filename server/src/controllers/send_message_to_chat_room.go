@@ -112,7 +112,6 @@ func getUserResponse(userID string) *dto.UserResponseDTO {
 
 	return &dto.UserResponseDTO{
 		ID:             user.ID,
-		Account:        user.Account,
 		Gender:         user.Gender,
 		Bio:            user.Bio,
 		ProfilePicture: user.ProfilePicture,

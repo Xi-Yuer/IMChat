@@ -14,12 +14,14 @@ export const registerRequest = (params: IRegisterParmas) => {
 }
 export interface ILoginResponse {
   account: string
-  nick_name:string
+  nick_name: string
   id: string
   token: string
   profile_picture: string
   gender: number | string
+  origin: string
   bio: string
+  last_login: string | number
 }
 export const loginRequest = (params: IRegisterParmas) => {
   return request.post<AxiosResponse<ILoginResponse>>({
@@ -36,7 +38,7 @@ interface IUpdateUserParmas {
   profile_picture?: string
 }
 export const updateUserRequest = (params: IUpdateUserParmas) => {
-  return request.post({
+  return request.post<AxiosResponse<ILoginResponse>>({
     url: '/user/update',
     data: params
   })

@@ -65,7 +65,6 @@ func (r *userRoomChatRepository) FindChatRoomUsers(chatRoomId string) ([]dto.Cha
 	for _, user := range users {
 		response = append(response, dto.ChatRoomUserListResponseDTO{
 			ID:             user.ID,
-			Account:        user.Account,
 			Gender:         user.Gender,
 			Bio:            user.Bio,
 			ProfilePicture: user.ProfilePicture,

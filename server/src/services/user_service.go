@@ -33,22 +33,23 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 // 注册
 func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) error {
 	avatarList := [...]string{
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E8%81%8C%E5%9C%BA%E7%94%B7%E5%A3%AB.png",
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E4%B8%AD%E9%95%BF%E5%8F%91%E5%A5%B3%E5%AD%A9.png",
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png",
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%95%86%E5%8A%A1%E7%94%B7%E4%BA%BA.png",
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E5%A4%A7%E8%83%A1%E5%AD%90%E7%94%B7%E5%A3%AB.png",
-		"https://xiyuer.club/system/%E5%A4%B4%E5%83%8F%20%E9%98%B3%E5%85%89%E7%94%B7%E7%94%9F.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E8%81%8C%E5%9C%BA%E7%94%B7%E5%A3%AB.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E4%B8%AD%E9%95%BF%E5%8F%91%E5%A5%B3%E5%AD%A9.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E5%8F%8C%E9%A9%AC%E5%B0%BE%E5%A5%B3%E5%AD%A9.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E5%95%86%E5%8A%A1%E7%94%B7%E4%BA%BA.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E5%A4%A7%E8%83%A1%E5%AD%90%E7%94%B7%E5%A3%AB.png",
+		"system/%E5%A4%B4%E5%83%8F%20%E9%98%B3%E5%85%89%E7%94%B7%E7%94%9F.png",
 	}
 	password, err := utils.HashPassword(dto.Password)
 	if err != nil {
 		return err
 	}
+	avatarID := *dto.AvatarID
 	user := &models.User{
 		Account:        dto.Account,
 		Password:       password,
 		NickName:       dto.NickName,
-		ProfilePicture: avatarList[dto.AvatarID],
+		ProfilePicture: avatarList[avatarID],
 	}
 	return s.userRepository.CreateUser(user)
 }
@@ -84,15 +85,17 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 		return nil, err
 	}
 	locationStr := https.GetUserOriginByIP(ip)
+	baseUrl := config.AppConfig.DoMian.URL
 	go s.userRepository.Login(u.ID, locationStr)
 	return &dto.UserLoginResponseDTO{
 		ID:             u.ID,
-		Account:        u.Account,
 		NickName:       u.NickName,
 		Token:          tokenString,
-		ProfilePicture: u.ProfilePicture,
+		ProfilePicture: baseUrl + u.ProfilePicture,
 		Gender:         u.Gender,
 		Bio:            u.Bio,
+		LastLogin:      u.LastLogin,
+		Origin:         u.Origin,
 	}, nil
 }
 
@@ -112,14 +115,16 @@ func (s *UserServiceImpl) GetUserList() ([]*dto.UserResponseDTO, error) {
 		return nil, err
 	}
 	list := make([]*dto.UserResponseDTO, len(users))
+	baseUrl := config.AppConfig.DoMian.URL
 	for i, user := range users {
 		list[i] = &dto.UserResponseDTO{
 			ID:             user.ID,
-			Account:        user.Account,
 			NickName:       user.NickName,
-			ProfilePicture: user.ProfilePicture,
+			ProfilePicture: baseUrl + user.ProfilePicture,
 			Gender:         user.Gender,
 			Bio:            user.Bio,
+			LastLogin:      user.LastLogin,
+			Origin:         user.Origin,
 		}
 	}
 	return list, nil
@@ -130,11 +135,11 @@ func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO
 	if err != nil {
 		return nil, err
 	}
+	baseUrl := config.AppConfig.DoMian.URL
 	return &dto.UserResponseDTO{
 		ID:             user.ID,
-		Account:        user.Account,
 		NickName:       user.NickName,
-		ProfilePicture: user.ProfilePicture,
+		ProfilePicture: baseUrl + user.ProfilePicture,
 		Gender:         user.Gender,
 		Bio:            user.Bio,
 		LastLogin:      user.LastLogin,

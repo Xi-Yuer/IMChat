@@ -7,7 +7,7 @@ type UserRegisterDTO struct {
 	Account  string `json:"account" binding:"required"`
 	Password string `json:"password" binding:"required"`
 	NickName string `json:"nick_name" binding:"required"`
-	AvatarID int64  `json:"avatar_id" binding:"required"`
+	AvatarID *int64 `json:"avatar_id" binding:"required"`
 }
 
 type UserLoginDTO struct {
@@ -16,19 +16,18 @@ type UserLoginDTO struct {
 }
 
 type UserLoginResponseDTO struct {
-	ID             string `json:"id"`
-	Account        string `json:"account"`
-	NickName       string `json:"nick_name"`
-	Token          string `json:"token"`
-	Gender         string `json:"gender"`
-	Bio            string `json:"bio"`
-	ProfilePicture string `json:"profile_picture"`
-	// 其他字段...
+	ID             string     `json:"id"`
+	Gender         string     `json:"gender"`
+	Bio            string     `json:"bio"`
+	Origin         string     `json:"origin"`
+	NickName       string     `json:"nick_name"`
+	ProfilePicture string     `json:"profile_picture"`
+	LastLogin      *time.Time `json:"last_login"`
+	Token          string     `json:"token"`
 }
 
 type UserResponseDTO struct {
 	ID             string     `json:"id"`
-	Account        string     `json:"account"`
 	Gender         string     `json:"gender"`
 	Bio            string     `json:"bio"`
 	Origin         string     `json:"origin"`
@@ -39,7 +38,6 @@ type UserResponseDTO struct {
 
 type ChatRoomUserListResponseDTO struct {
 	ID             string     `json:"id"`
-	Account        string     `json:"account"`
 	Gender         string     `json:"gender"`
 	NickName       string     `json:"nick_name"`
 	Bio            string     `json:"bio"`

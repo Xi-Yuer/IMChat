@@ -35,7 +35,7 @@ const Profile = memo(() => {
     )
   }
   const avatarType = () => {
-    return user.account ? (
+    return user.nick_name ? (
       <Avatar
         size={45}
         src={<img src={user.profile_picture} alt="avatar" />}

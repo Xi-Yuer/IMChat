@@ -19,6 +19,9 @@ type Config struct {
 	API struct {
 		Key string `mapstructure:"Key"`
 	}
+	DoMian struct {
+		URL string `mapstructure:"URL"`
+	}
 	Aliyun struct {
 		AccessKeyID     string `mapstructure:"AccessKeyID"`
 		AccessKeySecret string `mapstructure:"AccessKeySecret"`

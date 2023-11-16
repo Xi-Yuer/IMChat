@@ -17,13 +17,15 @@ export const UserStore = createSlice({
       state.user = action.payload
     },
     userLogOut(state) {
-      state.user.account = ''
+      state.user.nick_name = ''
       state.user.token = ''
       state.user.account = ''
       state.user.bio = ''
       state.user.profile_picture = ''
       state.user.id = ''
       state.user.gender = '1'
+      state.user.origin = '1'
+      state.user.last_login = '1'
     },
     changeUserProfile(state, action) {
       state.user = action.payload
