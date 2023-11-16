@@ -5,7 +5,7 @@ import { RcFile } from 'antd/lib/upload'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadFile } from '../../server/apis/upload'
-import { updateUserRequest } from '../../server/apis/user'
+import { logout, updateUserRequest } from '../../server/apis/user'
 import { changeUserProfile, userLogOut } from '../../store/modules/user'
 import { getBase64 } from '../../utils/getBase64'
 
@@ -27,10 +27,17 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   const [previewImage, setPreviewImage] = useState('')
   const [spinning, setSpinning] = useState(false)
   const [file, setFile] = useState<File>()
-  const handleOk = () => {}
+
   const logOut = () => {
-    dispatch(userLogOut())
-    setIsModalOpen(false)
+    setSpinning(true)
+    logout()
+      .then(() => {
+        dispatch(userLogOut())
+        setIsModalOpen(false)
+      })
+      .finally(() => {
+        setSpinning(false)
+      })
   }
   const FormChange = (_: any, allValues: any) => {
     setUserTemp(allValues)
@@ -94,7 +101,6 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
       <Modal
         className="animate-fade-in-down select-none"
         open={isModalOpen}
-        onOk={handleOk}
         width={350}
         onCancel={modalCancel}
         footer={null}
@@ -130,7 +136,9 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
           </Form>
           <div className="mt-4">
             <Button onClick={logOut} loading={spinning}>
-              {spinning ? '更新资料...' : '退出登录'}
+              {(file || userTemp != undefined) && spinning
+                ? '更新资料...'
+                : '退出登录'}
             </Button>
           </div>
         </div>

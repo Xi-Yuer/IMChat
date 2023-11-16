@@ -43,3 +43,10 @@ export const updateUserRequest = (params: IUpdateUserParmas) => {
     data: params
   })
 }
+
+
+export const logout = () => {
+  return request.post({
+    url: '/user/logout',
+  })
+}
