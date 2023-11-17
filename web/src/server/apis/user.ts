@@ -40,17 +40,15 @@ interface IUpdateUserParmas {
 export const updateUserRequest = (params: IUpdateUserParmas) => {
   return request.post<AxiosResponse<ILoginResponse>>({
     url: '/user/update',
-    data: params
+    data: params,
   })
 }
-
 
 export const logout = () => {
   return request.post({
     url: '/user/logout',
   })
 }
-
 
 export interface IChatRoomResponse {
   name: string
@@ -61,6 +59,6 @@ export interface IChatRoomResponse {
 }
 export const getUserChatRoom = () => {
   return request.get<AxiosResponse<IChatRoomResponse[]>>({
-    url: '/chatroom/list'
+    url: '/chatroom/list',
   })
 }
