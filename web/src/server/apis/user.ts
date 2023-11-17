@@ -56,6 +56,8 @@ export interface IChatRoomResponse {
   avatar: string
   id: string
   create_at: string
+  current_msg: string
+  current_msg_time: number
 }
 export const getUserChatRoom = () => {
   return request.get<AxiosResponse<IChatRoomResponse[]>>({

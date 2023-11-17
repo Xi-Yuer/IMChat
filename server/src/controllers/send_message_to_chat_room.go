@@ -148,4 +148,6 @@ func messageStorageWorker() {
 // 将消息存储到数据库
 func storageMessage(message *models.Message) {
 	db.DB.Create(message)
+	// 更新群聊信息
+	db.DB.Model(&models.ChatRoom{}).Where("id = ?", message.ChatRoomID).Update("current_msg", message.Content).Update("cuurrent_msg_time", message.CreatedAt)
 }

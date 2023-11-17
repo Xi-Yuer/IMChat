@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -11,6 +13,9 @@ type ChatRoom struct {
 	Description string `json:"description" gorm:"type:varchar(255)"`
 	AdminID     string `gorm:"type:char(36)"`
 	Avatar      string `json:"avatar" gorm:"type:varchar(255)"`
+
+	CurrentMsg     string     `json:"current_msg" gorm:"type:varchar(255)"`
+	CurrentMsgTime *time.Time `json:"current_msg_time" gorm:"type:datetime"`
 
 	Admin User `gorm:"foreignKey:AdminID"`
 }

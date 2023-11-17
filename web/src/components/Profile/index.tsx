@@ -15,7 +15,7 @@ import { themeChange } from '../../store/modules/ui'
 import Login, { OpenModal } from '../Login'
 import MinePanel from '../MinePanel'
 import RoomPanel from '../RoomPanel-sm'
-import { iconStyle, iconWrapStyle, roomList } from './const'
+import { iconStyle, iconWrapStyle } from './const'
 
 const Profile = memo(() => {
   const LoginRef = useRef<OpenModal>(null)
@@ -23,11 +23,12 @@ const Profile = memo(() => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.UserReducer.user)
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
+  const roomList = useSelector((state: RootState) => state.UserReducer.roomList)
   const [currentActive, setCurrentActive] = useState(1)
 
   const chatRoomList = () => {
     return (
-      <div className="flex flex-col gap-2 max-h-48 scrollbar-w-2 overflow-y-scroll">
+      <div className="flex flex-col gap-2 max-h-48 overflow-y-scroll no-scrollbar">
         {roomList.map((room) => (
           <RoomPanel {...room} key={room.id} />
         ))}
@@ -61,7 +62,7 @@ const Profile = memo(() => {
 
   return (
     <>
-      <div className="w-[80px] h-full flex justify-between flex-col py-4 border-r dark:border-[#464958] transition-all duration-700">
+      <div className="w-[80px] h-full flex justify-between flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700">
         <div className="flex items-center flex-col gap-4">
           {avatarType()}
           <div
