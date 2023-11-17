@@ -5,10 +5,11 @@ import { useDispatch } from 'react-redux'
 import { Md5 } from 'ts-md5'
 import {
   ILoginResponse,
+  getUserChatRoom,
   loginRequest,
   registerRequest,
 } from '../../server/apis/user'
-import { userLogin } from '../../store/modules/user'
+import { changeRoomList, userLogin } from '../../store/modules/user'
 import { avatarImgList } from './constant'
 
 export interface OpenModal {
@@ -46,6 +47,9 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
           setIsModalOpen(false)
           if (res.data) {
             dispatch(userLogin(res.data as ILoginResponse))
+            getUserChatRoom().then((res) => {
+              dispatch(changeRoomList(res.data))
+            })
           }
         })
         .finally(() => setLoginLoading(false))

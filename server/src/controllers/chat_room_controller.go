@@ -32,7 +32,7 @@ func (c *ChatRoomController) CreateChatRoom(ctx *gin.Context) {
 
 func (c *ChatRoomController) GetRoomList(ctx *gin.Context) {
 	userID, _ := ctx.Get("id")
-	roomIDList, err := c.chatRoomService.GetUserRoomListID(userID.(string))
+	roomIDList, err := c.chatRoomService.GetUserRoomList(userID.(string))
 	if err != nil {
 		handlers.Error(ctx, err.Error())
 	} else {

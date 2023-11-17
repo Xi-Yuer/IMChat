@@ -4,11 +4,13 @@ import { ThemeMode } from 'antd-style'
 interface IUIState {
   fold: boolean
   theme: ThemeMode
+  value: string[]
 }
 
 const initialState = {
   fold: true,
   theme: 'dark',
+  value: []
 } as IUIState
 
 export const UIStore = createSlice({

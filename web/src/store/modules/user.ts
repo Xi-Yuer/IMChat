@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { ILoginResponse, getUserChatRoom } from '../../server/apis/user'
+import { type IChatRoomResponse, type ILoginResponse } from '../../server/apis/user'
 
 interface IUserStore {
   user: ILoginResponse
+  roomList: IChatRoomResponse[]
 }
 
 const initialState = {
   user: {},
+  roomList: [] as IChatRoomResponse[],
 } as IUserStore
 
 export const UserStore = createSlice({
@@ -15,9 +17,10 @@ export const UserStore = createSlice({
   reducers: {
     userLogin(state, action) {
       state.user = action.payload
-      getUserChatRoom().then(res => {
-        console.log(res);
-      })
+
+    },
+    changeRoomList(state, action) {
+      state.roomList = action.payload
     },
     userLogOut(state) {
       state.user.nick_name = ''
@@ -27,8 +30,8 @@ export const UserStore = createSlice({
       state.user.profile_picture = ''
       state.user.id = ''
       state.user.gender = '1'
-      state.user.origin = '1'
-      state.user.last_login = '1'
+      state.user.origin = ''
+      state.user.last_login = ''
     },
     changeUserProfile(state, action) {
       state.user = action.payload
@@ -36,5 +39,5 @@ export const UserStore = createSlice({
   },
 })
 
-export const { userLogin, userLogOut, changeUserProfile } = UserStore.actions
+export const { userLogin, userLogOut, changeUserProfile, changeRoomList } = UserStore.actions
 export default UserStore.reducer

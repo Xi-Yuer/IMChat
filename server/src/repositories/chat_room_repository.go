@@ -8,7 +8,7 @@ import (
 
 type ChatRoomRepository interface {
 	CreateChatRoom(*models.ChatRoom) error
-	GetUserRoomListID(userID string) ([]models.UserChatRoom, error)
+	GetUserRoomList(userID string) ([]models.ChatRoom, error)
 }
 
 type chatRoomRepository struct {
@@ -24,11 +24,22 @@ func (r *chatRoomRepository) CreateChatRoom(chatRoom *models.ChatRoom) error {
 	return r.db.Create(chatRoom).Error
 }
 
-func (r *chatRoomRepository) GetUserRoomListID(userID string) ([]models.UserChatRoom, error) {
+func (r *chatRoomRepository) GetUserRoomList(userID string) ([]models.ChatRoom, error) {
 	var chatRoomIDList []models.UserChatRoom
+	var chatRoomList []models.ChatRoom
+
 	err := r.db.Where("user_id = ?", userID).Find(&chatRoomIDList).Error
 	if err != nil {
-		return chatRoomIDList, err
+		return nil, err
 	}
-	return chatRoomIDList, nil
+
+	var roomsIDs []string
+	for _, v := range chatRoomIDList {
+		roomsIDs = append(roomsIDs, v.ChatRoomID)
+	}
+
+	if err := r.db.Where("id in (?)", roomsIDs).Find(&chatRoomList).Error; err != nil {
+		return chatRoomList, err
+	}
+	return chatRoomList, nil
 }

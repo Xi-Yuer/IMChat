@@ -51,8 +51,16 @@ export const logout = () => {
   })
 }
 
+
+export interface IChatRoomResponse {
+  name: string
+  descripttion: string
+  avatar: string
+  id: string
+  create_at: string
+}
 export const getUserChatRoom = () => {
-  return request.get({
+  return request.get<AxiosResponse<IChatRoomResponse[]>>({
     url: '/chatroom/list'
   })
 }

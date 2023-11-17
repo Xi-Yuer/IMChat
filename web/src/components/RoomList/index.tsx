@@ -1,11 +1,13 @@
 import { memo } from 'react'
-import { roomList } from '../Profile/const'
+import { useSelector } from 'react-redux'
+import { RootState } from '../../store'
 import RoomPanel from '../RoomPanel-lg'
 
 const RoomList = memo(() => {
+  const list = useSelector((state: RootState) => state.UserReducer.roomList)
   return (
     <div className="hidden lg:block w-[250px] h-full border-r dark:border-[#343642] flex-col gap-4 py-4 px-2 overflow-hidden">
-      {roomList.map((room) => {
+      {list.map((room) => {
         return (
           <div className="mb-2 text-[#f0f0f0]" key={room.id}>
             <RoomPanel {...room} />

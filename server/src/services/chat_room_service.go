@@ -1,6 +1,7 @@
 package services
 
 import (
+	"ImChat/src/config"
 	"ImChat/src/dto"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
@@ -8,7 +9,7 @@ import (
 
 type ChatRoomService interface {
 	// 获取聊天室列表
-	GetUserRoomListID(userID string) ([]models.UserChatRoom, error)
+	GetUserRoomList(userID string) ([]dto.ChatRoomResponseDTO, error)
 
 	// 获取聊天室详情
 	// GetChatRoomDetail(id string) (*models.ChatRoom, error)
@@ -36,10 +37,25 @@ func (s *ChatRoomServiceImpl) CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID
 		Name:        dto.Name,
 		Description: dto.Description,
 		AdminID:     adminID,
+		Avatar:      dto.Avatar,
 	}
 	return s.chatRoomRepository.CreateChatRoom(chatRoom)
 }
 
-func (s *ChatRoomServiceImpl) GetUserRoomListID(userID string) ([]models.UserChatRoom, error) {
-	return s.chatRoomRepository.GetUserRoomListID(userID)
+func (s *ChatRoomServiceImpl) GetUserRoomList(userID string) ([]dto.ChatRoomResponseDTO, error) {
+	rooms, err := s.chatRoomRepository.GetUserRoomList(userID)
+	if err != nil {
+		return nil, err
+	}
+	var RoomList []dto.ChatRoomResponseDTO
+	baseUrl := config.AppConfig.DoMian.URL
+	for _, room := range rooms {
+		RoomList = append(RoomList, dto.ChatRoomResponseDTO{
+			ID:          room.ID,
+			Name:        room.Name,
+			Avatar:      baseUrl + room.Avatar,
+			Description: room.Description,
+		})
+	}
+	return RoomList, nil
 }
