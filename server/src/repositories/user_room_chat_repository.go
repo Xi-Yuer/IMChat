@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"ImChat/src/config"
 	"ImChat/src/dto"
 	"ImChat/src/models"
 	"sort"
@@ -62,15 +63,17 @@ func (r *userRoomChatRepository) FindChatRoomUsers(chatRoomId string) ([]dto.Cha
 	})
 
 	var response []dto.ChatRoomUserListResponseDTO
+	baseUrl := config.AppConfig.DoMian.URL
 	for _, user := range users {
 		response = append(response, dto.ChatRoomUserListResponseDTO{
 			ID:             user.ID,
 			Gender:         user.Gender,
 			Bio:            user.Bio,
-			ProfilePicture: user.ProfilePicture,
+			ProfilePicture: baseUrl + user.ProfilePicture,
 			LastLogin:      user.LastLogin,
 			Active:         user.Active,
 			IsAdmin:        user.IsAdmin,
+			NickName:       user.NickName,
 		})
 	}
 

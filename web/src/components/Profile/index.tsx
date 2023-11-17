@@ -2,6 +2,7 @@ import { RootState } from '@/store'
 import {
   GithubFilled,
   MessageOutlined,
+  SmileOutlined,
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons'
@@ -14,7 +15,7 @@ import lightImg from '../../assets/image/light.png'
 import { themeChange } from '../../store/modules/ui'
 import Login, { OpenModal } from '../Login'
 import MinePanel from '../MinePanel'
-import RoomPanel from '../RoomPanel-sm'
+import RoomPanelSm from '../RoomPanel-sm'
 import { iconStyle, iconWrapStyle } from './const'
 
 const Profile = memo(() => {
@@ -30,8 +31,14 @@ const Profile = memo(() => {
     return (
       <div className="flex flex-col gap-2 max-h-48 overflow-y-scroll no-scrollbar">
         {roomList.map((room) => (
-          <RoomPanel {...room} key={room.id} />
+          <RoomPanelSm {...room} key={room.id} />
         ))}
+        {roomList.length === 0 && (
+          <span>
+            <SmileOutlined className="mr-2" />
+            暂无数据
+          </span>
+        )}
       </div>
     )
   }

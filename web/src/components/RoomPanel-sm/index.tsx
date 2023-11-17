@@ -5,7 +5,7 @@ import { IRoomPanelProps } from '../RoomPanel-lg'
 
 const RoomPanel: FC<IRoomPanelProps> = memo(({ name, avatar }) => {
   return (
-    <div className="flex transition-all duration-200 justify-between items-center bg-gray-50 dark:bg-gray-700 gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
+    <div className="flex transition-all duration-200 justify-between items-center bg-gray-100 dark:bg-gray-700 gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
       <div className="flex justify-center items-center rounded-full">
         <Image
           src={avatar}

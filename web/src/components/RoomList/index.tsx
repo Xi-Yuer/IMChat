@@ -1,7 +1,8 @@
+import { SmileOutlined } from '@ant-design/icons'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../store'
-import RoomPanel from '../RoomPanel-lg'
+import RoomPanelLg from '../RoomPanel-lg'
 
 const RoomList = memo(() => {
   const list = useSelector((state: RootState) => state.UserReducer.roomList)
@@ -10,10 +11,18 @@ const RoomList = memo(() => {
       {list.map((room) => {
         return (
           <div className="mb-2 text-[#f0f0f0]" key={room.id}>
-            <RoomPanel {...room} />
+            <RoomPanelLg {...room} />
           </div>
         )
       })}
+      {list.length === 0 && (
+        <div className="w-full h-full flex justify-center items-center dark:text-gray-300">
+          <div className="mt-[-150px]">
+            <SmileOutlined className="mr-2" />
+            暂无数据
+          </div>
+        </div>
+      )}
     </div>
   )
 })
