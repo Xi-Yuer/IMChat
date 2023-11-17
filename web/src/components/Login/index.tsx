@@ -3,9 +3,9 @@ import { Avatar, Button, Form, Input, Modal, Popover, Tooltip } from 'antd'
 import { forwardRef, memo, useImperativeHandle, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { Md5 } from 'ts-md5'
+import { getUserChatRoom } from '../../server/apis/chatRoom'
 import {
   ILoginResponse,
-  getUserChatRoom,
   loginRequest,
   registerRequest,
 } from '../../server/apis/user'

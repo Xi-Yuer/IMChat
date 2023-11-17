@@ -1,8 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { IChatRoomResponse } from '../../server/apis/chatRoom'
+import { ILoginResponse } from '../../server/apis/user'
 
 const initialState = {
-  currentChatRoom: {},
-  currentChatRoomUserList: [],
+  currentChatRoom: {} as IChatRoomResponse,
+  currentChatRoomUserList: [] as (Omit<ILoginResponse, 'token'> & {
+    active: boolean
+  })[],
 }
 export const useChatRoomStore = createSlice({
   name: 'chatRoom',

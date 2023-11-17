@@ -1,11 +1,17 @@
 import { Image } from 'antd'
 import { FC, memo } from 'react'
 import ErrorImage from '../../assets/image/error'
-import { IRoomPanelProps } from '../RoomPanel-lg'
+import { useChangeCurrentRoom } from '../../hooks/useChangeCurrentRoom'
+import { IChatRoomResponse } from '../../server/apis/chatRoom'
 
-const RoomPanel: FC<IRoomPanelProps> = memo(({ name, avatar }) => {
+const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
+  const { name, avatar } = room
+  const { roomChangeHandle } = useChangeCurrentRoom(room)
   return (
-    <div className="flex transition-all duration-200 justify-between items-center bg-gray-100 dark:bg-gray-700 gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600">
+    <div
+      className="flex transition-all duration-700 justify-between items-center bg-gray-100 dark:bg-gray-700 gap-2 cursor-pointer p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600"
+      onClick={roomChangeHandle}
+    >
       <div className="flex justify-center items-center rounded-full">
         <Image
           src={avatar}

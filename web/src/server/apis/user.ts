@@ -13,7 +13,6 @@ export const registerRequest = (params: IRegisterParmas) => {
   })
 }
 export interface ILoginResponse {
-  account: string
   nick_name: string
   id: string
   token: string
@@ -47,20 +46,5 @@ export const updateUserRequest = (params: IUpdateUserParmas) => {
 export const logout = () => {
   return request.post({
     url: '/user/logout',
-  })
-}
-
-export interface IChatRoomResponse {
-  name: string
-  descripttion: string
-  avatar: string
-  id: string
-  create_at: string
-  current_msg: string
-  current_msg_time: number
-}
-export const getUserChatRoom = () => {
-  return request.get<AxiosResponse<IChatRoomResponse[]>>({
-    url: '/chatroom/list',
   })
 }

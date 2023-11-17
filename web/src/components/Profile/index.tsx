@@ -108,7 +108,7 @@ const Profile = memo(() => {
               <img src={lightImg} alt="" className="w-[25px] h-[25px]" />
             )}
           </div>
-          <GithubFilled className="text-3xl dark:text-gray-200" />
+          <GithubFilled className="text-3xl transition-all duration-700 dark:text-gray-200" />
         </div>
       </div>
       <Login ref={LoginRef} />

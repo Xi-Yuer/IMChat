@@ -1,34 +1,15 @@
 import { Image } from 'antd'
 import { FC, memo } from 'react'
-import { useDispatch } from 'react-redux'
 import ErrorImage from '../../assets/image/error'
-import { getRoomUserListRequest } from '../../server/apis/chatRoom'
-import {
-  changeCurrentRoom,
-  changeCurrentRoomUserList,
-} from '../../store/modules/chatRoom'
+import { useChangeCurrentRoom } from '../../hooks/useChangeCurrentRoom'
+import { IChatRoomResponse } from '../../server/apis/chatRoom'
 
-export interface IRoomPanelProps {
-  id: string
-  name: string
-  avatar: string
-  description?: string
-  current_msg?: string
-  current_mag_time?: number
-}
-
-const RoomPanel: FC<IRoomPanelProps> = memo((room) => {
-  const { name, description, avatar, current_msg, current_mag_time } = room
-  const dispatch = useDispatch()
-  const roomClickHandle = () => {
-    dispatch(changeCurrentRoom(room))
-    getRoomUserListRequest(room.id).then((res) => {
-      dispatch(changeCurrentRoomUserList(res.data))
-    })
-  }
+const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
+  const { name, description, avatar, current_msg, current_msg_time } = room
+  const { roomChangeHandle } = useChangeCurrentRoom(room)
   return (
     <div
-      onClick={roomClickHandle}
+      onClick={roomChangeHandle}
       className="flex text-gray-900 transition-all duration-700 justify-between items-center bg-gray-50 dark:bg-gray-700 h-[55px] rounded-md px-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600"
     >
       <div>
@@ -40,7 +21,9 @@ const RoomPanel: FC<IRoomPanelProps> = memo((room) => {
         />
       </div>
       <div className="flex flex-col justify-between w-[100px] ml-[-20px]">
-        <span className="font-bold text-sm dark:text-gray-200 ">{name}</span>
+        <span className="font-bold text-sm dark:text-gray-200 transition-all duration-700">
+          {name}
+        </span>
         <span className="truncate text-xs dark:text-gray-400 transition-all duration-700">
           {description}
           {current_msg}
@@ -48,7 +31,7 @@ const RoomPanel: FC<IRoomPanelProps> = memo((room) => {
       </div>
       <div>
         <span className="text-xs dark:text-gray-200 transition-all duration-700">
-          {current_mag_time}
+          {current_msg_time}
         </span>
       </div>
     </div>

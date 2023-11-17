@@ -1,8 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import {
-  type IChatRoomResponse,
-  type ILoginResponse,
-} from '../../server/apis/user'
+import { type ILoginResponse } from '../../server/apis/user'
+import { IChatRoomResponse } from '../../server/apis/chatRoom'
 
 interface IUserStore {
   user: ILoginResponse
