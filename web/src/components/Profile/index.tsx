@@ -6,7 +6,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Popover } from 'antd'
+import { Avatar, Popover, Spin } from 'antd'
 import classNames from 'classnames'
 import { memo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,21 +25,28 @@ const Profile = memo(() => {
   const user = useSelector((state: RootState) => state.UserReducer.user)
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const roomList = useSelector((state: RootState) => state.UserReducer.roomList)
+  const loading = useSelector(
+    (state: RootState) => state.UIReducer.roomListLoading
+  )
   const [currentActive, setCurrentActive] = useState(1)
 
   const chatRoomList = () => {
     return (
-      <div className="flex flex-col gap-2 max-h-48 overflow-y-scroll no-scrollbar">
-        {roomList.map((room) => (
-          <RoomPanelSm {...room} key={room.id} />
-        ))}
-        {roomList.length === 0 && (
-          <span>
-            <SmileOutlined className="mr-2" />
-            暂无数据
-          </span>
-        )}
-      </div>
+      <>
+        <Spin spinning={loading}>
+          <div className="flex flex-col gap-2 max-h-48 overflow-y-scroll no-scrollbar">
+            {roomList.map((room) => (
+              <RoomPanelSm {...room} key={room.id} />
+            ))}
+            {roomList.length === 0 && (
+              <span>
+                <SmileOutlined className="mr-2" />
+                暂无数据
+              </span>
+            )}
+          </div>
+        </Spin>
+      </>
     )
   }
   const avatarType = () => {

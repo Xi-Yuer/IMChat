@@ -2,15 +2,18 @@ import { createSlice } from '@reduxjs/toolkit'
 import { ThemeMode } from 'antd-style'
 
 interface IUIState {
-  fold: boolean
+  roomListLoading: boolean
+  currentRoomLoading: boolean
+  currentRoomUserListLoading: boolean
   theme: ThemeMode
   value: string[]
 }
 
 const initialState = {
-  fold: true,
+  roomListLoading: false,
+  currentRoomLoading: false,
+  currentRoomUserListLoading: false,
   theme: 'dark',
-  value: [],
 } as IUIState
 
 export const UIStore = createSlice({
@@ -26,8 +29,22 @@ export const UIStore = createSlice({
         document.documentElement.classList.remove('dark')
       }
     },
+    changeRoomListLoading(state, action) {
+      state.roomListLoading = action.payload
+    },
+    changeCurrentRoomLoading(state, action) {
+      state.currentRoomLoading = action.payload
+    },
+    changeCurrentRoomUserListLoading(state, action) {
+      state.currentRoomUserListLoading = action.payload
+    },
   },
 })
 
-export const { themeChange } = UIStore.actions
+export const {
+  themeChange,
+  changeRoomListLoading,
+  changeCurrentRoomLoading,
+  changeCurrentRoomUserListLoading,
+} = UIStore.actions
 export default UIStore.reducer

@@ -9,6 +9,7 @@ import {
   loginRequest,
   registerRequest,
 } from '../../server/apis/user'
+import { changeRoomListLoading } from '../../store/modules/ui'
 import { changeRoomList, userLogin } from '../../store/modules/user'
 import { avatarImgList } from './constant'
 
@@ -47,9 +48,14 @@ const Loggin = forwardRef<OpenModal>((_, ref) => {
           setIsModalOpen(false)
           if (res.data) {
             dispatch(userLogin(res.data as ILoginResponse))
-            getUserChatRoom().then((res) => {
-              dispatch(changeRoomList(res.data))
-            })
+            dispatch(changeRoomListLoading(true))
+            getUserChatRoom()
+              .then((res) => {
+                dispatch(changeRoomList(res.data))
+              })
+              .finally(() => {
+                dispatch(changeRoomListLoading(false))
+              })
           }
         })
         .finally(() => setLoginLoading(false))

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { type ILoginResponse } from '../../server/apis/user'
 import { IChatRoomResponse } from '../../server/apis/chatRoom'
+import { type ILoginResponse } from '../../server/apis/user'
 
 interface IUserStore {
   user: ILoginResponse
@@ -22,16 +22,9 @@ export const UserStore = createSlice({
     changeRoomList(state, action) {
       state.roomList = action.payload
     },
-    userLogOut(state) {
-      state.user.nick_name = ''
-      state.user.token = ''
-      state.user.account = ''
-      state.user.bio = ''
-      state.user.profile_picture = ''
-      state.user.id = ''
-      state.user.gender = '1'
-      state.user.origin = ''
-      state.user.last_login = ''
+    userLogOut() {
+      window.sessionStorage.clear()
+      window.location.reload()
     },
     changeUserProfile(state, action) {
       state.user = action.payload

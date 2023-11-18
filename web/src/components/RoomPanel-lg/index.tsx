@@ -16,6 +16,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
         <Image
           src={avatar}
           width={40}
+          preview={false}
           className="rounded-full border border-gray-200 w-[40px] h-[40px]"
           fallback={ErrorImage}
         />
