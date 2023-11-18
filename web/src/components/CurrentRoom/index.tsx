@@ -22,7 +22,7 @@ const CurrentRoom = memo(() => {
             </Spin>
           </div>
           <Spin spinning={currentRoomUserListLoading}>
-            <div className="w-[180px] hidden xl:block px-2">
+            <div className="w-[180px] overflow-hidden hidden xl:block px-2">
               {currentChatRoomUserList.map((user) => (
                 <UserPanel {...user} key={user.id} />
               ))}
