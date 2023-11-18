@@ -28,6 +28,7 @@ const UserPanel = memo(
               <Image
                 src={user.profile_picture}
                 width={30}
+                height={30}
                 className="rounded-full"
                 preview={false}
               />

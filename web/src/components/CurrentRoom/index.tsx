@@ -3,6 +3,7 @@ import { SmileOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
+import useWebSocket from '../../hooks/useSoket'
 import UserPanel from '../UserPanel'
 
 const CurrentRoom = memo(() => {
@@ -12,6 +13,29 @@ const CurrentRoom = memo(() => {
   const { currentRoomLoading, currentRoomUserListLoading } = useSelector(
     (state: RootState) => state.UIReducer
   )
+  const { user } = useSelector((state: RootState) => state.UserReducer)
+
+  const socketUrl = `ws://localhost:8080/ws?id=${user.id}`
+  const [webSocket, sendMessage, lastMessage, isConnected] = useWebSocket({
+    url: socketUrl, //这里放长链接
+    onOpen: () => {
+      //连接成功
+      console.log('WebSocket connected')
+    },
+    onClose: () => {
+      //连接关闭
+      console.log('WebSocket disconnected')
+    },
+    onError: (event) => {
+      //连接异常
+      console.error('WebSocket error:', event)
+    },
+    onMessage: (message) => {
+      //收到消息
+      console.log('WebSocket received message:', message)
+    },
+  })
+
   return (
     <>
       {currentChatRoom.id ? (

@@ -4,7 +4,6 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
-	"ImChat/src/handlers"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
@@ -56,19 +55,14 @@ func HandleReceivedData(p []byte, UserID string) {
 
 // 通知群在线用户获取最新群在线人数信息
 func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context) {
-	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
-
-	if !ok {
-		handlers.NoPermission(c)
-		return
-	}
+	id := c.Param("id") // 用户携带 token 之后就会有 id 信息
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOffline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
 	userRepo := repositories.NewUserRepository(db.DB)
 	time := time.Now()
-	userRepo.Logout(id.(string), time)
+	userRepo.Logout(id, time)
 	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
 		// TODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
@@ -149,5 +143,5 @@ func messageStorageWorker() {
 func storageMessage(message *models.Message) {
 	db.DB.Create(message)
 	// 更新群聊信息
-	db.DB.Model(&models.ChatRoom{}).Where("id = ?", message.ChatRoomID).Update("current_msg", message.Content).Update("cuurrent_msg_time", message.CreatedAt)
+	db.DB.Model(&models.ChatRoom{}).Where("id = ?", message.ChatRoomID).Update("current_msg", message.Content).Update("current_msg_time", message.CreatedAt)
 }

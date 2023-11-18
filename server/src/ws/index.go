@@ -4,11 +4,11 @@ import (
 	"ImChat/src/controllers"
 	"ImChat/src/db"
 	"ImChat/src/enum"
-	"ImChat/src/handlers"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"encoding/json"
 	"log"
+	"net/http"
 	"sync"
 	"time"
 
@@ -17,6 +17,9 @@ import (
 )
 
 var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 }
@@ -36,9 +39,9 @@ func UpgradeWebSocketConnection(c *gin.Context) (*websocket.Conn, error) {
 // 处理用户信息和添加到连接映射
 func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error {
 	// 从 WebSocket 请求头中获取用户信息
-	UserID, _ := c.Get("id")
+	UserID := c.Query("id")
 	chatRoomRepository := repositories.NewUserRoomChatRepository(db.DB)
-	userChatRoom, err := chatRoomRepository.FindUserChatRoom(UserID.(string))
+	userChatRoom, err := chatRoomRepository.FindUserChatRoom(UserID)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -50,8 +53,8 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 
 	userMutex.Lock()
 	conn := models.UserConnection{
-		UserID: UserID.(string), // 用户名
-		Groups: userGroups,      // 群组
+		UserID: UserID,     // 用户名
+		Groups: userGroups, // 群组
 		Conn:   ws,
 	}
 	models.Connection[ws] = conn
@@ -64,12 +67,7 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 // 处理接收到的消息
 func HandleReceivedMessage(p []byte, c *gin.Context) {
 	// 在这里处理接收到的 JSON 数据
-	id, ok := c.Get("id") // 用户携带 token 之后就会有 id 信息
-	if !ok {
-		handlers.NoPermission(c)
-		return
-	}
-
+	id := c.Query("id") // 用户携带 token 之后就会有 id 信息
 	// 获取传递过来的数据 type 值
 	var MessageType struct {
 		Type string `json:"type"`
@@ -82,7 +80,7 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 	switch MessageType.Type {
 	// 群消息
 	case enum.GroupMessage:
-		controllers.HandleReceivedData(p, id.(string))
+		controllers.HandleReceivedData(p, id)
 	default:
 		// 处理其他消息类型
 	}

@@ -58,7 +58,7 @@ func SetupRoutes(router *gin.Engine) {
 		fileRoutes.POST("/upload", fileController.UploadFile)
 	}
 
-	wsRoutes := router.Group("/ws", middlewares.Auth())
+	wsRoutes := router.Group("/ws")
 	{
 		wsRoutes.GET("", func(c *gin.Context) {
 			// 创建WebSocket连接

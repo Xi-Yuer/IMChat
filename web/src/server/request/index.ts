@@ -133,9 +133,6 @@ export default new Request('/api', 100000, {
   responseInterceptor: {
     onFulfilled(value) {
       console.log('实例响应成功拦截')
-      if (value.data.code === 200) {
-        message.success(value.data.msg)
-      }
       if (value.data.code !== 200) {
         message.error(value.data.msg)
       }
