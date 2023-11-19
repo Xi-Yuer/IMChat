@@ -87,7 +87,7 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 }
 
 // 检测客户端连接状态
-func CheckHeartbeat(conn *websocket.Conn, c *gin.Context) {
+func CheckHeartbeat(conn *websocket.Conn, c *gin.Context, id string) {
 loop:
 	for {
 		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
@@ -96,7 +96,7 @@ loop:
 			log.Printf("发送Ping失败：%v", err)
 			log.Println("客户端离线")
 			// 处理客户端离线业务
-			controllers.SendGroupChatNumber(conn, c)
+			controllers.SendGroupChatNumber(conn, c, id)
 			// 删除连接维护
 			RemoveConnection(conn)
 			// 停止循环，不再发送 ping

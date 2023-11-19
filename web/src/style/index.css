@@ -23,7 +23,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #a2abb8; /* 滚动条轨道背景颜色 */
+  background-color: transparent; /* 滚动条轨道背景颜色 */
 }
 
 ::-webkit-scrollbar-thumb {

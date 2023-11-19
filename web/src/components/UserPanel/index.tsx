@@ -37,7 +37,7 @@ const UserPanel = memo(
                   'w-2 h-2 rounded-full absolute right-[-2px] bottom-0 transition-all duration-700',
                   {
                     'bg-[#adff2f]': user.active,
-                    'bg-gray-500': !user.active,
+                    'bg-gray-400': !user.active,
                   }
                 )}
               ></span>

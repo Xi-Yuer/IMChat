@@ -9,6 +9,7 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -55,8 +56,8 @@ func HandleReceivedData(p []byte, UserID string) {
 }
 
 // 通知群在线用户获取最新群在线人数信息
-func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context) {
-	id := c.Param("id") // 用户携带 token 之后就会有 id 信息
+func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context, id string) {
+	fmt.Println("id===========", id)
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOffline, // 响应体
 	}

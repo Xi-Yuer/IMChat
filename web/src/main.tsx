@@ -13,7 +13,20 @@ import './style/index.css'
 let persistor = persistStore(store)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <ConfigProvider locale={zhCN}>
+  <ConfigProvider
+    locale={zhCN}
+    theme={{
+      token: {
+        controlOutline: 'transparent',
+      },
+      components: {
+        Input: {
+          activeBorderColor: 'transparent',
+          hoverBorderColor: 'transparent',
+        },
+      },
+    }}
+  >
     <App>
       <Provider store={store}>
         <PersistGate

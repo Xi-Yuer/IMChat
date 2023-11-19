@@ -11,9 +11,16 @@ import { themeChange } from './store/modules/ui'
 import { customDarkAlgorithm } from './theme/dark'
 import { customLightAlgorithm } from './theme/light'
 
+interface ContextType {
+  sendMessage: (message: any) => void
+  lastMessage: string
+  webSocket: WebSocket | undefined
+  isConnected: boolean
+}
+
+export const WebSocketContext = createContext<ContextType>({} as ContextType)
 const Root = memo(() => {
   const dispatch = useDispatch()
-  const WebSocketContext = createContext({})
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const { user } = useSelector((state: RootState) => state.UserReducer)
 
@@ -58,7 +65,7 @@ const Root = memo(() => {
           }
         >
           <WebSocketContext.Provider
-            value={[sendMessage, lastMessage, isConnected, webSocket]}
+            value={{ sendMessage, lastMessage, isConnected, webSocket }}
           >
             <RenderRoutes />
           </WebSocketContext.Provider>
