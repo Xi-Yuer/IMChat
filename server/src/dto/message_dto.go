@@ -27,6 +27,7 @@ type MessageToRoomDTO struct {
 
 type MessageDTO struct {
 	Content     string `json:"content"`
+	GroupID     string `json:"group_id"`
 	MessageType string `json:"message_type"`
 	CreatedAt   string `json:"created_at"`
 }

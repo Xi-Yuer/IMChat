@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"ImChat/src/config"
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
@@ -104,11 +105,13 @@ func getUserResponse(userID string) *dto.UserResponseDTO {
 		return nil
 	}
 
+	baseUrl := config.AppConfig.DoMian.URL
 	return &dto.UserResponseDTO{
 		ID:             user.ID,
+		NickName:       user.NickName,
 		Gender:         user.Gender,
 		Bio:            user.Bio,
-		ProfilePicture: user.ProfilePicture,
+		ProfilePicture: baseUrl + user.ProfilePicture,
 		LastLogin:      user.LastLogin,
 		Origin:         user.Origin,
 	}
@@ -128,6 +131,7 @@ func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 	return &dto.MessageDTO{
 		Content:     data.Message,
 		MessageType: data.MessageType,
+		GroupID:     data.GroupID,
 		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 }

@@ -3,6 +3,7 @@ import { persistReducer } from 'redux-persist'
 import storageSession from 'redux-persist/lib/storage/session'
 import thunk from 'redux-thunk'
 import ChatRoomReducer from './modules/chatRoom'
+import SocketReducer from './modules/socket'
 import UIReducer from './modules/ui'
 import UserReducer from './modules/user'
 
@@ -15,6 +16,7 @@ const reducers = combineReducers({
   UIReducer,
   UserReducer,
   ChatRoomReducer,
+  SocketReducer,
 })
 
 export const persistedReducer = persistReducer(persistConfig, reducers)
