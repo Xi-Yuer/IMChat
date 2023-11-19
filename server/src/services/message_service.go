@@ -1,6 +1,8 @@
 package services
 
 import (
+	"ImChat/src/config"
+	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
@@ -35,22 +37,27 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 		return nil, err
 	}
 	var chatMessageResponseDTOs []*dto.ChatMessageResponseDTO
+	baseUrl := config.AppConfig.DoMian.URL
 	for _, message := range messages {
+		userRepo := repositories.NewUserRepository(db.DB)
+		user, _ := userRepo.GetUserDetailByUserID(message.SenderID)
 		chatMessageResponseDTO := &dto.ChatMessageResponseDTO{
 			User: &dto.UserResponseDTO{
-				ID:             message.SenderID,
-				Gender:         message.Sender.Gender,
-				Bio:            message.Sender.Bio,
-				ProfilePicture: message.Sender.ProfilePicture,
-				Origin:         message.Sender.Origin,
+				ID:             user.ID,
+				NickName:       user.NickName,
+				Gender:         user.Gender,
+				Bio:            user.Bio,
+				ProfilePicture: baseUrl + user.ProfilePicture,
+				Origin:         user.Origin,
 			},
 			Message: &dto.MessageDTO{
 				Content:     message.Content,
+				CreatedAt:   message.BaseModel.CreatedAt,
+				GroupID:     message.ChatRoom.ID,
 				MessageType: message.MessageType,
 			},
 		}
-
-		chatMessageResponseDTOs = append(chatMessageResponseDTOs, chatMessageResponseDTO)
+		chatMessageResponseDTOs = append([]*dto.ChatMessageResponseDTO{chatMessageResponseDTO}, chatMessageResponseDTOs...)
 	}
 	return chatMessageResponseDTOs, nil
 }

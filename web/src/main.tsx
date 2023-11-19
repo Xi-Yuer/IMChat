@@ -18,6 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     theme={{
       token: {
         controlOutline: 'transparent',
+        colorBgMask: 'transparent',
       },
       components: {
         Input: {

@@ -26,6 +26,7 @@ func (r *MessageRepositoryImpl) CreateMessage(message *models.Message) error {
 // 获取群消息聊天列表
 func (r *MessageRepositoryImpl) GetChatRoomMessageList(chatRoomID string, limit, page int) ([]*models.Message, error) {
 	var messages []*models.Message
+	// 查找最新数据
 	if err := r.db.Where("chat_room_id = ?", chatRoomID).Order("created_at desc").Limit(limit).Offset((page - 1) * limit).Find(&messages).Error; err != nil {
 		return nil, err
 	}

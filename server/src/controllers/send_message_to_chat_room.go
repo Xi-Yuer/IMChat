@@ -9,7 +9,6 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -57,7 +56,6 @@ func HandleReceivedData(p []byte, UserID string) {
 
 // 通知群在线用户获取最新群在线人数信息
 func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context, id string) {
-	fmt.Println("id===========", id)
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOffline, // 响应体
 	}
@@ -133,7 +131,7 @@ func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 		Content:     data.Message,
 		MessageType: data.MessageType,
 		GroupID:     data.GroupID,
-		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		CreatedAt:   time.Now(),
 	}
 }
 

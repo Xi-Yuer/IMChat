@@ -19,8 +19,6 @@ export const useSocketStore = createSlice({
   initialState,
   reducers: {
     changeRoomMessageList(state, actions) {
-      console.log(actions.payload.message.group_id)
-
       if (state.roomMessageList[actions.payload.message.group_id]) {
         state.roomMessageList[actions.payload.message.group_id].push(
           actions.payload
@@ -31,8 +29,12 @@ export const useSocketStore = createSlice({
         ]
       }
     },
+    changeRoomMessageListByRoomId(state, actions) {
+      state.roomMessageList[actions.payload.room_id] = actions.payload.message
+    },
   },
 })
 
-export const { changeRoomMessageList } = useSocketStore.actions
+export const { changeRoomMessageList, changeRoomMessageListByRoomId } =
+  useSocketStore.actions
 export default useSocketStore.reducer

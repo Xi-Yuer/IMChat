@@ -17,12 +17,12 @@ func NewMessageController(messageService services.MessageService) *MessageContro
 }
 
 func (c *MessageController) GetChatRoomMessageList(ctx *gin.Context) {
-	var dto dto.GetMessageDTO
-	if err := ctx.ShouldBind(&dto); err != nil {
+	var messageDTO dto.GetMessageDTO
+	if err := ctx.ShouldBindQuery(&messageDTO); err != nil {
 		handlers.Error(ctx, err.Error())
 		return
 	}
-	response, err := c.messageService.GetChatRoomMessageList(dto.ChatRoomID, dto.Limit, dto.Offset)
+	response, err := c.messageService.GetChatRoomMessageList(messageDTO.ChatRoomID, messageDTO.Limit, messageDTO.Offset)
 	if err != nil {
 		handlers.Error(ctx, err.Error())
 		return

@@ -3,7 +3,6 @@ package controllers
 import (
 	"ImChat/src/handlers"
 	"ImChat/src/services"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +21,6 @@ func (c *FileController) UploadFile(ctx *gin.Context) {
 		handlers.NoAuth(ctx)
 		return
 	}
-	fmt.Println(sender)
 	// 获取文件
 	file, err := ctx.FormFile("file")
 	if err != nil {

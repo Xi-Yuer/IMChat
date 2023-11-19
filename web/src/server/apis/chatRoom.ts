@@ -24,3 +24,18 @@ export const getRoomUserListRequest = (chat_room_id: string) => {
     },
   })
 }
+
+export const getRoomMsgListRequest = (
+  chat_room_id: string,
+  limit: number,
+  offset: number
+) => {
+  return request.get({
+    url: '/message/list',
+    params: {
+      chat_room_id,
+      limit,
+      offset,
+    },
+  })
+}

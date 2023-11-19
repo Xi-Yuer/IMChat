@@ -1,5 +1,5 @@
 import { RootState } from '@/store'
-import { SmileOutlined } from '@ant-design/icons'
+import { LoadingOutlined, SmileOutlined } from '@ant-design/icons'
 import { Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
@@ -15,7 +15,7 @@ const CurrentRoom = memo(() => {
   const { currentChatRoom, currentChatRoomUserList } = useSelector(
     (state: RootState) => state.ChatRoomReducer
   )
-  const { currentRoomUserListLoading } = useSelector(
+  const { currentRoomUserListLoading, currentRoomLoading } = useSelector(
     (state: RootState) => state.UIReducer
   )
   const { roomMessageList } = useSelector(
@@ -38,26 +38,41 @@ const CurrentRoom = memo(() => {
         top: contentRef.current.scrollHeight,
       })
     }
+  }, [currentChatRoom])
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo({
+        top: contentRef.current.scrollHeight,
+      })
+    }
   }, [roomMessageList])
   return (
     <>
       {currentChatRoom.id ? (
         <div className="p-1 flex-1 flex h-[100%]">
           <div className="flex-1 border-r h-[100%] border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
-            <div>
+            <div className=" flex items-center">
               <h2 className="dark:text-gray-200 text-lg p-2">
                 {currentChatRoom.name}
               </h2>
+              <div className=" ml-2 dark:text-gray-200">
+                {currentRoomLoading && <LoadingOutlined />}
+              </div>
             </div>
             <div className="flex flex-col h-full">
               <div
-                className="flex-1 overflow-y-auto no-scrollbar p-2"
+                className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2"
                 ref={contentRef}
               >
                 {roomMessageList[currentChatRoom.id]?.map((message, index) => {
+                  const lastMessageTime =
+                    roomMessageList[currentChatRoom.id]?.[index - 1]?.message
+                      .created_at
                   return (
                     <MessageBubble
                       {...message}
+                      lastMessageTime={lastMessageTime}
                       key={message.message.content + index}
                     />
                   )
@@ -71,7 +86,7 @@ const CurrentRoom = memo(() => {
                   className=" transition-all duration-700"
                   bordered={false}
                   rows={6}
-                  maxLength={100}
+                  maxLength={300}
                 />
               </div>
             </div>
