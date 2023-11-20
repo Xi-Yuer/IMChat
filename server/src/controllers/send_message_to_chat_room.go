@@ -71,12 +71,15 @@ func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context, id string) {
 }
 
 // 用户上线
-func UserOnline(conn models.UserConnection) {
+func UserOnline(conn models.UserConnection, c *gin.Context) {
 	// 通知群在线用户获取最新群在线人数信息
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOnline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
+	userRepo := repositories.NewUserRepository(db.DB)
+	ip := c.ClientIP()
+	go userRepo.Login(conn.UserID, ip)
 	for _, v := range models.Connection {
 		if utils.FirstArrayInLastArray(v.Groups, conn.Groups) {
 			// 发送响应数据给用户所在群组的所有用户

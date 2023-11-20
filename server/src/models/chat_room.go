@@ -16,7 +16,7 @@ type ChatRoom struct {
 
 	CurrentMsg     string     `json:"current_msg" gorm:"type:varchar(255)"`
 	CurrentMsgTime *time.Time `json:"current_msg_time" gorm:"type:datetime"`
-
+	
 	Admin User `gorm:"foreignKey:AdminID"`
 }
 

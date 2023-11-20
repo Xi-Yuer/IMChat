@@ -58,7 +58,7 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 		Conn:   ws,
 	}
 	models.Connection[ws] = conn
-	go controllers.UserOnline(conn)
+	go controllers.UserOnline(conn, c)
 	userMutex.Unlock()
 
 	return nil

@@ -51,6 +51,13 @@ func (s *ChatRoomServiceImpl) GetUserRoomList(userID string) ([]dto.ChatRoomResp
 	baseUrl := config.AppConfig.DoMian.URL
 	for _, room := range rooms {
 		RoomList = append(RoomList, dto.ChatRoomResponseDTO{
+			Admin: dto.UserResponseDTO{
+				NickName:       room.Admin.NickName,
+				ProfilePicture: baseUrl + room.Admin.ProfilePicture,
+				Gender:         room.Admin.Gender,
+				Bio:            room.Admin.Gender,
+				ID:             room.Admin.ID,
+			},
 			ID:             room.ID,
 			Name:           room.Name,
 			Avatar:         baseUrl + room.Avatar,

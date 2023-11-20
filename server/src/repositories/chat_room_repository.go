@@ -28,7 +28,7 @@ func (r *chatRoomRepository) GetUserRoomList(userID string) ([]models.ChatRoom, 
 	var chatRoomIDList []models.UserChatRoom
 	var chatRoomList []models.ChatRoom
 
-	err := r.db.Where("user_id = ?", userID).Find(&chatRoomIDList).Error
+	err := r.db.Preload("User").Where("user_id = ?", userID).Find(&chatRoomIDList).Error
 	if err != nil {
 		return nil, err
 	}
