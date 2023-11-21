@@ -3,11 +3,15 @@ import { memo } from 'react'
 import CurrentRoom from '../../components/CurrentRoom'
 import Profile from '../../components/Profile'
 import RoomList from '../../components/RoomList/index'
+import { useScreen } from '../../hooks/useScreen'
+import { InnerStyle, WrapperStyle } from './style'
+
 const Home = memo(() => {
+  const { isMobile } = useScreen()
   return (
-    <div className="backdrop-blur-3xl bg-gray-200 w-screen h-screen flex items-center justify-center dark:bg-gray-600 transition-all duration-700">
-      <ParticlesBg type="tadpole" bg={true} />
-      <div className="w-[80%] h-[80%] min-h-[500px] min-w-[600px] overflow-hidden bg-white rounded-lg flex select-none dark:bg-[#333643] transition-all duration-700">
+    <div className={WrapperStyle(isMobile)}>
+      {!isMobile && <ParticlesBg type="tadpole" bg={true} />}
+      <div className={InnerStyle(isMobile)}>
         <Profile />
         <RoomList />
         <CurrentRoom />

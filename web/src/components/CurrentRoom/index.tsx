@@ -1,10 +1,17 @@
 import { RootState } from '@/store'
-import { LoadingOutlined, SmileOutlined } from '@ant-design/icons'
+import {
+  LoadingOutlined,
+  PictureOutlined,
+  SendOutlined,
+  SmileOutlined,
+} from '@ant-design/icons'
 import { Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import classNames from 'classnames'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
+import { useScreen } from '../../hooks/useScreen'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
 
@@ -12,6 +19,7 @@ const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const contentRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
+  const { isMobile } = useScreen()
   const { currentChatRoom, currentChatRoomUserList } = useSelector(
     (state: RootState) => state.ChatRoomReducer
   )
@@ -22,6 +30,15 @@ const CurrentRoom = memo(() => {
     (state: RootState) => state.SocketReducer
   )
 
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      if (contentRef.current) {
+        contentRef.current.scrollTo({
+          top: contentRef.current.scrollHeight,
+        })
+      }
+    })
+  }, [])
   const sendMessage = () => {
     sendMessageContext({
       type: 'GROUP_MESSAGE',
@@ -51,7 +68,7 @@ const CurrentRoom = memo(() => {
     <>
       {currentChatRoom.id ? (
         <div className="p-1 flex-1 flex h-[100%]">
-          <div className="flex-1 border-r h-[100%] border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
+          <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
             <div className=" flex items-center">
               <h2 className="dark:text-gray-200 text-lg p-2">
                 {currentChatRoom.name}
@@ -61,6 +78,7 @@ const CurrentRoom = memo(() => {
               </div>
             </div>
             <div className="flex flex-col h-full">
+              {/* 消息框 */}
               <div
                 className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2"
                 ref={contentRef}
@@ -78,34 +96,54 @@ const CurrentRoom = memo(() => {
                   )
                 })}
               </div>
-              <div className="h-[180px] border-t dark:border-[#3b3d4b] transition-all duration-700">
+              {/* 输入框 */}
+              <div className="h-[180px] border-dashed border-t dark:border-[#494b5c] transition-all duration-700">
+                <div className="w-full flex justify-between items-center px-3 pt-2">
+                  <div className="flex gap-2">
+                    <SmileOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
+                    <PictureOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
+                  </div>
+                  <div>
+                    <SendOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
+                  </div>
+                </div>
                 <TextArea
                   onPressEnter={sendMessage}
                   value={inputValue}
+                  placeholder="愉快的聊天吧~"
                   onChange={(e) => setInputValue(e.target.value)}
                   className=" transition-all duration-700"
                   bordered={false}
-                  rows={6}
+                  rows={4}
                   maxLength={300}
                 />
               </div>
             </div>
           </div>
-          <Spin spinning={currentRoomUserListLoading}>
-            <div className="w-[180px] overflow-hidden hidden xl:block px-2">
-              {currentChatRoomUserList.map((user) => (
-                <UserPanel {...user} key={user.id} />
-              ))}
-              {currentChatRoomUserList.length === 0 && (
-                <div className="w-full h-full flex justify-center items-center dark:text-gray-300">
-                  <div className="mt-[-150px]">
-                    <SmileOutlined className="mr-2" />
-                    暂无数据
+          {/* 侧边栏用户列表 */}
+          {!isMobile ? (
+            <Spin
+              spinning={currentRoomUserListLoading && !isMobile}
+              wrapperClassName={classNames({
+                'lg:w-[180px] ': !isMobile,
+                'hidden ': isMobile,
+              })}
+            >
+              <div className="w-0 lg:w-[180px] overflow-hidden hidden lg:block px-2">
+                {currentChatRoomUserList.map((user) => (
+                  <UserPanel {...user} key={user.id} />
+                ))}
+                {currentChatRoomUserList.length === 0 && (
+                  <div className="w-full h-full flex justify-center items-center dark:text-gray-300">
+                    <div className="mt-[-150px]">
+                      <SmileOutlined className="mr-2" />
+                      暂无数据
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </Spin>
+                )}
+              </div>
+            </Spin>
+          ) : null}
         </div>
       ) : null}
     </>
