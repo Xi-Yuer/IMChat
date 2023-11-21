@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-//消息类型，下面的代码我用any类型，不建议用any，大家可以自己声明Message类型，为了方便我暂时用any 不用Message
-
+//消息类型
 export type Message = {
   type: string
   data: any

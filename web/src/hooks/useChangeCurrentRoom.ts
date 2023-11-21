@@ -20,27 +20,32 @@ export const useChangeCurrentRoom = (room: IChatRoomResponse) => {
   const { currentChatRoom } = useSelector(
     (state: RootState) => state.ChatRoomReducer
   )
-  const roomChangeHandle = () => {
+  const roomChangeHandle = async () => {
     if (currentChatRoom.id === room.id) return
     dispatch(changeCurrentRoom(room))
-    dispatch(changeCurrentRoomUserListLoading(true))
-    getRoomUserListRequest(room.id)
-      .then((res) => {
-        dispatch(changeCurrentRoomUserList(res.data))
-      })
-      .finally(() => {
-        dispatch(changeCurrentRoomUserListLoading(false))
-      })
-    dispatch(changeCurrentRoomLoading(true))
-    getRoomMsgListRequest(room.id, 20, 1)
-      .then((res) => {
-        dispatch(
-          changeRoomMessageListByRoomId({ room_id: room.id, message: res.data })
-        )
-      })
-      .finally(() => {
-        dispatch(changeCurrentRoomLoading(false))
-      })
+
+    // 群用户列表
+    try {
+      dispatch(changeCurrentRoomUserListLoading(true))
+      const result = await getRoomUserListRequest(room.id)
+      dispatch(changeCurrentRoomUserList(result.data))
+    } finally {
+      dispatch(changeCurrentRoomUserListLoading(false))
+    }
+
+    // 群消息列表
+    try {
+      dispatch(changeCurrentRoomLoading(true))
+      const roomMessageList = await getRoomMsgListRequest(room.id, 20, 1)
+      dispatch(
+        changeRoomMessageListByRoomId({
+          room_id: room.id,
+          message: roomMessageList.data,
+        })
+      )
+    } finally {
+      dispatch(changeCurrentRoomLoading(false))
+    }
   }
   return {
     roomChangeHandle,

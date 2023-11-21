@@ -23,8 +23,8 @@ const Root = memo(() => {
   const dispatch = useDispatch()
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const { user } = useSelector((state: RootState) => state.UserReducer)
-
   const socketUrl = `ws://localhost:8080/ws?id=${user.id}`
+
   const [webSocket, sendMessage, lastMessage, isConnected] = useWebSocket({
     isAuthenticated: !!user.id,
     url: socketUrl, //这里放长链接
