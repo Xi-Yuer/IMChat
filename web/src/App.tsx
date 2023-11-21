@@ -48,22 +48,20 @@ const Root = memo(() => {
       }
     },
   })
+  const Theme = (appearance: ThemeAppearance) => {
+    return appearance === 'dark'
+      ? { token: {}, algorithm: [customDarkAlgorithm] }
+      : {
+          algorithm: [customLightAlgorithm],
+        }
+  }
   useEffect(() => {
     dispatch(themeChange(theme))
   }, [])
   return (
     <>
       <HashRouter>
-        <ThemeProvider
-          themeMode={theme}
-          theme={(appearance: ThemeAppearance) =>
-            appearance === 'dark'
-              ? { token: {}, algorithm: [customDarkAlgorithm] }
-              : {
-                  algorithm: [customLightAlgorithm],
-                }
-          }
-        >
+        <ThemeProvider themeMode={theme} theme={Theme}>
           <WebSocketContext.Provider
             value={{ sendMessage, lastMessage, isConnected, webSocket }}
           >
