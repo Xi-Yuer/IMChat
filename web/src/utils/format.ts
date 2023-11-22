@@ -52,7 +52,7 @@ export const isBefore30Minutes = (
   //  date 是否是 lastMessageTime 的后 30 分钟之后
   const pre = new Date(lastMessageTime)
   const cur = new Date(date)
-  if (cur.getTime() - pre.getTime() > 30 * 60 * 1000) {
+  if (cur.getTime() - pre.getTime() > 5 * 60 * 1000) {
     return true
   }
   return false

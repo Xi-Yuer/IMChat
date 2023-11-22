@@ -12,6 +12,11 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
     } = props
     return (
       <>
+        {isBefore30Minutes(lastMessageTime, created_at) ? (
+          <div className="w-full text-xs text-gray-400 text-center dark:text-gray-400">
+            {formatDateV2(lastMessageTime)}
+          </div>
+        ) : null}
         <div className="my-8 flex gap-3">
           <div>
             <Avatar src={profile_picture} size={30} />
@@ -30,11 +35,6 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
             </div>
           </div>
         </div>
-        {isBefore30Minutes(lastMessageTime, created_at) ? (
-          <div className="w-full text-xs text-gray-400 text-center dark:text-gray-400">
-            {formatDateV2(created_at)}
-          </div>
-        ) : null}
       </>
     )
   }
