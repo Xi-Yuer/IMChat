@@ -80,9 +80,13 @@ const Profile = memo(() => {
         <div className="flex items-center flex-col gap-4">
           {avatarType()}
           <div
-            className={classNames(iconWrapStyle, {
-              'bg-[#ececec] dark:bg-[#474b5c]': currentActive === 1,
-            })}
+            className={classNames(
+              iconWrapStyle,
+              {
+                'bg-[#ececec] dark:bg-[#474b5c]': currentActive === 1,
+              },
+              'hidden lg:flex'
+            )}
             onClick={() => sideBarItemClick(1)}
           >
             <MessageOutlined className={iconStyle} />

@@ -7,7 +7,6 @@ import {
 } from '@ant-design/icons'
 import { Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
-import classNames from 'classnames'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
@@ -124,12 +123,9 @@ const CurrentRoom = memo(() => {
           {!isMobile ? (
             <Spin
               spinning={currentRoomUserListLoading && !isMobile}
-              wrapperClassName={classNames({
-                'lg:w-[180px] ': !isMobile,
-                'hidden ': isMobile,
-              })}
+              wrapperClassName="hidden xl:w-[180px] xl:block"
             >
-              <div className="w-0 lg:w-[180px] overflow-hidden hidden lg:block px-2">
+              <div className="w-0 lg:w-[180px] overflow-hidden hidden xl:block px-2 transition-all duration-700">
                 {currentChatRoomUserList.map((user) => (
                   <UserPanel {...user} key={user.id} />
                 ))}

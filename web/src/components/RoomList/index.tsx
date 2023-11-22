@@ -16,7 +16,7 @@ const RoomList = memo(() => {
     <>
       {!isMobile && (
         <Spin spinning={loading}>
-          <div className="hidden aaa lg:block w-[250px] h-full flex-col gap-4 py-4 px-2 overflow-hidden transition-all duration-700">
+          <div className="hidden lg:block w-[250px] h-full flex-col gap-4 py-4 px-2 overflow-hidden transition-all duration-700">
             {list.map((room) => {
               return (
                 <div className="mb-2 text-[#f0f0f0]" key={room.id}>
