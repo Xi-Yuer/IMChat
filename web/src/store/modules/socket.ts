@@ -30,14 +30,11 @@ export const useSocketStore = createSlice({
       }
     },
     unshiftRoomMessageList(state, actions) {
-      console.log(actions.payload.message)
       state.roomMessageList[actions.payload.room_id].unshift(
         ...actions.payload.message
       )
     },
     changeRoomMessageListByRoomId(state, actions) {
-      console.log(actions.payload.message)
-
       state.roomMessageList[actions.payload.room_id] = actions.payload.message
     },
   },

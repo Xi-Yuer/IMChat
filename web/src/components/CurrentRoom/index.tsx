@@ -55,26 +55,11 @@ const CurrentRoom = memo(() => {
     setInputValue('')
     return false
   }
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: contentRef.current.scrollHeight,
-      })
-    }
-  }, [currentChatRoom])
-
-  useEffect(() => {
-    if (contentRef.current) {
-      contentRef.current.scrollTo({
-        top: contentRef.current.scrollHeight,
-      })
-    }
-  }, [roomMessageList])
 
   const handleScroll = () => {
     if (contentRef.current) {
+      setCurrentContentScrollHeight(contentRef.current?.scrollHeight)
       if (contentRef.current.scrollTop === 0) {
-        setCurrentContentScrollHeight(contentRef.current?.scrollHeight)
         setCurrentPage(currentPage + 1)
       }
     }
@@ -82,7 +67,7 @@ const CurrentRoom = memo(() => {
 
   // 加载更多
   useEffect(() => {
-    if (!user.id || !currentChatRoom.id) return
+    if (!user.id || !currentChatRoom.id || currentPage === 1) return
     getRoomMsgListRequest(currentChatRoom.id, 20, currentPage).then((res) => {
       if (res.data?.length) {
         dispatch(
@@ -91,8 +76,10 @@ const CurrentRoom = memo(() => {
             message: res.data,
           })
         )
-        contentRef.current!.scrollTo({
-          top: currentContentScrollHeight,
+        setTimeout(() => {
+          contentRef.current!.scrollTo({
+            top: contentRef.current!.scrollHeight - currentContentScrollHeight,
+          })
         })
       }
     })
