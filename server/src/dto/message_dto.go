@@ -40,6 +40,6 @@ type MessageListResponseDTO struct {
 
 type GetMessageDTO struct {
 	ChatRoomID string `form:"chat_room_id" json:"chat_room_id" binding:"required"`
-	Limit      int    `form:"limit" json:"limit" binding:"required"`
-	Offset     int    `form:"offset" json:"offset" binding:"required"`
+	Limit      *int    `form:"limit" json:"limit" binding:"required"`
+	Offset     *int    `form:"offset" json:"offset" binding:"required"`
 }

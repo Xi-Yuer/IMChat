@@ -8,9 +8,11 @@ import {
 import { Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { useScreen } from '../../hooks/useScreen'
+import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
+import { unshiftRoomMessageList } from '../../store/modules/socket'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
 
@@ -18,7 +20,11 @@ const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const contentRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [currentContentScrollHeight, setCurrentContentScrollHeight] =
+    useState(0)
   const { isMobile } = useScreen()
+  const dispatch = useDispatch()
   const { currentChatRoom, currentChatRoomUserList } = useSelector(
     (state: RootState) => state.ChatRoomReducer
   )
@@ -28,6 +34,7 @@ const CurrentRoom = memo(() => {
   const { roomMessageList } = useSelector(
     (state: RootState) => state.SocketReducer
   )
+  const { user } = useSelector((state: RootState) => state.UserReducer)
 
   useEffect(() => {
     window.addEventListener('resize', () => {
@@ -63,6 +70,34 @@ const CurrentRoom = memo(() => {
       })
     }
   }, [roomMessageList])
+
+  const handleScroll = () => {
+    if (contentRef.current) {
+      if (contentRef.current.scrollTop === 0) {
+        setCurrentContentScrollHeight(contentRef.current?.scrollHeight)
+        setCurrentPage(currentPage + 1)
+      }
+    }
+  }
+
+  // 加载更多
+  useEffect(() => {
+    if (!user.id || !currentChatRoom.id) return
+    getRoomMsgListRequest(currentChatRoom.id, 20, currentPage).then((res) => {
+      if (res.data?.length) {
+        dispatch(
+          unshiftRoomMessageList({
+            room_id: currentChatRoom.id,
+            message: res.data,
+          })
+        )
+        contentRef.current!.scrollTo({
+          top: currentContentScrollHeight,
+        })
+      }
+    })
+  }, [currentPage])
+
   return (
     <>
       {currentChatRoom.id ? (
@@ -83,6 +118,7 @@ const CurrentRoom = memo(() => {
               <div
                 className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2"
                 ref={contentRef}
+                onScroll={handleScroll}
               >
                 {roomMessageList[currentChatRoom.id]?.map((message, index) => {
                   const lastMessageTime =
