@@ -68,12 +68,14 @@ const CurrentRoom = memo(() => {
       {currentChatRoom.id ? (
         <div className="p-1 flex-1 flex h-[100%]">
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
-            <div className=" flex items-center">
-              <h2 className="dark:text-gray-200 text-lg p-2">
-                {currentChatRoom.name}
-              </h2>
-              <div className=" ml-2 dark:text-gray-200">
-                {currentRoomLoading && <LoadingOutlined />}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <h2 className="dark:text-gray-200 text-lg p-2">
+                  {currentChatRoom.name}
+                </h2>
+                <div className=" ml-2 dark:text-gray-200">
+                  {currentRoomLoading && <LoadingOutlined />}
+                </div>
               </div>
             </div>
             <div className="flex flex-col h-full">
