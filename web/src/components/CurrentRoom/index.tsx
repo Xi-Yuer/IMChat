@@ -1,5 +1,6 @@
 import { RootState } from '@/store'
 import {
+  DoubleRightOutlined,
   LoadingOutlined,
   PictureOutlined,
   SendOutlined,
@@ -20,7 +21,10 @@ const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const contentRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showUpdownBottom, setShowUpdownBottom] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [isFirstIn, setIsFirstIn] = useState(true)
   const [currentContentScrollHeight, setCurrentContentScrollHeight] =
     useState(0)
   const { isMobile } = useScreen()
@@ -45,6 +49,20 @@ const CurrentRoom = memo(() => {
       }
     })
   }, [])
+
+  useEffect(() => {
+    if (isFirstIn) {
+      queueMicrotask(() => {
+        if (contentRef.current) {
+          contentRef.current.scrollTo({
+            top: contentRef.current.scrollHeight,
+          })
+        }
+      })
+      setIsFirstIn(false)
+    }
+  }, [roomMessageList])
+
   const sendMessage = () => {
     sendMessageContext({
       type: 'GROUP_MESSAGE',
@@ -53,42 +71,66 @@ const CurrentRoom = memo(() => {
       group: currentChatRoom.id,
     })
     setInputValue('')
+    // 滚动到底部
+    setIsFirstIn(true)
     return false
   }
 
   const handleScroll = () => {
     if (contentRef.current) {
-      setCurrentContentScrollHeight(contentRef.current?.scrollHeight)
+      setCurrentContentScrollHeight(contentRef.current!.scrollHeight)
+      if (
+        contentRef.current.scrollTop + contentRef.current.clientHeight <=
+        contentRef.current.scrollHeight - 800
+      ) {
+        setShowUpdownBottom(true)
+      } else {
+        setShowUpdownBottom(false)
+      }
       if (contentRef.current.scrollTop === 0) {
         setCurrentPage(currentPage + 1)
       }
     }
   }
 
+  // 回到底部
+  const backToBottom = () => {
+    contentRef.current?.scrollTo({
+      top: contentRef.current.scrollHeight,
+      behavior: 'smooth',
+    })
+  }
+
   // 加载更多
   useEffect(() => {
     if (!user.id || !currentChatRoom.id || currentPage === 1) return
-    getRoomMsgListRequest(currentChatRoom.id, 20, currentPage).then((res) => {
-      if (res.data?.length) {
-        dispatch(
-          unshiftRoomMessageList({
-            room_id: currentChatRoom.id,
-            message: res.data,
+    setLoading(true)
+    getRoomMsgListRequest(currentChatRoom.id, 20, currentPage)
+      .then((res) => {
+        if (res.data?.length) {
+          dispatch(
+            unshiftRoomMessageList({
+              room_id: currentChatRoom.id,
+              message: res.data,
+            })
+          )
+          queueMicrotask(() => {
+            contentRef.current!.scrollTo({
+              top:
+                contentRef.current!.scrollHeight - currentContentScrollHeight,
+            })
           })
-        )
-        setTimeout(() => {
-          contentRef.current!.scrollTo({
-            top: contentRef.current!.scrollHeight - currentContentScrollHeight,
-          })
-        })
-      }
-    })
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }, [currentPage])
 
   return (
     <>
       {currentChatRoom.id ? (
-        <div className="p-1 flex-1 flex h-[100%]">
+        <div className="p-1 flex-1 flex h-[100%] relative">
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -100,6 +142,15 @@ const CurrentRoom = memo(() => {
                 </div>
               </div>
             </div>
+            {showUpdownBottom && (
+              <div
+                className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#0ea5e9] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-gray-300 pl-4 cursor-pointer rounded-l-2xl"
+                onClick={backToBottom}
+              >
+                <span className="text-xs">回到底部</span>
+                <DoubleRightOutlined className=" rotate-90 ml-1 text-xs" />
+              </div>
+            )}
             <div className="flex flex-col h-full">
               {/* 消息框 */}
               <div
@@ -107,6 +158,9 @@ const CurrentRoom = memo(() => {
                 ref={contentRef}
                 onScroll={handleScroll}
               >
+                <div className=" flex justify-center items-center">
+                  <Spin spinning={loading} tip="加载中..." size="small"></Spin>
+                </div>
                 {roomMessageList[currentChatRoom.id]?.map((message, index) => {
                   const lastMessageTime =
                     roomMessageList[currentChatRoom.id]?.[index - 1]?.message
