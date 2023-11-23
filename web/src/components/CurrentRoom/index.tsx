@@ -26,6 +26,7 @@ const CurrentRoom = memo(() => {
   const [showUpdownBottom, setShowUpdownBottom] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [isFirstIn, setIsFirstIn] = useState(true)
+  const [open, setOpen] = useState(false)
   const [currentContentScrollHeight, setCurrentContentScrollHeight] =
     useState(0)
   const { isMobile } = useScreen()
@@ -129,7 +130,6 @@ const CurrentRoom = memo(() => {
       })
   }, [currentPage])
 
-  const [open, setOpen] = useState(true)
   const showDrawer = () => {
     setOpen(true)
   }

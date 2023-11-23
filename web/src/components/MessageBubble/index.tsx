@@ -1,4 +1,5 @@
 import { RootState } from '@/store'
+import { ManOutlined, WomanOutlined } from '@ant-design/icons'
 import { Avatar } from 'antd'
 import classNames from 'classnames'
 import { FC, memo } from 'react'
@@ -26,8 +27,16 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
             'flex-row-reverse': user.id === id,
           })}
         >
-          <div>
+          <div className=" relative">
             <Avatar src={profile_picture} size={30} />
+            <div
+              className={classNames('absolute top-0', {
+                'left-[-15px] rotate-[-45deg] mr-2': user.id == id,
+                'right-[-15px] rotate-[45deg]': user.id !== id,
+              })}
+            >
+              {user.gender === '1' ? <ManOutlined /> : <WomanOutlined />}
+            </div>
           </div>
           <div className="flex flex-col">
             <span
@@ -38,7 +47,9 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                 }
               )}
             >
-              {nick_name}（{origin}）
+              {user.id !== id
+                ? `${nick_name}(${origin})`
+                : `(${origin})${nick_name}`}
             </span>
             <div
               style={{
