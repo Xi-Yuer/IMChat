@@ -11,7 +11,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
   (props) => {
     const {
       message: { content, created_at },
-      user: { profile_picture, nick_name, origin, id },
+      user: { profile_picture, nick_name, origin, id, gender },
       lastMessageTime,
     } = props
     const { user } = useSelector((state: RootState) => state.UserReducer)
@@ -27,15 +27,21 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
             'flex-row-reverse': user.id === id,
           })}
         >
-          <div className=" relative">
+          <div className="relative">
             <Avatar src={profile_picture} size={30} />
             <div
-              className={classNames('absolute top-0', {
-                'left-[-15px] rotate-[-45deg] mr-2': user.id == id,
-                'right-[-15px] rotate-[45deg]': user.id !== id,
+              className={classNames('absolute top-[20px]', {
+                'left-[-11px] top-[15px]': user.id == id,
+                'right-[-10px]': user.id != id,
+                'text-pink-500': gender != '1',
+                'text-sky-500': gender == '1',
               })}
             >
-              {user.gender === '1' ? <ManOutlined /> : <WomanOutlined />}
+              {gender === '1' ? (
+                <ManOutlined />
+              ) : (
+                <WomanOutlined className=" rotate-[230deg]" />
+              )}
             </div>
           </div>
           <div className="flex flex-col">
@@ -44,6 +50,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                 'dark:text-gray-200 inline-block text-xs mb-1 transition-all duration-700',
                 {
                   'text-end': user.id === id,
+                  'text-start': user.id !== id,
                 }
               )}
             >

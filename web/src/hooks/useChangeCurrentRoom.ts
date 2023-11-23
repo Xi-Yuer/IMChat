@@ -24,15 +24,6 @@ export const useChangeCurrentRoom = (room: IChatRoomResponse) => {
     if (currentChatRoom.id === room.id) return
     dispatch(changeCurrentRoom(room))
 
-    // 群用户列表
-    try {
-      dispatch(changeCurrentRoomUserListLoading(true))
-      const result = await getRoomUserListRequest(room.id)
-      dispatch(changeCurrentRoomUserList(result.data))
-    } finally {
-      dispatch(changeCurrentRoomUserListLoading(false))
-    }
-
     // 群消息列表
     try {
       dispatch(changeCurrentRoomLoading(true))
@@ -45,6 +36,15 @@ export const useChangeCurrentRoom = (room: IChatRoomResponse) => {
       )
     } finally {
       dispatch(changeCurrentRoomLoading(false))
+    }
+
+    // 群用户列表
+    try {
+      dispatch(changeCurrentRoomUserListLoading(true))
+      const result = await getRoomUserListRequest(room.id)
+      dispatch(changeCurrentRoomUserList(result.data))
+    } finally {
+      dispatch(changeCurrentRoomUserListLoading(false))
     }
   }
   return {

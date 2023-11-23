@@ -9,17 +9,20 @@ import {
 } from '@ant-design/icons'
 import { Drawer, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
+import Emoji, { EmojiRefCom } from '../Emoji'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
 
 const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
+  const emojiRef = useRef<EmojiRefCom>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
   const [loading, setLoading] = useState(false)
@@ -65,6 +68,10 @@ const CurrentRoom = memo(() => {
     }
   }, [roomMessageList])
 
+  const pickEmoji = (emoji: EmojiClickData) => {
+    emojiRef.current?.hidden()
+    setInputValue(emoji.emoji)
+  }
   const sendMessage = () => {
     if (!inputValue) return
     sendMessageContext({
@@ -142,7 +149,6 @@ const CurrentRoom = memo(() => {
     position: 'relative',
     overflow: 'hidden',
     textAlign: 'center',
-    border: 'none !important',
   }
   return (
     <>
@@ -152,9 +158,9 @@ const CurrentRoom = memo(() => {
           style={containerStyle}
         >
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
-            <div className="flex items-center justify-between border-b dark:border-[#494d5f] transition-all duration-700">
+            <div className="flex items-center justify-between border-dashed border-b dark:border-[#494d5f] transition-all duration-700">
               <div className="flex items-center">
-                <h2 className="dark:text-gray-200 text-lg p-2">
+                <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">
                   {currentChatRoom.name}
                 </h2>
                 <div className=" ml-2 dark:text-gray-200">
@@ -170,7 +176,7 @@ const CurrentRoom = memo(() => {
             </div>
             {showUpdownBottom && (
               <div
-                className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#0ea5e9] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-gray-300 pl-4 cursor-pointer rounded-l-2xl"
+                className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#4ba3e3] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-[#4d5162] pl-4 cursor-pointer rounded-l-2xl"
                 onClick={backToBottom}
               >
                 <span className="text-xs">回到底部</span>
@@ -200,11 +206,15 @@ const CurrentRoom = memo(() => {
                   )
                 })}
               </div>
+              <Emoji ref={emojiRef} pickEmoji={pickEmoji} />
               {/* 输入框 */}
               <div className="h-[180px] border-dashed border-t dark:border-[#494b5c] transition-all duration-700">
                 <div className="w-full flex justify-between items-center px-3 pt-2">
                   <div className="flex gap-2">
-                    <SmileOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
+                    <SmileOutlined
+                      className=" transition-all duration-700 cursor-pointer dark:text-white"
+                      onClick={() => emojiRef.current?.show()}
+                    />
                     <PictureOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                   </div>
                   <div onClick={sendMessage}>
