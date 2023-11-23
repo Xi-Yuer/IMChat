@@ -5,8 +5,9 @@ import {
   PictureOutlined,
   SendOutlined,
   SmileOutlined,
+  TeamOutlined,
 } from '@ant-design/icons'
-import { Spin } from 'antd'
+import { Drawer, Spin } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -64,6 +65,7 @@ const CurrentRoom = memo(() => {
   }, [roomMessageList])
 
   const sendMessage = () => {
+    if (!inputValue) return
     sendMessageContext({
       type: 'GROUP_MESSAGE',
       message: inputValue,
@@ -127,12 +129,30 @@ const CurrentRoom = memo(() => {
       })
   }, [currentPage])
 
+  const [open, setOpen] = useState(true)
+  const showDrawer = () => {
+    setOpen(true)
+  }
+
+  const onClose = () => {
+    setOpen(false)
+  }
+
+  const containerStyle: React.CSSProperties = {
+    position: 'relative',
+    overflow: 'hidden',
+    textAlign: 'center',
+    border: 'none !important',
+  }
   return (
     <>
       {currentChatRoom.id ? (
-        <div className="p-1 flex-1 flex h-[100%] relative">
+        <div
+          className="p-1 flex-1 flex h-[100%] relative border-none focus:outline-none"
+          style={containerStyle}
+        >
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between border-b dark:border-[#494d5f] transition-all duration-700">
               <div className="flex items-center">
                 <h2 className="dark:text-gray-200 text-lg p-2">
                   {currentChatRoom.name}
@@ -140,6 +160,12 @@ const CurrentRoom = memo(() => {
                 <div className=" ml-2 dark:text-gray-200">
                   {currentRoomLoading && <LoadingOutlined />}
                 </div>
+              </div>
+              <div
+                className="pr-4 dark:text-gray-200 text-lg cursor-pointer transition-all duration-700 block xl:hidden"
+                onClick={showDrawer}
+              >
+                <TeamOutlined />
               </div>
             </div>
             {showUpdownBottom && (
@@ -181,7 +207,7 @@ const CurrentRoom = memo(() => {
                     <SmileOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                     <PictureOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                   </div>
-                  <div>
+                  <div onClick={sendMessage}>
                     <SendOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                   </div>
                 </div>
@@ -219,6 +245,33 @@ const CurrentRoom = memo(() => {
               </div>
             </Spin>
           ) : null}
+
+          <Drawer
+            title={false}
+            placement="right"
+            className="border-none focus:outline-none focus:border-none"
+            width="150px"
+            closable={false}
+            onClose={onClose}
+            open={open}
+            getContainer={false}
+          >
+            <div className="overflow-hidden transition-all duration-700">
+              <Spin spinning={currentRoomUserListLoading}>
+                {currentChatRoomUserList.map((user) => (
+                  <UserPanel {...user} key={user.id} />
+                ))}
+                {currentChatRoomUserList.length === 0 && (
+                  <div className="w-full h-full flex justify-center items-center dark:text-gray-300">
+                    <div className="mt-[-150px]">
+                      <SmileOutlined className="mr-2" />
+                      暂无数据
+                    </div>
+                  </div>
+                )}
+              </Spin>
+            </div>
+          </Drawer>
         </div>
       ) : null}
     </>

@@ -47,3 +47,7 @@
   border-radius: 6px;
   filter: invert(100%);
 }
+:focus {
+  outline: 0;
+}
+
