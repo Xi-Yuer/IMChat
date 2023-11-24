@@ -11,9 +11,13 @@
 7. 支持消息置顶
 
 ## 技术选型
-- Go + Gin + GORM + Mysql + Websoket + OSS
+- 后端
+    - Go + Gin + GORM + Mysql + Soket + OSS
+- 前端
+    - React + Ant Design + AHooks + RTK
 
 ## 功能实现
 1. 登录
 2. 注册
 3. 群聊
+3. 表情包

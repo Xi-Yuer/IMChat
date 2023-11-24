@@ -4,7 +4,7 @@
   "description": "1. 支持群聊\r 2. 支持私聊\r 3. 支持图片、文件、视频、语音、表情\r 4. 支持消息撤回\r 5. 支持消息搜索\r 6. 支持消息免打扰\r 7. 支持消息置顶",
   "main": "index.js",
   "scripts": {
-    "commit": "npx cz"
+    "commit": "git add . && npx cz"
   },
   "repository": {
     "type": "git",
