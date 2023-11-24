@@ -1,6 +1,32 @@
 {
-  "devDependencies": {
+  "name": "imchat",
+  "version": "1.0.0",
+  "description": "1. 支持群聊\r 2. 支持私聊\r 3. 支持图片、文件、视频、语音、表情\r 4. 支持消息撤回\r 5. 支持消息搜索\r 6. 支持消息免打扰\r 7. 支持消息置顶",
+  "main": "index.js",
+  "scripts": {
+    "commit": "npx cz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xi-Yuer/IMChat.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Xi-Yuer/IMChat/issues"
+  },
+  "homepage": "https://github.com/Xi-Yuer/IMChat#readme",
+  "dependencies": {
     "commitizen": "^4.3.0",
+    "cz-conventional-changelog-zh": "^0.0.2"
+  },
+  "devDependencies": {
     "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog-zh"
+    }
   }
 }
