@@ -1,13 +1,49 @@
+import { RootState } from '@/store'
 import { Image } from 'antd'
 import { FC, memo } from 'react'
+import { useSelector } from 'react-redux'
 import ErrorImage from '../../assets/image/error'
 import { useChangeCurrentRoom } from '../../hooks/useChangeCurrentRoom'
 import { IChatRoomResponse } from '../../server/apis/chatRoom'
 import { formatDate } from '../../utils/format'
 
 const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
-  const { name, description, avatar, current_msg, current_msg_time } = room
+  const { name, description, avatar, current_msg, current_msg_time, id } = room
   const { roomChangeHandle } = useChangeCurrentRoom(room)
+  const { roomMessageList } = useSelector(
+    (state: RootState) => state.SocketReducer
+  )
+
+  const recentMessage = () => {
+    if (roomMessageList[id]?.length > 0) {
+      if (
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === 'text'
+      ) {
+        return {
+          msg: roomMessageList[id][roomMessageList[id].length - 1].message
+            .content,
+          time: roomMessageList[id][roomMessageList[id].length - 1].message
+            .created_at,
+        }
+      }
+      if (
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === 'image'
+      ) {
+        return {
+          msg: '图片',
+          time: roomMessageList[id][roomMessageList[id].length - 1].message
+            .created_at,
+        }
+      }
+    } else {
+      return {
+        msg: description || current_msg,
+        time: current_msg_time,
+      }
+    }
+  }
   return (
     <div
       onClick={roomChangeHandle}
@@ -27,12 +63,12 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
           {name}
         </span>
         <span className="truncate text-xs dark:text-gray-400 transition-all duration-700">
-          {current_msg ? current_msg : description}
+          {recentMessage()?.msg}
         </span>
       </div>
       <div className="flex-1 text-end">
         <span className="text-xs dark:text-gray-200 transition-all duration-700">
-          {formatDate(current_msg_time, 'HH:mm')}
+          {formatDate(recentMessage()!.time, 'HH:mm')}
         </span>
       </div>
     </div>
