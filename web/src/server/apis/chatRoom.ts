@@ -1,5 +1,7 @@
 import { AxiosResponse } from 'axios'
+import { SystemMessageType } from '../../enum/messageType'
 import request from '../request'
+import { ILoginResponse } from './user'
 
 export interface IChatRoomResponse {
   name: string
@@ -25,12 +27,21 @@ export const getRoomUserListRequest = (chat_room_id: string) => {
   })
 }
 
+interface IChatMessageResponse {
+  message: {
+    content: string
+    create_at: string
+    group_id: string
+    message_type: SystemMessageType
+  }
+  user: Omit<ILoginResponse, 'token'>
+}
 export const getRoomMsgListRequest = (
   chat_room_id: string,
   limit: number,
   offset: number
 ) => {
-  return request.get({
+  return request.get<AxiosResponse<IChatMessageResponse[]>>({
     url: '/message/list',
     params: {
       chat_room_id,

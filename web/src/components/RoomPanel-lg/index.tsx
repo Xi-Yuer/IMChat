@@ -3,6 +3,7 @@ import { Image } from 'antd'
 import { FC, memo } from 'react'
 import { useSelector } from 'react-redux'
 import ErrorImage from '../../assets/image/error'
+import { SystemMessageType } from '../../enum/messageType'
 import { useChangeCurrentRoom } from '../../hooks/useChangeCurrentRoom'
 import { IChatRoomResponse } from '../../server/apis/chatRoom'
 import { formatDate } from '../../utils/format'
@@ -18,7 +19,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
     if (roomMessageList[id]?.length > 0) {
       if (
         roomMessageList[id][roomMessageList[id].length - 1].message
-          .message_type === 'text'
+          .message_type === SystemMessageType.TEXT
       ) {
         return {
           msg: roomMessageList[id][roomMessageList[id].length - 1].message
@@ -29,7 +30,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
       }
       if (
         roomMessageList[id][roomMessageList[id].length - 1].message
-          .message_type === 'image'
+          .message_type === SystemMessageType.IMAGE
       ) {
         return {
           msg: '图片',

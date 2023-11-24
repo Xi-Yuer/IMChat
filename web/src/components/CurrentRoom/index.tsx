@@ -13,6 +13,7 @@ import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
+import { SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
@@ -77,7 +78,7 @@ const CurrentRoom = memo(() => {
     sendMessageContext({
       type: 'GROUP_MESSAGE',
       message: inputValue,
-      message_type: 'text',
+      message_type: SystemMessageType.TEXT,
       group: currentChatRoom.id,
     })
     setInputValue('')
