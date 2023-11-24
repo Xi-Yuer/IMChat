@@ -4,13 +4,20 @@ import { Avatar } from 'antd'
 import classNames from 'classnames'
 import { FC, memo } from 'react'
 import { useSelector } from 'react-redux'
+import { SystemMessageType } from '../../enum/messageType'
 import { RoomMessageType } from '../../store/modules/socket'
 import { formatDateV2, isBefore30Minutes } from '../../utils/format'
+import DocxMessage from '../TypesMessage/DocxMessage'
+import TextMessage from '../TypesMessage/TextMessage'
+import VideoMessage from '../TypesMessage/VideoMessage'
+import VoiceMessage from '../TypesMessage/VoiceMessage'
+import XlsxMessage from '../TypesMessage/XlsxMessage'
+import ImageMessage from '../TypesMessage/imageMessage'
 
 const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
   (props) => {
     const {
-      message: { content, created_at },
+      message: { content, created_at, message_type },
       user: { profile_picture, nick_name, origin, id, gender },
       lastMessageTime,
     } = props
@@ -23,7 +30,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
           </div>
         ) : null}
         <div
-          className={classNames('my-8 flex gap-3 w-full', {
+          className={classNames('my-8 flex gap-3 w-full relative', {
             'flex-row-reverse': user.id === id,
           })}
         >
@@ -44,7 +51,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
               )}
             </div>
           </div>
-          <div className="flex flex-col">
+          <div className={classNames('flex flex-col')}>
             <span
               className={classNames(
                 'dark:text-gray-200 inline-block text-xs mb-1 transition-all duration-700',
@@ -58,15 +65,72 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                 ? `${nick_name}(${origin})`
                 : `(${origin})${nick_name}`}
             </span>
-            <div
-              style={{
-                borderRadius:
-                  user.id === id ? '20px 2px 20px 20px' : '2px 20px 20px',
-              }}
-              className="min-w-[60px] min-h-[30px] max-w-xs bg-slate-100 dark:bg-sky-500 p-3 transition-all duration-700"
-            >
-              {content}
-            </div>
+            {message_type === SystemMessageType.TEXT && (
+              <div
+                style={{
+                  borderRadius:
+                    user.id === id ? '20px 2px 20px 20px' : '2px 20px 20px',
+                }}
+                className={classNames(
+                  'min-w-[60px] min-h-[30px] max-w-xs bg-slate-100 dark:bg-sky-500 p-3 transition-all duration-700'
+                )}
+              >
+                {message_type === SystemMessageType.TEXT && (
+                  <TextMessage content={content} />
+                )}
+              </div>
+            )}
+            {message_type === SystemMessageType.IMAGE && (
+              <div
+                className={classNames('p-3', {
+                  'text-start': user.id !== id,
+                  'text-end': user.id === id,
+                })}
+              >
+                <ImageMessage content={content} />
+              </div>
+            )}
+            {message_type === SystemMessageType.DOCX && (
+              <div
+                className={classNames('p-3', {
+                  'text-start': user.id !== id,
+                  'text-end': user.id === id,
+                })}
+              >
+                <DocxMessage content={content} />
+              </div>
+            )}
+            {message_type === SystemMessageType.XLSX && (
+              <div
+                className={classNames('p-3', {
+                  'text-start': user.id !== id,
+                  'text-end': user.id === id,
+                })}
+              >
+                <XlsxMessage content={content} />
+              </div>
+            )}
+            {message_type === SystemMessageType.MP4 && (
+              <div
+                className={classNames('p-3', {
+                  'text-start': user.id !== id,
+                  'text-end': user.id === id,
+                })}
+              >
+                <VideoMessage content={content} />
+              </div>
+            )}
+
+            {message_type === SystemMessageType.MP3 && (
+              <div
+                className={classNames('p-3', {
+                  'text-start': user.id !== id,
+                  'text-end': user.id === id,
+                })}
+              >
+                <VoiceMessage content={content} />
+              </div>
+            )}
           </div>
         </div>
       </>

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { SystemMessageType } from 'src/enum/messageType'
 import { ILoginResponse } from '../../server/apis/user'
 
 export interface RoomMessageType {
@@ -6,7 +7,7 @@ export interface RoomMessageType {
   message: {
     created_at: string
     content: string
-    message_type: string
+    message_type: SystemMessageType
     group_id: string
   }
 }

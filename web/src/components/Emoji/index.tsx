@@ -64,6 +64,12 @@ const Emoji = forwardRef<EmojiRefCom, Props>((props: Props, ref) => {
                 'https://xiyuer.club/ca4a6dbd-316f-44b6-8772-b26870e6d1eb.jpg',
               id: 'me',
             },
+            {
+              names: ['添加自己的Emoji'],
+              imgUrl:
+                'https://th.bing.com/th/id/OIP.c-zqTRG3479A7gj7MgfT8QHaHa?rs=1&pid=ImgDetMain',
+              id: '添加自己的Emoji',
+            },
           ]}
         />
       </div>

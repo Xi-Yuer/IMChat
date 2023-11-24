@@ -3,6 +3,7 @@ package services
 import (
 	"ImChat/src/config"
 	"ImChat/src/dto"
+	"ImChat/src/enum"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 )
@@ -38,6 +39,10 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 	var chatMessageResponseDTOs []*dto.ChatMessageResponseDTO
 	baseUrl := config.AppConfig.DoMian.URL
 	for _, message := range messages {
+		// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
+		if message.MessageType == enum.IMAGE || message.MessageType == enum.MP3 || message.MessageType == enum.MP4 || message.MessageType == enum.XLSX || message.MessageType == enum.DOCX || message.MessageType == enum.EMOJI {
+			message.Content = config.AppConfig.DoMian.URL + message.Content
+		}
 		chatMessageResponseDTO := &dto.ChatMessageResponseDTO{
 			User: &dto.UserResponseDTO{
 				ID:             message.Sender.ID,
@@ -47,6 +52,7 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 				ProfilePicture: baseUrl + message.Sender.ProfilePicture,
 				Origin:         message.Sender.Origin,
 			},
+
 			Message: &dto.MessageDTO{
 				Content:     message.Content,
 				CreatedAt:   message.BaseModel.CreatedAt,

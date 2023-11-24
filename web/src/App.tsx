@@ -2,7 +2,7 @@ import { ThemeAppearance, ThemeProvider } from 'antd-style'
 import { createContext, memo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { HashRouter } from 'react-router-dom'
-import { MessageType } from './enum/messageType'
+import { MessageType, SystemMessageType } from './enum/messageType'
 import useWebSocket from './hooks/useSoket'
 import { RenderRoutes } from './routes'
 import { RootState } from './store'
@@ -11,8 +11,14 @@ import { themeChange } from './store/modules/ui'
 import { customDarkAlgorithm } from './theme/dark'
 import { customLightAlgorithm } from './theme/light'
 
+interface MessageContent {
+  type: MessageType
+  message: string
+  message_type: SystemMessageType
+  group: string
+}
 interface ContextType {
-  sendMessage: (message: any) => void
+  sendMessage: (message: MessageContent) => void
   lastMessage: string
   webSocket: WebSocket | undefined
   isConnected: boolean

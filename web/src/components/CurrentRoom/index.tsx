@@ -7,13 +7,13 @@ import {
   SmileOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
-import { Drawer, Spin } from 'antd'
+import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
-import { SystemMessageType } from '../../enum/messageType'
+import { MessageType, SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
@@ -73,10 +73,10 @@ const CurrentRoom = memo(() => {
     emojiRef.current?.hidden()
     setInputValue(emoji.emoji)
   }
-  const sendMessage = () => {
+  const sendTextMessage = () => {
     if (!inputValue) return
     sendMessageContext({
-      type: 'GROUP_MESSAGE',
+      type: MessageType.GROUP_MESSAGE,
       message: inputValue,
       message_type: SystemMessageType.TEXT,
       group: currentChatRoom.id,
@@ -86,6 +86,34 @@ const CurrentRoom = memo(() => {
     setIsFirstIn(true)
     return false
   }
+
+  const props: UploadProps = {
+    name: 'file',
+    action: '/api/file/upload',
+    headers: {
+      authorization: user.token,
+    },
+    showUploadList: false,
+    onChange(info) {
+      if (info.file.status !== 'uploading') {
+        message.loading('发送中...')
+      }
+      if (info.file.status === 'done') {
+        const {
+          data: { file_url },
+        } = info.file.response
+        sendMessageContext({
+          type: MessageType.GROUP_MESSAGE,
+          message: file_url,
+          message_type: SystemMessageType.IMAGE,
+          group: currentChatRoom.id,
+        })
+      } else if (info.file.status === 'error') {
+        message.loading('图片发送失败')
+      }
+    },
+  }
+  const SendPicktureMessage = async () => {}
 
   const handleScroll = () => {
     if (contentRef.current) {
@@ -192,7 +220,7 @@ const CurrentRoom = memo(() => {
                 onScroll={handleScroll}
               >
                 <div className=" flex justify-center items-center">
-                  <Spin spinning={loading} tip="加载中..." size="small"></Spin>
+                  <Spin spinning={loading} size="small"></Spin>
                 </div>
                 {roomMessageList[currentChatRoom.id]?.map((message, index) => {
                   const lastMessageTime =
@@ -216,14 +244,24 @@ const CurrentRoom = memo(() => {
                       className=" transition-all duration-700 cursor-pointer dark:text-white"
                       onClick={() => emojiRef.current?.show()}
                     />
-                    <PictureOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
+                    <Upload
+                      id="file"
+                      {...props}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                    >
+                      <PictureOutlined
+                        onClick={SendPicktureMessage}
+                        className=" transition-all duration-700 cursor-pointer dark:text-white"
+                      />
+                    </Upload>
                   </div>
-                  <div onClick={sendMessage}>
+                  <div onClick={sendTextMessage}>
                     <SendOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                   </div>
                 </div>
                 <TextArea
-                  onPressEnter={sendMessage}
+                  onPressEnter={sendTextMessage}
                   value={inputValue}
                   placeholder="愉快的聊天吧~"
                   onChange={(e) => setInputValue(e.target.value)}
