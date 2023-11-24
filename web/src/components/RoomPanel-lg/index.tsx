@@ -38,6 +38,38 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
             .created_at,
         }
       }
+      if (
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === SystemMessageType.MP3
+      ) {
+        return {
+          msg: '音频',
+          time: roomMessageList[id][roomMessageList[id].length - 1].message
+            .created_at,
+        }
+      }
+      if (
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === SystemMessageType.MP4
+      ) {
+        return {
+          msg: '视频',
+          time: roomMessageList[id][roomMessageList[id].length - 1].message
+            .created_at,
+        }
+      }
+      if (
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === SystemMessageType.XLSX ||
+        roomMessageList[id][roomMessageList[id].length - 1].message
+          .message_type === SystemMessageType.DOCX
+      ) {
+        return {
+          msg: '文档',
+          time: roomMessageList[id][roomMessageList[id].length - 1].message
+            .created_at,
+        }
+      }
     } else {
       return {
         msg: description || current_msg,

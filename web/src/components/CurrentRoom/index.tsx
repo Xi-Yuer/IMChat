@@ -1,6 +1,7 @@
 import { RootState } from '@/store'
 import {
   DoubleRightOutlined,
+  FolderOpenOutlined,
   LoadingOutlined,
   PictureOutlined,
   SendOutlined,
@@ -87,6 +88,9 @@ const CurrentRoom = memo(() => {
     return false
   }
 
+  const [messageType, setMessageType] = useState<SystemMessageType>(
+    SystemMessageType.IMAGE
+  )
   const props: UploadProps = {
     name: 'file',
     action: '/api/file/upload',
@@ -94,6 +98,25 @@ const CurrentRoom = memo(() => {
       authorization: user.token,
     },
     showUploadList: false,
+    beforeUpload(file) {
+      console.log(file.type)
+
+      if (/^image\/.*/.test(file.type)) {
+        setMessageType(SystemMessageType.IMAGE)
+      }
+      if (/^(doc|docx)$/i.test(file.type.toLowerCase())) {
+        setMessageType(SystemMessageType.DOCX)
+      }
+      if (/^audio\/.*/.test(file!.type)) {
+        setMessageType(SystemMessageType.MP3)
+      }
+      if (/^video\/.*/.test(file!.type)) {
+        setMessageType(SystemMessageType.MP4)
+      }
+      if (/^application\/.*/.test(file!.type.toLowerCase())) {
+        setMessageType(SystemMessageType.XLSX)
+      }
+    },
     onChange(info) {
       if (info.file.status !== 'uploading') {
         message.loading('发送中...')
@@ -102,11 +125,13 @@ const CurrentRoom = memo(() => {
         const {
           data: { file_url },
         } = info.file.response
-        sendMessageContext({
-          type: MessageType.GROUP_MESSAGE,
-          message: file_url,
-          message_type: SystemMessageType.IMAGE,
-          group: currentChatRoom.id,
+        queueMicrotask(() => {
+          sendMessageContext({
+            type: MessageType.GROUP_MESSAGE,
+            message: file_url,
+            message_type: messageType,
+            group: currentChatRoom.id,
+          })
         })
       } else if (info.file.status === 'error') {
         message.loading('图片发送失败')
@@ -241,19 +266,27 @@ const CurrentRoom = memo(() => {
                 <div className="w-full flex justify-between items-center px-3 pt-2">
                   <div className="flex gap-2">
                     <SmileOutlined
-                      className=" transition-all duration-700 cursor-pointer dark:text-white"
+                      className="transition-all duration-700 cursor-pointer dark:text-white"
                       onClick={() => emojiRef.current?.show()}
                     />
                     <Upload
-                      id="file"
+                      id="picture"
                       {...props}
                       accept="image/*"
                       style={{ display: 'none' }}
                     >
                       <PictureOutlined
                         onClick={SendPicktureMessage}
-                        className=" transition-all duration-700 cursor-pointer dark:text-white"
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
                       />
+                    </Upload>
+                    <Upload
+                      id="file"
+                      {...props}
+                      style={{ display: 'none' }}
+                      accept=".doc,.docx,.xlsx,.xls,audio/*,video/*"
+                    >
+                      <FolderOpenOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
                   </div>
                   <div onClick={sendTextMessage}>
