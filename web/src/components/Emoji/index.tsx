@@ -48,12 +48,14 @@ const Emoji = forwardRef<EmojiRefCom, Props>((props: Props, ref) => {
     show && (
       <div
         ref={EmojiRef}
-        className="w-[350px] absolute transition-all duration-700 bottom-[145px] left-[10px]"
+        className="w-[90%] md:w-[350px] h-[60%] transition-all duration-700 bottom-[145px] left-[2%] absolute"
       >
         <EmojiPicker
           emojiStyle={EmojiStyle.NATIVE}
           theme={theme === 'dark' ? Theme.DARK : Theme.LIGHT}
           onEmojiClick={onEmojiClick}
+          height={'100%'}
+          width={'100%'}
           autoFocusSearch={false}
           customEmojis={[
             {
