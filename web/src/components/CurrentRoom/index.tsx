@@ -80,7 +80,8 @@ const CurrentRoom = memo(() => {
     emojiRef.current?.hidden()
     setInputValue(emoji.emoji)
   }
-  const sendTextMessage = () => {
+  const sendTextMessage = (e?: any) => {
+    e?.preventDefault()
     if (!inputValue) return
     sendMessageContext({
       type: MessageType.GROUP_MESSAGE,
@@ -124,8 +125,7 @@ const CurrentRoom = memo(() => {
       if (info.file.status === 'done') {
         const {
           data: { file_url },
-        } = info.file.response
-        queueMicrotask(() => {
+        } = info.file.response(() => {
           sendMessageContext({
             type: MessageType.GROUP_MESSAGE,
             message: file_url,
@@ -301,12 +301,12 @@ const CurrentRoom = memo(() => {
                       <FolderOpenOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
                   </div>
-                  <div onClick={sendTextMessage}>
+                  <div onClick={() => sendTextMessage()}>
                     <SendOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />
                   </div>
                 </div>
                 <TextArea
-                  onPressEnter={sendTextMessage}
+                  onPressEnter={(e) => sendTextMessage(e)}
                   value={inputValue}
                   placeholder="愉快的聊天吧~"
                   onChange={(e) => setInputValue(e.target.value)}

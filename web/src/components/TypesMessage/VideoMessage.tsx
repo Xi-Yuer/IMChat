@@ -12,7 +12,11 @@ const VideoMessage: FC<IMessagePanelProps> = memo(({ content }) => {
       }
     }
   }, [inViewport])
-  return <video src={content} ref={ref} controls width={220}></video>
+  return (
+    <div className="relative w-full h-full">
+      <video src={content} ref={ref} width={220} controls></video>
+    </div>
+  )
 })
 
 export default VideoMessage
