@@ -9,6 +9,7 @@ export interface RoomMessageType {
     content: string
     message_type: SystemMessageType
     group_id: string
+    file_name?: string
   }
 }
 

@@ -33,7 +33,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
           .message_type === SystemMessageType.IMAGE
       ) {
         return {
-          msg: '图片',
+          msg: '[图片]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message
             .created_at,
         }
@@ -43,7 +43,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
           .message_type === SystemMessageType.MP3
       ) {
         return {
-          msg: '音频',
+          msg: '[音频文件]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message
             .created_at,
         }
@@ -53,7 +53,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
           .message_type === SystemMessageType.MP4
       ) {
         return {
-          msg: '视频',
+          msg: '[视频文件]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message
             .created_at,
         }
@@ -65,7 +65,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
           .message_type === SystemMessageType.DOCX
       ) {
         return {
-          msg: '文档',
+          msg: '[文档]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message
             .created_at,
         }

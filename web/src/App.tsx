@@ -15,6 +15,7 @@ interface MessageContent {
   type: MessageType
   message: string
   message_type: SystemMessageType
+  file_name?: string
   group: string
 }
 interface ContextType {

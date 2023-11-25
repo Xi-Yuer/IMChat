@@ -32,8 +32,13 @@ const CurrentRoom = memo(() => {
   const [currentPage, setCurrentPage] = useState(1)
   const [isFirstIn, setIsFirstIn] = useState(true)
   const [open, setOpen] = useState(false)
+  const [messageType, setMessageType] = useState<SystemMessageType>(
+    SystemMessageType.IMAGE
+  )
+  const [file_name, setFile_name] = useState('')
   const [currentContentScrollHeight, setCurrentContentScrollHeight] =
     useState(0)
+
   const { isMobile } = useScreen()
   const dispatch = useDispatch()
   const { currentChatRoom, currentChatRoomUserList } = useSelector(
@@ -88,9 +93,6 @@ const CurrentRoom = memo(() => {
     return false
   }
 
-  const [messageType, setMessageType] = useState<SystemMessageType>(
-    SystemMessageType.IMAGE
-  )
   const props: UploadProps = {
     name: 'file',
     action: '/api/file/upload',
@@ -99,8 +101,7 @@ const CurrentRoom = memo(() => {
     },
     showUploadList: false,
     beforeUpload(file) {
-      console.log(file.type)
-
+      setFile_name(file.name)
       if (/^image\/.*/.test(file.type)) {
         setMessageType(SystemMessageType.IMAGE)
       }
@@ -131,10 +132,11 @@ const CurrentRoom = memo(() => {
             message: file_url,
             message_type: messageType,
             group: currentChatRoom.id,
+            file_name: file_name,
           })
         })
       } else if (info.file.status === 'error') {
-        message.loading('图片发送失败')
+        message.loading('发送失败')
       }
     },
   }

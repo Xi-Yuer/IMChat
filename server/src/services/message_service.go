@@ -55,6 +55,7 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 
 			Message: &dto.MessageDTO{
 				Content:     message.Content,
+				FileName:    message.FileName,
 				CreatedAt:   message.BaseModel.CreatedAt,
 				GroupID:     message.ChatRoom.ID,
 				MessageType: message.MessageType,

@@ -24,12 +24,14 @@ type ChatMessageResponseDTO struct {
 type MessageToRoomDTO struct {
 	Message     string `json:"message"`
 	MessageType string `json:"message_type"`
+	FileName    string `json:"file_name"`
 	GroupID     string `json:"group"`
 }
 
 type MessageDTO struct {
 	Content     string    `json:"content"`
 	GroupID     string    `json:"group_id"`
+	FileName    string    `json:"file_name"`
 	MessageType string    `json:"message_type"`
 	CreatedAt   time.Time `json:"created_at"`
 }
@@ -40,6 +42,6 @@ type MessageListResponseDTO struct {
 
 type GetMessageDTO struct {
 	ChatRoomID string `form:"chat_room_id" json:"chat_room_id" binding:"required"`
-	Limit      *int    `form:"limit" json:"limit" binding:"required"`
-	Offset     *int    `form:"offset" json:"offset" binding:"required"`
+	Limit      *int   `form:"limit" json:"limit" binding:"required"`
+	Offset     *int   `form:"offset" json:"offset" binding:"required"`
 }

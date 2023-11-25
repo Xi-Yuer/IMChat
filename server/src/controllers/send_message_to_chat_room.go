@@ -123,6 +123,7 @@ func getMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Messag
 	return &models.Message{
 		Content:     data.Message,
 		MessageType: data.MessageType,
+		FileName:    data.FileName,
 		SenderID:    UserID,
 		ChatRoomID:  data.GroupID,
 	}
@@ -137,6 +138,7 @@ func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 		Content:     data.Message,
 		MessageType: data.MessageType,
 		GroupID:     data.GroupID,
+		FileName:    data.FileName,
 		CreatedAt:   time.Now(),
 	}
 }

@@ -10,6 +10,7 @@ type Message struct {
 	SenderID    string
 	Content     string
 	MessageType string
+	FileName    string
 	IsDeleted   bool
 	DeletedBy   *string // 使用指针类型以允许 NULL 值
 	ChatRoomID  string  // 外键字段，表示消息所属的群聊

@@ -8,16 +8,16 @@ import { SystemMessageType } from '../../enum/messageType'
 import { RoomMessageType } from '../../store/modules/socket'
 import { formatDateV2, isBefore30Minutes } from '../../utils/format'
 import DocxMessage from '../TypesMessage/DocxMessage'
+import ImageMessage from '../TypesMessage/ImageMessage'
 import TextMessage from '../TypesMessage/TextMessage'
 import VideoMessage from '../TypesMessage/VideoMessage'
 import VoiceMessage from '../TypesMessage/VoiceMessage'
 import XlsxMessage from '../TypesMessage/XlsxMessage'
-import ImageMessage from '../TypesMessage/imageMessage'
 
 const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
   (props) => {
     const {
-      message: { content, created_at, message_type },
+      message: { content, created_at, message_type, file_name },
       user: { profile_picture, nick_name, origin, id, gender },
       lastMessageTime,
     } = props
@@ -128,7 +128,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                   'text-end': user.id === id,
                 })}
               >
-                <VoiceMessage content={content} />
+                <VoiceMessage content={content} file_name={file_name} />
               </div>
             )}
           </div>
