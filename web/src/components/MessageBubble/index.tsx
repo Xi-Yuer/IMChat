@@ -97,7 +97,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                   'text-end': user.id === id,
                 })}
               >
-                <DocxMessage content={content} />
+                <DocxMessage content={content} file_name={file_name} />
               </div>
             )}
             {message_type === SystemMessageType.XLSX && (
@@ -107,7 +107,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo(
                   'text-end': user.id === id,
                 })}
               >
-                <XlsxMessage content={content} />
+                <XlsxMessage content={content} file_name={file_name} />
               </div>
             )}
             {message_type === SystemMessageType.MP4 && (

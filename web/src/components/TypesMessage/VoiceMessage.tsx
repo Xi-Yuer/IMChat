@@ -55,7 +55,9 @@ const VoiceMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
           <PauseCircleOutlined onClick={() => handlePlay(true)} />
         )}
       </div>
-      <div className=" flex-1 px-2 text-start truncate">{file_name}</div>
+      <div className="transition-all duration-700 px-2 w-[150px] text-start truncate dark:text-[#414141]">
+        {file_name}
+      </div>
       {isPlayed && (
         <div className=" absolute bottom-[-18px] left-0 right-0">
           <Progress

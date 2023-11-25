@@ -1,5 +1,6 @@
 import { RootState } from '@/store'
 import {
+  CustomerServiceOutlined,
   DoubleRightOutlined,
   FolderOpenOutlined,
   LoadingOutlined,
@@ -101,11 +102,12 @@ const CurrentRoom = memo(() => {
     },
     showUploadList: false,
     beforeUpload(file) {
+      message.loading('发送中...')
       setFile_name(file.name)
       if (/^image\/.*/.test(file.type)) {
         setMessageType(SystemMessageType.IMAGE)
       }
-      if (/^(doc|docx)$/i.test(file.type.toLowerCase())) {
+      if (/^(doc|docx)$/i.test(file.type)) {
         setMessageType(SystemMessageType.DOCX)
       }
       if (/^audio\/.*/.test(file!.type)) {
@@ -114,14 +116,11 @@ const CurrentRoom = memo(() => {
       if (/^video\/.*/.test(file!.type)) {
         setMessageType(SystemMessageType.MP4)
       }
-      if (/^application\/.*/.test(file!.type.toLowerCase())) {
+      if (/^application\/.*/.test(file!.type)) {
         setMessageType(SystemMessageType.XLSX)
       }
     },
     onChange(info) {
-      if (info.file.status !== 'uploading') {
-        message.loading('发送中...')
-      }
       if (info.file.status === 'done') {
         const {
           data: { file_url },
@@ -283,10 +282,21 @@ const CurrentRoom = memo(() => {
                       />
                     </Upload>
                     <Upload
+                      id="picture"
+                      {...props}
+                      accept="audio/*"
+                      style={{ display: 'none' }}
+                    >
+                      <CustomerServiceOutlined
+                        onClick={SendPicktureMessage}
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
+                      />
+                    </Upload>
+                    <Upload
                       id="file"
                       {...props}
                       style={{ display: 'none' }}
-                      accept=".doc,.docx,.xlsx,.xls,audio/*,video/*"
+                      accept=".doc,.docx,.xlsx,.pdf,.xls,audio/*,video/*"
                     >
                       <FolderOpenOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
