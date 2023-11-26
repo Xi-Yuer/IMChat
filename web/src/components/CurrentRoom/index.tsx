@@ -9,10 +9,18 @@ import {
   SmileOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
+import { useThrottleFn } from 'ahooks'
 import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
-import { memo, useContext, useEffect, useRef, useState } from 'react'
+import {
+  memo,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
@@ -31,7 +39,6 @@ const CurrentRoom = memo(() => {
   const [loading, setLoading] = useState(false)
   const [showUpdownBottom, setShowUpdownBottom] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isFirstIn, setIsFirstIn] = useState(true)
   const [open, setOpen] = useState(false)
   const [messageType, setMessageType] = useState<SystemMessageType>(
     SystemMessageType.IMAGE
@@ -64,16 +71,9 @@ const CurrentRoom = memo(() => {
   }, [])
 
   useEffect(() => {
-    if (isFirstIn) {
-      queueMicrotask(() => {
-        if (contentRef.current) {
-          contentRef.current.scrollTo({
-            top: contentRef.current.scrollHeight,
-          })
-        }
-      })
-      setIsFirstIn(false)
-    }
+    setCurrentPage(
+      Math.floor(roomMessageList[currentChatRoom?.id]?.length / 20) || 1
+    )
   }, [roomMessageList])
 
   const pickEmoji = (emoji: EmojiClickData) => {
@@ -91,7 +91,6 @@ const CurrentRoom = memo(() => {
     })
     setInputValue('')
     // 滚动到底部
-    setIsFirstIn(true)
     return false
   }
 
@@ -141,22 +140,27 @@ const CurrentRoom = memo(() => {
   }
   const SendPicktureMessage = async () => {}
 
-  const handleScroll = () => {
-    if (contentRef.current) {
-      setCurrentContentScrollHeight(contentRef.current!.scrollHeight)
-      if (
-        contentRef.current.scrollTop + contentRef.current.clientHeight <=
-        contentRef.current.scrollHeight - 800
-      ) {
-        setShowUpdownBottom(true)
-      } else {
-        setShowUpdownBottom(false)
+  const { run } = useThrottleFn(
+    () => {
+      if (contentRef.current) {
+        setCurrentContentScrollHeight(contentRef.current!.scrollHeight)
+        if (
+          contentRef.current.scrollTop + contentRef.current.clientHeight <=
+          contentRef.current.scrollHeight - 800
+        ) {
+          setShowUpdownBottom(true)
+        } else {
+          setShowUpdownBottom(false)
+        }
+        if (contentRef.current.scrollTop === 0) {
+          setCurrentPage(currentPage + 1)
+        }
       }
-      if (contentRef.current.scrollTop === 0) {
-        setCurrentPage(currentPage + 1)
-      }
+    },
+    {
+      wait: 500,
     }
-  }
+  )
 
   // 回到底部
   const backToBottom = () => {
@@ -179,18 +183,19 @@ const CurrentRoom = memo(() => {
               message: res.data,
             })
           )
-          queueMicrotask(() => {
-            contentRef.current!.scrollTo({
-              top:
-                contentRef.current!.scrollHeight - currentContentScrollHeight,
-            })
-          })
         }
       })
       .finally(() => {
         setLoading(false)
       })
   }, [currentPage])
+
+  useLayoutEffect(() => {
+    if (!contentRef.current) return
+    contentRef.current!.scrollTo({
+      top: contentRef.current!.scrollHeight - currentContentScrollHeight,
+    })
+  }, [roomMessageList])
 
   const showDrawer = () => {
     setOpen(true)
@@ -238,14 +243,14 @@ const CurrentRoom = memo(() => {
                 <DoubleRightOutlined className=" rotate-90 ml-1 text-xs" />
               </div>
             )}
-            <div className="flex flex-col h-full">
+            <div className="flex flex-col h-full relative">
               {/* 消息框 */}
               <div
                 className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2"
                 ref={contentRef}
-                onScroll={handleScroll}
+                onScroll={run}
               >
-                <div className=" flex justify-center items-center">
+                <div className=" flex justify-center items-center w-full absolute">
                   <Spin spinning={loading} size="small"></Spin>
                 </div>
                 {roomMessageList[currentChatRoom.id]?.map((message, index) => {
