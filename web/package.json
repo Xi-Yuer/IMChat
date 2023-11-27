@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@better-scroll/core": "^2.5.1",
+    "@better-scroll/observe-dom": "^2.5.1",
     "@reduxjs/toolkit": "^1.9.7",
     "ahooks": "^3.7.8",
     "antd": "^5.11.1",
