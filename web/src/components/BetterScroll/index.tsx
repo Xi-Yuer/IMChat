@@ -4,14 +4,19 @@ import { useBetterScroll } from '../../hooks/useBetterScroll'
 export interface ScrollProps {
   wrapHeight: string
   prop?: any
-  onPullup?: Function
-  onPulldown?: Function
+  onPullup: Function
+  onPulldown: Function
+  onScroll: Function
   children: ReactElement
 }
 
 const BetterScroll: FC<ScrollProps> = memo(
-  ({ wrapHeight, prop, onPullup, onPulldown, children }) => {
-    const { wrapRef } = useBetterScroll({ prop, onPullup, onPulldown })
+  ({ wrapHeight, onPullup, onPulldown, onScroll, children }) => {
+    const { wrapRef } = useBetterScroll({
+      onPullup,
+      onPulldown,
+      onScroll,
+    })
     return (
       <div
         className="scroll-warpper"
