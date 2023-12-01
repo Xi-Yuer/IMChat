@@ -9,17 +9,24 @@ import {
   SmileOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
+import { useThrottleFn } from 'ahooks'
 import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
-import { memo, useContext, useEffect, useRef, useState } from 'react'
+import {
+  memo,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
-import BetterScroll from '../BetterScroll'
 import Emoji, { EmojiRefCom } from '../Emoji'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
@@ -27,21 +34,47 @@ import UserPanel from '../UserPanel'
 const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const emojiRef = useRef<EmojiRefCom>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
   const [loading, setLoading] = useState(false)
   const [showUpdownBottom, setShowUpdownBottom] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [open, setOpen] = useState(false)
-  const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
+  const [messageType, setMessageType] = useState<SystemMessageType>(
+    SystemMessageType.IMAGE
+  )
   const [file_name, setFile_name] = useState('')
-  const [currentContentScrollHeight, setCurrentContentScrollHeight] = useState(0)
+  const [currentContentScrollHeight, setCurrentContentScrollHeight] =
+    useState(0)
 
   const { isMobile } = useScreen()
   const dispatch = useDispatch()
-  const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
-  const { currentRoomUserListLoading, currentRoomLoading } = useSelector((state: RootState) => state.UIReducer)
-  const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
+  const { currentChatRoom, currentChatRoomUserList } = useSelector(
+    (state: RootState) => state.ChatRoomReducer
+  )
+  const { currentRoomUserListLoading, currentRoomLoading } = useSelector(
+    (state: RootState) => state.UIReducer
+  )
+  const { roomMessageList } = useSelector(
+    (state: RootState) => state.SocketReducer
+  )
   const { user } = useSelector((state: RootState) => state.UserReducer)
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      if (contentRef.current) {
+        contentRef.current.scrollTo({
+          top: contentRef.current.scrollHeight,
+        })
+      }
+    })
+  }, [])
+
+  useEffect(() => {
+    setCurrentPage(
+      Math.floor(roomMessageList[currentChatRoom?.id]?.length / 20) || 1
+    )
+  }, [roomMessageList])
 
   const pickEmoji = (emoji: EmojiClickData) => {
     emojiRef.current?.hidden()
@@ -57,6 +90,8 @@ const CurrentRoom = memo(() => {
       group: currentChatRoom.id,
     })
     setInputValue('')
+    // 滚动到底部
+    return false
   }
 
   const props: UploadProps = {
@@ -103,29 +138,64 @@ const CurrentRoom = memo(() => {
       }
     },
   }
+  const SendPicktureMessage = async () => {}
 
-  const loadMoreMessage = async () => {
-    setLoading(true)
-    try {
-      if (!user.id || !currentChatRoom.id) return
-      setCurrentPage(currentPage + 1)
-      const result = await getRoomMsgListRequest(currentChatRoom.id, 20, currentPage + 1)
-      dispatch(
-        unshiftRoomMessageList({
-          room_id: currentChatRoom.id,
-          message: result.data,
-        })
-      )
-    } finally {
-      setLoading(false)
+  const { run } = useThrottleFn(
+    () => {
+      if (contentRef.current) {
+        setCurrentContentScrollHeight(contentRef.current!.scrollHeight)
+        if (
+          contentRef.current.scrollTop + contentRef.current.clientHeight <=
+          contentRef.current.scrollHeight - 800
+        ) {
+          setShowUpdownBottom(true)
+        } else {
+          setShowUpdownBottom(false)
+        }
+        if (contentRef.current.scrollTop === 0) {
+          setCurrentPage(currentPage + 1)
+        }
+      }
+    },
+    {
+      wait: 500,
     }
+  )
+
+  // 回到底部
+  const backToBottom = () => {
+    contentRef.current?.scrollTo({
+      top: contentRef.current.scrollHeight,
+      behavior: 'smooth',
+    })
   }
 
+  // 加载更多
   useEffect(() => {
-    // 根据当前消息条数更新当前页码
-    console.log('根据当前消息条数更新当前页码')
-    setCurrentPage(Math.floor(roomMessageList[currentChatRoom?.id]?.length / 20) || 1)
-  }, [roomMessageList[currentChatRoom?.id]])
+    if (!user.id || !currentChatRoom.id || currentPage === 1) return
+    setLoading(true)
+    getRoomMsgListRequest(currentChatRoom.id, 20, currentPage)
+      .then((res) => {
+        if (res.data?.length) {
+          dispatch(
+            unshiftRoomMessageList({
+              room_id: currentChatRoom.id,
+              message: res.data,
+            })
+          )
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [currentPage])
+
+  useLayoutEffect(() => {
+    if (!contentRef.current) return
+    contentRef.current!.scrollTo({
+      top: contentRef.current!.scrollHeight - currentContentScrollHeight,
+    })
+  }, [roomMessageList])
 
   const showDrawer = () => {
     setOpen(true)
@@ -140,60 +210,99 @@ const CurrentRoom = memo(() => {
     overflow: 'hidden',
     textAlign: 'center',
   }
-  const onPullup = () => {
-    // console.log('下拉')
-  }
-  const onPulldown = () => {
-    loadMoreMessage()
-    console.log('上拉')
-  }
-  const onScroll = () => {}
   return (
     <>
       {currentChatRoom.id ? (
-        <div className="p-1 flex-1 flex h-[100%] relative border-none focus:outline-none" style={containerStyle}>
+        <div
+          className="p-1 flex-1 flex h-[100%] relative border-none focus:outline-none"
+          style={containerStyle}
+        >
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
             <div className="flex items-center justify-between border-dashed border-b dark:border-[#494d5f] transition-all duration-700">
               <div className="flex items-center">
-                <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">{currentChatRoom.name}</h2>
-                <div className=" ml-2 dark:text-gray-200">{currentRoomLoading && <LoadingOutlined />}</div>
+                <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">
+                  {currentChatRoom.name}
+                </h2>
+                <div className=" ml-2 dark:text-gray-200">
+                  {currentRoomLoading && <LoadingOutlined />}
+                </div>
               </div>
-              <div className="pr-4 dark:text-gray-200 text-lg cursor-pointer transition-all duration-700 block xl:hidden" onClick={showDrawer}>
+              <div
+                className="pr-4 dark:text-gray-200 text-lg cursor-pointer transition-all duration-700 block xl:hidden"
+                onClick={showDrawer}
+              >
                 <TeamOutlined />
               </div>
             </div>
             {showUpdownBottom && (
-              <div className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#4ba3e3] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-[#4d5162] pl-4 cursor-pointer rounded-l-2xl">
+              <div
+                className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#4ba3e3] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-[#4d5162] pl-4 cursor-pointer rounded-l-2xl"
+                onClick={backToBottom}
+              >
                 <span className="text-xs">回到底部</span>
                 <DoubleRightOutlined className=" rotate-90 ml-1 text-xs" />
               </div>
             )}
             <div className="flex flex-col h-full relative">
               {/* 消息框 */}
-              <BetterScroll wrapHeight="100%" onPulldown={onPulldown} onPullup={onPullup} onScroll={onScroll}>
-                <div>
-                  <div className=" flex justify-center items-center w-full absolute">
-                    <Spin spinning={loading} size="small"></Spin>
-                  </div>
-                  {roomMessageList[currentChatRoom.id]?.map((message, index) => {
-                    const lastMessageTime = roomMessageList[currentChatRoom.id]?.[index - 1]?.message.created_at
-                    return <MessageBubble {...message} lastMessageTime={lastMessageTime} key={message.message.content + index} />
-                  })}
+              <div
+                className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2"
+                ref={contentRef}
+                onScroll={run}
+              >
+                <div className=" flex justify-center items-center w-full absolute">
+                  <Spin spinning={loading} size="small"></Spin>
                 </div>
-              </BetterScroll>
+                {roomMessageList[currentChatRoom.id]?.map((message, index) => {
+                  const lastMessageTime =
+                    roomMessageList[currentChatRoom.id]?.[index - 1]?.message
+                      .created_at
+                  return (
+                    <MessageBubble
+                      {...message}
+                      lastMessageTime={lastMessageTime}
+                      key={message.message.content + index}
+                    />
+                  )
+                })}
+              </div>
               <Emoji ref={emojiRef} pickEmoji={pickEmoji} />
               {/* 输入框 */}
               <div className="h-[180px] border-dashed border-t dark:border-[#494b5c] transition-all duration-700">
                 <div className="w-full flex justify-between items-center px-3 pt-2">
                   <div className="flex gap-2">
-                    <SmileOutlined className="transition-all duration-700 cursor-pointer dark:text-white" onClick={() => emojiRef.current?.show()} />
-                    <Upload id="picture" {...props} accept="image/*" style={{ display: 'none' }}>
-                      <PictureOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
+                    <SmileOutlined
+                      className="transition-all duration-700 cursor-pointer dark:text-white"
+                      onClick={() => emojiRef.current?.show()}
+                    />
+                    <Upload
+                      id="picture"
+                      {...props}
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                    >
+                      <PictureOutlined
+                        onClick={SendPicktureMessage}
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
+                      />
                     </Upload>
-                    <Upload id="picture" {...props} accept="audio/*" style={{ display: 'none' }}>
-                      <CustomerServiceOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
+                    <Upload
+                      id="picture"
+                      {...props}
+                      accept="audio/*"
+                      style={{ display: 'none' }}
+                    >
+                      <CustomerServiceOutlined
+                        onClick={SendPicktureMessage}
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
+                      />
                     </Upload>
-                    <Upload id="file" {...props} style={{ display: 'none' }} accept=".doc,.docx,.xlsx,.pdf,.xls,audio/*,video/*">
+                    <Upload
+                      id="file"
+                      {...props}
+                      style={{ display: 'none' }}
+                      accept=".doc,.docx,.xlsx,.pdf,.xls,audio/*,video/*"
+                    >
                       <FolderOpenOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
                   </div>
@@ -216,7 +325,10 @@ const CurrentRoom = memo(() => {
           </div>
           {/* 侧边栏用户列表 */}
           {!isMobile ? (
-            <Spin spinning={currentRoomUserListLoading && !isMobile} wrapperClassName="hidden xl:w-[180px] xl:block">
+            <Spin
+              spinning={currentRoomUserListLoading && !isMobile}
+              wrapperClassName="hidden xl:w-[180px] xl:block"
+            >
               <div className="w-0 lg:w-[180px] overflow-hidden hidden xl:block px-2 transition-all duration-700">
                 {currentChatRoomUserList.map((user) => (
                   <UserPanel {...user} key={user.id} />

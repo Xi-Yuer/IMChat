@@ -1,6 +1,6 @@
 import ParticlesBg from 'particles-bg'
 import { memo } from 'react'
-import CurrentRoom from '../../components/CurrentRoom'
+import CurrentRoom from '../../components/CurrentRoom/index'
 import Profile from '../../components/Profile'
 import RoomList from '../../components/RoomList/index'
 import { useScreen } from '../../hooks/useScreen'

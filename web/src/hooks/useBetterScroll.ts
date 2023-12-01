@@ -10,11 +10,7 @@ interface BetterScrollProps {
   onScroll: Function
 }
 
-export const useBetterScroll = ({
-  onPulldown,
-  onPullup,
-  onScroll,
-}: BetterScrollProps) => {
+export const useBetterScroll = ({ onPulldown, onPullup, onScroll }: BetterScrollProps) => {
   BScroll.use(ObserveDOM)
   BScroll.use(Pullup)
   BScroll.use(PullDown)
@@ -58,7 +54,6 @@ export const useBetterScroll = ({
     })
     BetterScroll.on('pullingDown', async () => {
       try {
-        console.log('下拉')
         await onPulldown()
       } finally {
         BetterScroll.finishPullDown()
