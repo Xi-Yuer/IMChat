@@ -30,15 +30,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   >
     <App>
       <Provider store={store}>
-        <PersistGate
-          loading={
-            <Spin
-              fullscreen
-              indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
-            />
-          }
-          persistor={persistor}
-        >
+        <PersistGate loading={<Spin fullscreen indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />} persistor={persistor}>
           <Root />
         </PersistGate>
       </Provider>

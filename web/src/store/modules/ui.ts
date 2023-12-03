@@ -41,10 +41,5 @@ export const UIStore = createSlice({
   },
 })
 
-export const {
-  themeChange,
-  changeRoomListLoading,
-  changeCurrentRoomLoading,
-  changeCurrentRoomUserListLoading,
-} = UIStore.actions
+export const { themeChange, changeRoomListLoading, changeCurrentRoomLoading, changeCurrentRoomUserListLoading } = UIStore.actions
 export default UIStore.reducer

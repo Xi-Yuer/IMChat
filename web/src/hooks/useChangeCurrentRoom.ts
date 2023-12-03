@@ -1,25 +1,13 @@
 import { RootState } from '@/store'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  IChatRoomResponse,
-  getRoomMsgListRequest,
-  getRoomUserListRequest,
-} from '../server/apis/chatRoom'
-import {
-  changeCurrentRoom,
-  changeCurrentRoomUserList,
-} from '../store/modules/chatRoom'
+import { IChatRoomResponse, getRoomMsgListRequest, getRoomUserListRequest } from '../server/apis/chatRoom'
+import { changeCurrentRoom, changeCurrentRoomUserList } from '../store/modules/chatRoom'
 import { changeRoomMessageListByRoomId } from '../store/modules/socket'
-import {
-  changeCurrentRoomLoading,
-  changeCurrentRoomUserListLoading,
-} from '../store/modules/ui'
+import { changeCurrentRoomLoading, changeCurrentRoomUserListLoading } from '../store/modules/ui'
 
 export const useChangeCurrentRoom = (room: IChatRoomResponse) => {
   const dispatch = useDispatch()
-  const { currentChatRoom } = useSelector(
-    (state: RootState) => state.ChatRoomReducer
-  )
+  const { currentChatRoom } = useSelector((state: RootState) => state.ChatRoomReducer)
   const roomChangeHandle = async () => {
     if (currentChatRoom.id === room.id) return
     dispatch(changeCurrentRoom(room))

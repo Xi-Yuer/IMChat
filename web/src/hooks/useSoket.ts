@@ -28,18 +28,8 @@ const defaultOptions: Required<WebSocketOptions> = {
   reconnectAttempts: Number.MAX_VALUE, //最大连接范围数
 }
 
-const useWebSocket = (
-  options: WebSocketOptions
-): [WebSocket | undefined, (message: any) => void, string, boolean] => {
-  const {
-    url,
-    onOpen,
-    onClose,
-    onMessage,
-    reconnectInterval,
-    reconnectAttempts,
-    isAuthenticated,
-  } = {
+const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (message: any) => void, string, boolean] => {
+  const { url, onOpen, onClose, onMessage, reconnectInterval, reconnectAttempts, isAuthenticated } = {
     ...defaultOptions,
     ...options,
   }

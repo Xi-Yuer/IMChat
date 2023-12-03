@@ -1,17 +1,6 @@
 import { RootState } from '@/store'
-import EmojiPicker, {
-  EmojiStyle,
-  Theme,
-  type EmojiClickData,
-} from 'emoji-picker-react'
-import {
-  forwardRef,
-  memo,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import EmojiPicker, { EmojiStyle, Theme, type EmojiClickData } from 'emoji-picker-react'
+import { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 
 export interface Props {
@@ -46,10 +35,7 @@ const Emoji = forwardRef<EmojiRefCom, Props>((props: Props, ref) => {
   const onEmojiClick = (emoji: EmojiClickData) => props.pickEmoji(emoji)
   return (
     show && (
-      <div
-        ref={EmojiRef}
-        className="w-[90%] md:w-[350px] h-[60%] transition-all duration-700 bottom-[145px] left-[2%] absolute"
-      >
+      <div ref={EmojiRef} className="w-[90%] md:w-[350px] h-[60%] transition-all duration-700 bottom-[145px] left-[2%] absolute">
         <EmojiPicker
           emojiStyle={EmojiStyle.NATIVE}
           theme={theme === 'dark' ? Theme.DARK : Theme.LIGHT}
@@ -60,14 +46,12 @@ const Emoji = forwardRef<EmojiRefCom, Props>((props: Props, ref) => {
           customEmojis={[
             {
               names: ['Me'],
-              imgUrl:
-                'https://xiyuer.club/ca4a6dbd-316f-44b6-8772-b26870e6d1eb.jpg',
+              imgUrl: 'https://xiyuer.club/ca4a6dbd-316f-44b6-8772-b26870e6d1eb.jpg',
               id: 'me',
             },
             {
               names: ['添加自己的Emoji'],
-              imgUrl:
-                'https://th.bing.com/th/id/OIP.c-zqTRG3479A7gj7MgfT8QHaHa?rs=1&pid=ImgDetMain',
+              imgUrl: 'https://th.bing.com/th/id/OIP.c-zqTRG3479A7gj7MgfT8QHaHa?rs=1&pid=ImgDetMain',
               id: '添加自己的Emoji',
             },
           ]}

@@ -14,16 +14,5 @@ export const routes: RouteObject[] = [
 
 export const RenderRoutes = () => {
   const element = useRoutes(routes)
-  return (
-    <Suspense
-      fallback={
-        <Spin
-          fullscreen
-          indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}
-        />
-      }
-    >
-      {element}
-    </Suspense>
-  )
+  return <Suspense fallback={<Spin fullscreen indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />}>{element}</Suspense>
 }

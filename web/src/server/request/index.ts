@@ -1,9 +1,5 @@
 import { message } from 'antd'
-import axios, {
-  type AxiosInstance,
-  type AxiosResponse,
-  type CancelTokenSource,
-} from 'axios'
+import axios, { type AxiosInstance, type AxiosResponse, type CancelTokenSource } from 'axios'
 import { store } from '../../store'
 import type { InterceptorType, RequestConfig } from './type'
 

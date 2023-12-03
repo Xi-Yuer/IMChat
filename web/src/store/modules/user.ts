@@ -32,6 +32,5 @@ export const UserStore = createSlice({
   },
 })
 
-export const { userLogin, userLogOut, changeUserProfile, changeRoomList } =
-  UserStore.actions
+export const { userLogin, userLogOut, changeUserProfile, changeRoomList } = UserStore.actions
 export default UserStore.reducer

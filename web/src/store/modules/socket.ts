@@ -22,19 +22,13 @@ export const useSocketStore = createSlice({
   reducers: {
     changeRoomMessageList(state, actions) {
       if (state.roomMessageList[actions.payload.message.group_id]) {
-        state.roomMessageList[actions.payload.message.group_id].push(
-          actions.payload
-        )
+        state.roomMessageList[actions.payload.message.group_id].push(actions.payload)
       } else {
-        state.roomMessageList[actions.payload.message.group_id] = [
-          actions.payload,
-        ]
+        state.roomMessageList[actions.payload.message.group_id] = [actions.payload]
       }
     },
     unshiftRoomMessageList(state, actions) {
-      state.roomMessageList[actions.payload.room_id].unshift(
-        ...actions.payload.message
-      )
+      state.roomMessageList[actions.payload.room_id].unshift(...actions.payload.message)
     },
     changeRoomMessageListByRoomId(state, actions) {
       state.roomMessageList[actions.payload.room_id] = actions.payload.message
@@ -42,9 +36,5 @@ export const useSocketStore = createSlice({
   },
 })
 
-export const {
-  changeRoomMessageList,
-  changeRoomMessageListByRoomId,
-  unshiftRoomMessageList,
-} = useSocketStore.actions
+export const { changeRoomMessageList, changeRoomMessageListByRoomId, unshiftRoomMessageList } = useSocketStore.actions
 export default useSocketStore.reducer

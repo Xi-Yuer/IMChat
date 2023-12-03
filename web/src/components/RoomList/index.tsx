@@ -8,9 +8,7 @@ import RoomPanelLg from '../RoomPanel-lg'
 
 const RoomList = memo(() => {
   const list = useSelector((state: RootState) => state.UserReducer.roomList)
-  const loading = useSelector(
-    (state: RootState) => state.UIReducer.roomListLoading
-  )
+  const loading = useSelector((state: RootState) => state.UIReducer.roomListLoading)
   const { isMobile } = useScreen()
   return (
     <>

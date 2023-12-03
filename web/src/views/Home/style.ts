@@ -2,8 +2,7 @@ import classNames from 'classnames'
 
 export const normalStyle = {
   Wrapper: 'backdrop-blur-3xl dark:bg-gray-600 transition-all duration-700',
-  Inner:
-    'overflow-hidden bg-white rounded-lg flex select-none dark:bg-[#333643] transition-all duration-700',
+  Inner: 'overflow-hidden bg-white rounded-lg flex select-none dark:bg-[#333643] transition-all duration-700',
 }
 
 export const PcStyle = {

@@ -98,20 +98,10 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
   }))
   return (
     <>
-      <Modal
-        className="animate-fade-in-down select-none"
-        open={isModalOpen}
-        width={350}
-        onCancel={modalCancel}
-        footer={null}
-      >
+      <Modal className="animate-fade-in-down select-none" open={isModalOpen} width={350} onCancel={modalCancel} footer={null}>
         <div className="flex flex-col items-center justify-center">
           <Upload {...uploadProps}>
-            <img
-              className="w-12 h-12 rounded-full"
-              src={previewImage || user.profile_picture}
-              alt="avatar"
-            />
+            <img className="w-12 h-12 rounded-full" src={previewImage || user.profile_picture} alt="avatar" />
           </Upload>
           <Form
             layout="horizontal"
@@ -136,9 +126,7 @@ const MinePanel = forwardRef<OpenModalProfilePanel>((_, ref) => {
           </Form>
           <div className="mt-4">
             <Button onClick={logOut} loading={spinning}>
-              {(file || userTemp != undefined) && spinning
-                ? '更新资料...'
-                : '退出登录'}
+              {(file || userTemp != undefined) && spinning ? '更新资料...' : '退出登录'}
             </Button>
           </div>
         </div>

@@ -21,9 +21,7 @@ const DocxMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
         backgroundPosition: '10%',
       }}
     >
-      <div className=" flex-1 transition-all duration-700 px-2 w-[100px] text-start truncate ml-[55px] dark:text-[#707070]">
-        {file_name}
-      </div>
+      <div className=" flex-1 transition-all duration-700 px-2 w-[100px] text-start truncate ml-[55px] dark:text-[#707070]">{file_name}</div>
       <a href={content} download rel="noopener">
         <DownloadOutlined className="mr-[50px] transition-all duration-700 dark:text-[#707070]" />
       </a>

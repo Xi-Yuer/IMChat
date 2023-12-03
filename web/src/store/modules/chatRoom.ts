@@ -21,6 +21,5 @@ export const useChatRoomStore = createSlice({
   },
 })
 
-export const { changeCurrentRoom, changeCurrentRoomUserList } =
-  useChatRoomStore.actions
+export const { changeCurrentRoom, changeCurrentRoomUserList } = useChatRoomStore.actions
 export default useChatRoomStore.reducer

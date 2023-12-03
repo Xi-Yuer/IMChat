@@ -69,9 +69,7 @@ const Root = memo(() => {
     <>
       <HashRouter>
         <ThemeProvider themeMode={theme} theme={Theme}>
-          <WebSocketContext.Provider
-            value={{ sendMessage, lastMessage, isConnected, webSocket }}
-          >
+          <WebSocketContext.Provider value={{ sendMessage, lastMessage, isConnected, webSocket }}>
             <RenderRoutes />
           </WebSocketContext.Provider>
         </ThemeProvider>

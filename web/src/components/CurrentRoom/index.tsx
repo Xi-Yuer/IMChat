@@ -1,7 +1,6 @@
 import { RootState } from '@/store'
 import {
   CustomerServiceOutlined,
-  DoubleRightOutlined,
   FolderOpenOutlined,
   LoadingOutlined,
   PictureOutlined,
@@ -12,35 +11,25 @@ import {
 import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
-import { memo, useContext, useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { memo, useContext, useRef, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
-import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
-import { unshiftRoomMessageList } from '../../store/modules/socket'
-import BetterScroll from '../BetterScroll'
 import Emoji, { EmojiRefCom } from '../Emoji'
-import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
 
 const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const emojiRef = useRef<EmojiRefCom>(null)
   const [inputValue, setInputValue] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showUpdownBottom, setShowUpdownBottom] = useState(false)
-  const [currentPage, setCurrentPage] = useState(1)
   const [open, setOpen] = useState(false)
   const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
   const [file_name, setFile_name] = useState('')
-  const [currentContentScrollHeight, setCurrentContentScrollHeight] = useState(0)
 
   const { isMobile } = useScreen()
-  const dispatch = useDispatch()
   const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
   const { currentRoomUserListLoading, currentRoomLoading } = useSelector((state: RootState) => state.UIReducer)
-  const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
   const { user } = useSelector((state: RootState) => state.UserReducer)
 
   const pickEmoji = (emoji: EmojiClickData) => {
@@ -57,6 +46,8 @@ const CurrentRoom = memo(() => {
       group: currentChatRoom.id,
     })
     setInputValue('')
+    // 滚动到底部
+    return false
   }
 
   const props: UploadProps = {
@@ -89,14 +80,13 @@ const CurrentRoom = memo(() => {
       if (info.file.status === 'done') {
         const {
           data: { file_url },
-        } = info.file.response(() => {
-          sendMessageContext({
-            type: MessageType.GROUP_MESSAGE,
-            message: file_url,
-            message_type: messageType,
-            group: currentChatRoom.id,
-            file_name: file_name,
-          })
+        } = info.file.response
+        sendMessageContext({
+          type: MessageType.GROUP_MESSAGE,
+          message: file_url,
+          message_type: messageType,
+          group: currentChatRoom.id,
+          file_name: file_name,
         })
       } else if (info.file.status === 'error') {
         message.loading('发送失败')
@@ -104,50 +94,11 @@ const CurrentRoom = memo(() => {
     },
   }
 
-  const loadMoreMessage = async () => {
-    setLoading(true)
-    try {
-      if (!user.id || !currentChatRoom.id) return
-      setCurrentPage(currentPage + 1)
-      const result = await getRoomMsgListRequest(currentChatRoom.id, 20, currentPage + 1)
-      dispatch(
-        unshiftRoomMessageList({
-          room_id: currentChatRoom.id,
-          message: result.data,
-        })
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    // 根据当前消息条数更新当前页码
-    console.log('根据当前消息条数更新当前页码')
-    setCurrentPage(Math.floor(roomMessageList[currentChatRoom?.id]?.length / 20) || 1)
-  }, [roomMessageList[currentChatRoom?.id]])
-
-  const showDrawer = () => {
-    setOpen(true)
-  }
-
-  const onClose = () => {
-    setOpen(false)
-  }
-
   const containerStyle: React.CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
     textAlign: 'center',
   }
-  const onPullup = () => {
-    // console.log('下拉')
-  }
-  const onPulldown = () => {
-    loadMoreMessage()
-    console.log('上拉')
-  }
-  const onScroll = () => {}
   return (
     <>
       {currentChatRoom.id ? (
@@ -158,29 +109,18 @@ const CurrentRoom = memo(() => {
                 <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">{currentChatRoom.name}</h2>
                 <div className=" ml-2 dark:text-gray-200">{currentRoomLoading && <LoadingOutlined />}</div>
               </div>
-              <div className="pr-4 dark:text-gray-200 text-lg cursor-pointer transition-all duration-700 block xl:hidden" onClick={showDrawer}>
+              <div
+                className="pr-4 dark:text-gray-200 text-lg cursor-pointer transition-all duration-700 block xl:hidden"
+                onClick={() => setOpen(true)}
+              >
                 <TeamOutlined />
               </div>
             </div>
-            {showUpdownBottom && (
-              <div className=" transition-all duration-700 z-10 absolute right-0  bottom-[40%] opacity-90 dark:text-[#4ba3e3] w-[90px] h-[30px] flex items-center bg-gray-200 dark:bg-[#4d5162] pl-4 cursor-pointer rounded-l-2xl">
-                <span className="text-xs">回到底部</span>
-                <DoubleRightOutlined className=" rotate-90 ml-1 text-xs" />
-              </div>
-            )}
             <div className="flex flex-col h-full relative">
               {/* 消息框 */}
-              <BetterScroll wrapHeight="100%" onPulldown={onPulldown} onPullup={onPullup} onScroll={onScroll}>
-                <div>
-                  <div className=" flex justify-center items-center w-full absolute">
-                    <Spin spinning={loading} size="small"></Spin>
-                  </div>
-                  {roomMessageList[currentChatRoom.id]?.map((message, index) => {
-                    const lastMessageTime = roomMessageList[currentChatRoom.id]?.[index - 1]?.message.created_at
-                    return <MessageBubble {...message} lastMessageTime={lastMessageTime} key={message.message.content + index} />
-                  })}
-                </div>
-              </BetterScroll>
+              <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2">
+                <div className=" flex justify-center items-center w-full absolute"></div>
+              </div>
               <Emoji ref={emojiRef} pickEmoji={pickEmoji} />
               {/* 输入框 */}
               <div className="h-[180px] border-dashed border-t dark:border-[#494b5c] transition-all duration-700">
@@ -239,7 +179,7 @@ const CurrentRoom = memo(() => {
             className="border-none focus:outline-none focus:border-none"
             width="150px"
             closable={false}
-            onClose={onClose}
+            onClose={() => setOpen(false)}
             open={open}
             getContainer={false}
           >

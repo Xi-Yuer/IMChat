@@ -28,10 +28,7 @@ dayjs.extend(relativeTime)
 dayjs.extend(updateLocale)
 dayjs.extend(calenderPlugin)
 
-export const formatDate = (
-  date: string | number | Date,
-  format: string = 'YYYY-MM-DD HH:mm:ss'
-) => {
+export const formatDate = (date: string | number | Date, format: string = 'YYYY-MM-DD HH:mm:ss') => {
   if (date) {
     return dayjs(date).format(format)
   } else {
@@ -45,10 +42,7 @@ export const formatDateV2 = (date: string | number | Date) => {
   }
 }
 
-export const isBefore30Minutes = (
-  lastMessageTime: string | number | Date,
-  date: string | number | Date
-) => {
+export const isBefore30Minutes = (lastMessageTime: string | number | Date, date: string | number | Date) => {
   //  date 是否是 lastMessageTime 的后 30 分钟之后
   const pre = new Date(lastMessageTime)
   const cur = new Date(date)

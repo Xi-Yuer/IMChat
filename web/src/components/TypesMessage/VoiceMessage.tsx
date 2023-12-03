@@ -49,23 +49,12 @@ const VoiceMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
       ref={contentRef}
     >
       <div className="w-[70px] h-[70px] bg-[#a5dff9] flex justify-center items-center">
-        {!isPlayed ? (
-          <PlayCircleOutlined onClick={() => handlePlay(false)} />
-        ) : (
-          <PauseCircleOutlined onClick={() => handlePlay(true)} />
-        )}
+        {!isPlayed ? <PlayCircleOutlined onClick={() => handlePlay(false)} /> : <PauseCircleOutlined onClick={() => handlePlay(true)} />}
       </div>
-      <div className="transition-all duration-700 px-2 w-[150px] text-start truncate dark:text-[#414141]">
-        {file_name}
-      </div>
+      <div className="transition-all duration-700 px-2 w-[150px] text-start truncate dark:text-[#414141]">{file_name}</div>
       {isPlayed && (
         <div className=" absolute bottom-[-17px] left-0 right-0">
-          <Progress
-            percent={playPercent}
-            status="exception"
-            size="small"
-            showInfo={false}
-          />
+          <Progress percent={playPercent} status="exception" size="small" showInfo={false} />
         </div>
       )}
       <video

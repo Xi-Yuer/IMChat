@@ -1,11 +1,5 @@
 import { RootState } from '@/store'
-import {
-  GithubFilled,
-  MessageOutlined,
-  SmileOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons'
+import { GithubFilled, MessageOutlined, SmileOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Popover, Spin } from 'antd'
 import classNames from 'classnames'
 import { memo, useRef, useState } from 'react'
@@ -25,9 +19,7 @@ const Profile = memo(() => {
   const user = useSelector((state: RootState) => state.UserReducer.user)
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const roomList = useSelector((state: RootState) => state.UserReducer.roomList)
-  const loading = useSelector(
-    (state: RootState) => state.UIReducer.roomListLoading
-  )
+  const loading = useSelector((state: RootState) => state.UIReducer.roomListLoading)
   const [currentActive, setCurrentActive] = useState(1)
 
   const chatRoomList = () => {
@@ -58,12 +50,7 @@ const Profile = memo(() => {
         onClick={avatarImgClickHandle}
       />
     ) : (
-      <Avatar
-        size={45}
-        icon={<UserOutlined />}
-        className="cursor-pointer bg-gray-200 text-black"
-        onClick={loginImgClickHandle}
-      />
+      <Avatar size={45} icon={<UserOutlined />} className="cursor-pointer bg-gray-200 text-black" onClick={loginImgClickHandle} />
     )
   }
 
@@ -101,12 +88,7 @@ const Profile = memo(() => {
             )}
             onClick={() => sideBarItemClick(2)}
           >
-            <Popover
-              content={chatRoomList}
-              trigger="click"
-              placement="right"
-              arrow={{ pointAtCenter: true }}
-            >
+            <Popover content={chatRoomList} trigger="click" placement="right" arrow={{ pointAtCenter: true }}>
               <TeamOutlined className={iconStyle} />
             </Popover>
           </div>
