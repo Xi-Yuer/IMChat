@@ -48,11 +48,11 @@ type ChatRoomUserListResponseDTO struct {
 }
 
 type OriginData struct {
-	Data []Origin `json:"data"`
+	Data Origin `json:"data"`
 }
 
 type Origin struct {
-	Location string `json:"location"`
+	Area string `json:"area"`
 }
 
 type UpdateUserRequestDTO struct {
