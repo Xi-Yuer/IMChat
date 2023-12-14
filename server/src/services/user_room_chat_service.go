@@ -8,9 +8,9 @@ import (
 )
 
 type UserChatRoomService interface {
-	// 用户加入聊天室
+	// JoinChatRoom 用户加入聊天室
 	JoinChatRoom(userId string, chatRoomId string) error
-	// 查找聊天室的成员
+	// FindChatRoomUsers 查找聊天室的成员
 	FindChatRoomUsers(id string) ([]dto.ChatRoomUserListResponseDTO, error)
 	// 用户退出聊天室
 	// LeaveChatRoom(userId string, chatRoomId string) error

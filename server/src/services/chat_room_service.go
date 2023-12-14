@@ -8,13 +8,13 @@ import (
 )
 
 type ChatRoomService interface {
-	// 获取聊天室列表
+	// GetUserRoomList 获取聊天室列表
 	GetUserRoomList(userID string) ([]dto.ChatRoomResponseDTO, error)
 
 	// 获取聊天室详情
 	// GetChatRoomDetail(id string) (*models.ChatRoom, error)
 
-	// 创建聊天室
+	// CreateChatRoom 创建聊天室
 	CreateChatRoom(dto *dto.CreateChatRoomDTO, adminID string) error
 
 	// 删除聊天室

@@ -26,7 +26,7 @@ var upgrader = websocket.Upgrader{
 
 var userMutex sync.Mutex // 互斥锁
 
-// 创建WebSocket连接
+// UpgradeWebSocketConnection 创建WebSocket连接
 func UpgradeWebSocketConnection(c *gin.Context) (*websocket.Conn, error) {
 	ws, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
@@ -36,7 +36,7 @@ func UpgradeWebSocketConnection(c *gin.Context) (*websocket.Conn, error) {
 	return ws, nil
 }
 
-// 处理用户信息和添加到连接映射
+// HandleUserInfoAndAddToConnection 处理用户信息和添加到连接映射
 func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error {
 	// 从 WebSocket 请求头中获取用户信息
 	UserID := c.Query("id")
@@ -64,7 +64,7 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 	return nil
 }
 
-// 处理接收到的消息
+// HandleReceivedMessage 处理接收到的消息
 func HandleReceivedMessage(p []byte, c *gin.Context) {
 	// 在这里处理接收到的 JSON 数据
 	id := c.Query("id") // 用户携带 token 之后就会有 id 信息
@@ -86,7 +86,7 @@ func HandleReceivedMessage(p []byte, c *gin.Context) {
 	}
 }
 
-// 检测客户端连接状态
+// CheckHeartbeat 检测客户端连接状态
 func CheckHeartbeat(conn *websocket.Conn, c *gin.Context, id string) {
 loop:
 	for {
@@ -105,10 +105,13 @@ loop:
 	}
 }
 
-// 删除连接
+// RemoveConnection 删除连接
 func RemoveConnection(conn *websocket.Conn) {
 	// 关闭WebSocket连接
-	conn.Close()
+	err := conn.Close()
+	if err != nil {
+		return
+	}
 	// 从连接池中移除连接
 	userMutex.Lock()
 	delete(models.Connection, conn)

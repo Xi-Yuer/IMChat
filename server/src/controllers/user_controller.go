@@ -1,4 +1,4 @@
-// controllers/user_controller.go
+// Package controllers controllers/user_controller.go
 package controllers
 
 import (
@@ -23,7 +23,7 @@ func NewUserController(userService services.UserService) *UserController {
 	return &UserController{userService}
 }
 
-// 注册
+// RegisterUser 注册
 func (c *UserController) RegisterUser(ctx *gin.Context) {
 	var userRegisterDTO dto.UserRegisterDTO
 	if err := ctx.ShouldBind(&userRegisterDTO); err != nil {
@@ -52,7 +52,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 
 }
 
-// 登陆
+// Login 登陆
 func (c *UserController) Login(ctx *gin.Context) {
 	var userLoginDTO dto.UserLoginDTO
 	if err := ctx.ShouldBind(&userLoginDTO); err != nil {
@@ -75,11 +75,11 @@ func (c *UserController) Login(ctx *gin.Context) {
 	handlers.Success(ctx, "登录成功", userResponse)
 }
 
-// 登出
+// Logout 登出
 func (c *UserController) Logout(ctx *gin.Context) {
 	account, _ := ctx.Get("id")
-	time := time.Now()
-	err := c.userService.Logout(account.(string), time)
+	currTime := time.Now()
+	err := c.userService.Logout(account.(string), currTime)
 	if err != nil {
 		// 处理退出错误
 		// 返回错误响应
@@ -90,7 +90,7 @@ func (c *UserController) Logout(ctx *gin.Context) {
 	handlers.Success(ctx, "退出成功", nil)
 }
 
-// 请求用户列表
+// GetUserList 请求用户列表
 func (c *UserController) GetUserList(ctx *gin.Context) {
 	userInfo, err := c.userService.GetUserList()
 	if err != nil {
@@ -116,7 +116,7 @@ func (c *UserController) GetUserDetailByID(ctx *gin.Context) {
 	ctx.JSON(200, userInfo)
 }
 
-// 修改用户资料
+// UpdateUser 修改用户资料
 func (c *UserController) UpdateUser(ctx *gin.Context) {
 	id, ok := ctx.Get("id")
 	if !ok {

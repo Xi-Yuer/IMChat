@@ -1,4 +1,4 @@
-// services/user_service.go
+// Package services/user_service.go
 package services
 
 import (
@@ -30,7 +30,7 @@ func NewUserService(userRepository repositories.UserRepository) UserService {
 	return &UserServiceImpl{userRepository}
 }
 
-// 注册
+// RegisterUser 注册
 func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (*models.User, error) {
 	avatarList := [...]string{
 		"system/%E5%A4%B4%E5%83%8F%20%E8%81%8C%E5%9C%BA%E7%94%B7%E5%A3%AB.png",
@@ -54,7 +54,7 @@ func (s *UserServiceImpl) RegisterUser(dto *dto.UserRegisterDTO) (*models.User, 
 	return user, s.userRepository.CreateUser(user)
 }
 
-// 登陆
+// Login 登陆
 func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.UserLoginResponseDTO, error) {
 
 	user := &models.User{
@@ -86,7 +86,12 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	}
 	locationStr := https.GetUserOriginByIP(ip)
 	baseUrl := config.AppConfig.DoMian.URL
-	go s.userRepository.Login(u.ID, locationStr)
+	go func() {
+		err := s.userRepository.Login(u.ID, locationStr)
+		if err != nil {
+
+		}
+	}()
 	return &dto.UserLoginResponseDTO{
 		ID:             u.ID,
 		NickName:       u.NickName,
@@ -99,7 +104,7 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	}, nil
 }
 
-// 登出
+// Logout 登出
 func (s *UserServiceImpl) Logout(account string, time time.Time) error {
 	err := s.userRepository.Logout(account, time)
 	if err != nil {
@@ -108,7 +113,7 @@ func (s *UserServiceImpl) Logout(account string, time time.Time) error {
 	return nil
 }
 
-// 获取用户列表
+// GetUserList 获取用户列表
 func (s *UserServiceImpl) GetUserList() ([]*dto.UserResponseDTO, error) {
 	users, err := s.userRepository.GetUserList()
 	if err != nil {
@@ -147,7 +152,7 @@ func (s *UserServiceImpl) GetUserDetailByUserID(id string) (*dto.UserResponseDTO
 	}, nil
 }
 
-// 修改用户资料
+// UpdateUserDetail 修改用户资料
 func (s *UserServiceImpl) UpdateUserDetail(user *dto.UpdateUserRequestDTO, id string) error {
 
 	u, err := s.userRepository.GetUserDetailByUserID(id)

@@ -15,5 +15,8 @@ func main() {
 	limiter := tollbooth.NewLimiter(10, nil)
 	r.Use(middlewares.Limiter(limiter))
 	routes.SetupRoutes(r)
-	r.Run(":8080")
+	err := r.Run(":8080")
+	if err != nil {
+		return
+	}
 }

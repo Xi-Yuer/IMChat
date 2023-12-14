@@ -1,4 +1,4 @@
-// routes/routes.go
+// Package routes routes/routes.go
 package routes
 
 import (
@@ -68,7 +68,12 @@ func SetupRoutes(router *gin.Engine) {
 				handlers.ServerError(c, err.Error())
 				return
 			}
-			defer webSocketInstance.Close()
+			defer func(webSocketInstance *websocket.Conn) {
+				err := webSocketInstance.Close()
+				if err != nil {
+
+				}
+			}(webSocketInstance)
 			id := c.Query("id")
 			go ws.CheckHeartbeat(webSocketInstance, c, id)
 			// 处理用户信息和添加到连接映射

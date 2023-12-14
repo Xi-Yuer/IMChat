@@ -18,7 +18,7 @@ import (
 
 var messageStorageChannel = make(chan *models.Message, 100) // 创建一个消息存储通道
 
-// 处理消息
+// HandleReceivedData 处理消息
 func HandleReceivedData(p []byte, UserID string) {
 	// 在这里进行相应的逻辑处理，例如将消息存储到数据库或广播给其他用户
 	// 广播接收到的消息给所有在线客户端
@@ -49,28 +49,37 @@ func HandleReceivedData(p []byte, UserID string) {
 	for conn, user := range models.Connection {
 		if GroupInUser(user, data.GroupID) {
 			// 发送响应数据给用户所在群组的所有用户
-			conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+			err := conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+			if err != nil {
+				return
+			}
 		}
 	}
 }
 
-// 通知群在线用户获取最新群在线人数信息
+// SendGroupChatNumber 通知群在线用户获取最新群在线人数信息
 func SendGroupChatNumber(outConn *websocket.Conn, c *gin.Context, id string) {
 	response := &dto.BaseMessageResponseDTO{
 		Type: enum.UserOffline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
 	userRepo := repositories.NewUserRepository(db.DB)
-	time := time.Now()
-	userRepo.Logout(id, time)
+	currTime := time.Now()
+	err := userRepo.Logout(id, currTime)
+	if err != nil {
+		return
+	}
 	for _, v := range models.Connection {
 		// 发送响应数据给用户所在群组的所有用户
 		// TODO:这里其实应该只通知下线用户所在群的所有用户连接，但是我获取到的下载用户的群组ID为空，所以只能暂时通知所有在线用户
-		v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+		err := v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+		if err != nil {
+			return
+		}
 	}
 }
 
-// 用户上线
+// UserOnline 用户上线
 func UserOnline(conn models.UserConnection, c *gin.Context) {
 	// 通知群在线用户获取最新群在线人数信息
 	response := &dto.BaseMessageResponseDTO{
@@ -79,16 +88,24 @@ func UserOnline(conn models.UserConnection, c *gin.Context) {
 	responseJSON, _ := json.Marshal(response)
 	userRepo := repositories.NewUserRepository(db.DB)
 	ip := c.ClientIP()
-	go userRepo.Login(conn.UserID, ip)
+	go func() {
+		err := userRepo.Login(conn.UserID, ip)
+		if err != nil {
+
+		}
+	}()
 	for _, v := range models.Connection {
 		if utils.FirstArrayInLastArray(v.Groups, conn.Groups) {
 			// 发送响应数据给用户所在群组的所有用户
-			v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+			err := v.Conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+			if err != nil {
+				return
+			}
 		}
 	}
 }
 
-// 是否将消息广播给该连接用户
+// GroupInUser 是否将消息广播给该连接用户
 func GroupInUser(user models.UserConnection, group string) bool {
 	found := false
 	for _, _group := range user.Groups {

@@ -37,7 +37,10 @@ func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender stri
 		FileUrl:    fileURL,
 		FileSender: sender,
 	}
-	f.fileRepository.UploadFile(record)
+	err = f.fileRepository.UploadFile(record)
+	if err != nil {
+		return nil, err
+	}
 	if err := f.fileRepository.UploadFile(record); err != nil {
 		return nil, err
 	}
@@ -54,7 +57,7 @@ func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender stri
 
 // 图片消息：用户选择图片之后，由后端上传图片至OSS平台，上传成功之后返回图片相关信息给到前端，前端拿到图片信息之后再向群聊中发送一条消息，消息类型为图片类型，将消息存储到消息内存变量中并进行渲染
 
-// 将文件上传到 阿里云 oss
+// UploadAliyunOss 将文件上传到 阿里云 oss
 func UploadAliyunOss(file *multipart.FileHeader) (string, error) {
 	AppConfig := config.AppConfig
 	client, err := oss.New(AppConfig.Aliyun.Endpoint, AppConfig.Aliyun.AccessKeyID, AppConfig.Aliyun.AccessKeySecret)
@@ -71,7 +74,12 @@ func UploadAliyunOss(file *multipart.FileHeader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer src.Close()
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+
+		}
+	}(src)
 
 	// 将文件流上传至bucket目录下
 	fileID := uuid.New().String()
