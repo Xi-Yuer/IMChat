@@ -23,12 +23,18 @@ func (c *FileController) UploadFile(ctx *gin.Context) {
 	}
 	// 获取文件
 	file, err := ctx.FormFile("file")
+	// 获取文件信息
+	width := ctx.PostForm("width")
+	height := ctx.PostForm("height")
+	if err != nil {
+		return
+	}
 	if err != nil {
 		handlers.Error(ctx, err.Error())
 		return
 	}
 
-	if record, err := c.fileService.UploadFile(file, sender.(string)); err != nil {
+	if record, err := c.fileService.UploadFile(file, sender.(string), width, height); err != nil {
 		handlers.Error(ctx, err.Error())
 	} else {
 		handlers.Success(ctx, "success", record)

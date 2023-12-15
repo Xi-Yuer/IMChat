@@ -13,7 +13,7 @@ import (
 )
 
 type FileService interface {
-	UploadFile(fileData *multipart.FileHeader, sender string) (file *dto.FileResposeDTO, err error)
+	UploadFile(fileData *multipart.FileHeader, sender, width, height string) (file *dto.FileResposeDTO, err error)
 }
 
 func NewFileService(fileRepository repositories.FileRepository) FileService {
@@ -25,7 +25,7 @@ type FileServiceImpl struct {
 }
 
 // UploadFile 上传文件
-func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender string) (file *dto.FileResposeDTO, err error) {
+func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender, width, height string) (file *dto.FileResposeDTO, err error) {
 	fileURL, err := UploadAliyunOss(fileData)
 	if err != nil {
 		return nil, err
@@ -33,13 +33,11 @@ func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender stri
 	record := &models.File{
 		FileName:   fileData.Filename,
 		FileSize:   fileData.Size,
+		FileWidth:  width,
+		FileHeight: height,
 		FileType:   fileData.Header.Get("Content-Type"),
-		FileUrl:    fileURL,
+		FileUrl:    fileURL + "?width=" + width + "&height=" + height,
 		FileSender: sender,
-	}
-	err = f.fileRepository.UploadFile(record)
-	if err != nil {
-		return nil, err
 	}
 	if err := f.fileRepository.UploadFile(record); err != nil {
 		return nil, err
@@ -49,6 +47,8 @@ func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender stri
 		FileName:   record.FileName,
 		FileType:   record.FileType,
 		FileSize:   record.FileSize,
+		FileWidth:  record.FileWidth,
+		FileHeight: record.FileHeight,
 		FileUrl:    config.AppConfig.Aliyun.BucketURL + record.FileUrl,
 		FileSender: record.FileSender,
 	}
