@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// 密码加密
+// HashPassword 密码加密
 func HashPassword(password string) (string, error) {
 	// 生成密码哈希
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
@@ -20,7 +20,7 @@ func HashPassword(password string) (string, error) {
 	return string(hashedPassword), nil
 }
 
-// 密码验证
+// IsPasswordValid 密码验证
 func IsPasswordValid(inputPassword, storedHashedPassword string) error {
 	// 将数据库中存储的哈希密码字符串转换为字节数组
 	storedHashedPasswordBytes := []byte(storedHashedPassword)
@@ -30,7 +30,7 @@ func IsPasswordValid(inputPassword, storedHashedPassword string) error {
 	return err
 }
 
-// 生成随机的密钥(全局Secret)
+// GenerateRandomKey 生成随机的密钥(全局Secret)
 func GenerateRandomKey(length int) (string, error) {
 	key := make([]byte, length)
 	_, err := rand.Read(key)
@@ -40,7 +40,7 @@ func GenerateRandomKey(length int) (string, error) {
 	return base64.StdEncoding.EncodeToString(key), nil
 }
 
-// 判断第一个数据是否存在于第二个数组中
+// FirstArrayInLastArray 判断第一个数据是否存在于第二个数组中
 func FirstArrayInLastArray(firstArray, lastArray []string) bool {
 	//  创建一个map用于存储第一个数组的元素
 	elementMap := make(map[string]bool)
@@ -60,7 +60,7 @@ func FirstArrayInLastArray(firstArray, lastArray []string) bool {
 	return false
 }
 
-// 判断是否是用户自己
+// IsUserSelf 判断是否是用户自己
 func IsUserSelf(ctx *gin.Context, operationID string) bool {
 	userID, ok := ctx.Get("id")
 	if !ok {
