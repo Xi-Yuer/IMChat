@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Token 验证
+// Auth Token 验证
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
@@ -36,7 +36,7 @@ func Auth() gin.HandlerFunc {
 	}
 }
 
-// 限流
+// Limiter 限流
 func Limiter(lmt *limiter.Limiter) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		httpError := tollbooth.LimitByRequest(lmt, c.Writer, c.Request)

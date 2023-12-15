@@ -16,9 +16,9 @@ var DB *gorm.DB
 
 func init() {
 	// 加载配置
-	config := config.AppConfig
+	appConfig := config.AppConfig
 	// 数据库连接
-	db, err := gorm.Open(mysql.Open(config.Database.URL), &gorm.Config{
+	db, err := gorm.Open(mysql.Open(appConfig.Database.URL), &gorm.Config{
 		// 自定义日志
 		Logger: logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),

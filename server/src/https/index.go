@@ -17,7 +17,12 @@ func GetUserOriginByIP(ip string) string {
 		fmt.Println(err.Error())
 		locationStr = "未知"
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
 	// 读取响应内容
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
