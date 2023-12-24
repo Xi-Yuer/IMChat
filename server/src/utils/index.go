@@ -3,9 +3,10 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/base64"
-
+	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"mime/multipart"
 )
 
 // HashPassword 密码加密
@@ -70,4 +71,40 @@ func IsUserSelf(ctx *gin.Context, operationID string) bool {
 		return true
 	}
 	return false
+}
+
+type MediaRect struct {
+	Width  int
+	Height int
+}
+
+// HandelImageUplaod 处理图片上传
+func HandelImageUplaod(file *multipart.FileHeader) (*MediaRect, error) {
+	// 打开上传的文件
+	src, err := file.Open()
+	if err != nil {
+		// 错误处理逻辑
+	}
+	defer func(src multipart.File) {
+		err := src.Close()
+		if err != nil {
+			panic("file close error")
+		}
+	}(src)
+
+	// 使用imaging库解码图像文件
+	img, err := imaging.Decode(src)
+	if err != nil {
+		// 错误处理逻辑
+		panic(err)
+	}
+
+	// 获取图像的宽度和高度
+	width := img.Bounds().Dx()
+	height := img.Bounds().Dy()
+
+	return &MediaRect{
+		Width:  width,
+		Height: height,
+	}, nil
 }

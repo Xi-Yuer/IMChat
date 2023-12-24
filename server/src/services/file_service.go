@@ -13,7 +13,7 @@ import (
 )
 
 type FileService interface {
-	UploadFile(fileData *multipart.FileHeader, sender, width, height string) (file *dto.FileResposeDTO, err error)
+	UploadFile(fileData *multipart.FileHeader, sender string, width, height string) (file *dto.FileResposeDTO, err error)
 }
 
 func NewFileService(fileRepository repositories.FileRepository) FileService {
@@ -25,7 +25,7 @@ type FileServiceImpl struct {
 }
 
 // UploadFile 上传文件
-func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender, width, height string) (file *dto.FileResposeDTO, err error) {
+func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender string, width, height string) (file *dto.FileResposeDTO, err error) {
 	fileURL, err := UploadAliyunOss(fileData)
 	if err != nil {
 		return nil, err
@@ -39,6 +39,7 @@ func (f *FileServiceImpl) UploadFile(fileData *multipart.FileHeader, sender, wid
 		FileUrl:    fileURL + "?width=" + width + "&height=" + height,
 		FileSender: sender,
 	}
+
 	if err := f.fileRepository.UploadFile(record); err != nil {
 		return nil, err
 	}

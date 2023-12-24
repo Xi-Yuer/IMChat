@@ -63,7 +63,7 @@ const Profile = memo(() => {
 
   return (
     <>
-      <div className="w-[80px] h-full flex justify-between flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700">
+      <div className="w-[80px] h-full flex justify-between px-4 flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700">
         <div className="flex items-center flex-col gap-4">
           {avatarType()}
           <div

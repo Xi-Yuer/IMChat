@@ -11,25 +11,34 @@ import {
 import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
-import { memo, useContext, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { memo, useContext, useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
+import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
+import { unshiftRoomMessageList } from '../../store/modules/socket'
 import Emoji, { EmojiRefCom } from '../Emoji'
+import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
 
 const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const emojiRef = useRef<EmojiRefCom>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
+  const [isPushMessage, setIsPushMessage] = useState(true)
+  const [currPage, setCurrPage] = useState(2)
+  const [currScrollHeight, setCurrScrollHeight] = useState(0)
   const [open, setOpen] = useState(false)
   const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
   const [file_name, setFile_name] = useState('')
 
+  const dispatch = useDispatch()
   const { isMobile } = useScreen()
   const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
   const { currentRoomUserListLoading, currentRoomLoading } = useSelector((state: RootState) => state.UIReducer)
+  const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
   const { user } = useSelector((state: RootState) => state.UserReducer)
 
   const pickEmoji = (emoji: EmojiClickData) => {
@@ -47,7 +56,39 @@ const CurrentRoom = memo(() => {
     })
     setInputValue('')
     // 滚动到底部
+    setIsPushMessage(true)
     return false
+  }
+  useEffect(() => {
+    if (isPushMessage) {
+      queueMicrotask(() => {
+        containerRef.current?.scrollTo({
+          top: containerRef.current.scrollHeight,
+        })
+      })
+    } else {
+      queueMicrotask(() => {
+        containerRef.current?.scrollTo({
+          top: containerRef.current.scrollHeight - currScrollHeight,
+        })
+      })
+    }
+  }, [roomMessageList[currentChatRoom.id]])
+
+  const onScroll = (e: any) => {
+    setCurrScrollHeight(e.target.scrollHeight)
+    if (e.target.scrollTop === 0) {
+      setIsPushMessage(false)
+      setCurrPage(currPage + 1)
+      getRoomMsgListRequest(currentChatRoom.id, 20, currPage).then((res) => {
+        dispatch(
+          unshiftRoomMessageList({
+            room_id: currentChatRoom.id,
+            message: res.data,
+          })
+        )
+      })
+    }
   }
 
   const props: UploadProps = {
@@ -93,7 +134,6 @@ const CurrentRoom = memo(() => {
       }
     },
   }
-
   const containerStyle: React.CSSProperties = {
     position: 'relative',
     overflow: 'hidden',
@@ -118,8 +158,22 @@ const CurrentRoom = memo(() => {
             </div>
             <div className="flex flex-col h-full relative">
               {/* 消息框 */}
-              <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar p-2">
-                <div className=" flex justify-center items-center w-full absolute"></div>
+              {/* 使用 betterscroll 渲染消息列表 */}
+              <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2" style={{ height: '300px', overflow: 'hidden' }}>
+                <div className="h-full overflow-auto" ref={containerRef} onScroll={onScroll}>
+                  {roomMessageList[currentChatRoom.id]?.map((list, index) => {
+                    return (
+                      <div key={index}>
+                        <MessageBubble
+                          key={index}
+                          message={list.message}
+                          user={list.user}
+                          lastMessageTime={roomMessageList[currentChatRoom.id][index - 1]?.message.created_at}
+                        />
+                      </div>
+                    )
+                  })}
+                </div>
               </div>
               <Emoji ref={emojiRef} pickEmoji={pickEmoji} />
               {/* 输入框 */}
