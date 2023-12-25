@@ -172,10 +172,10 @@ const CurrentRoom = memo(() => {
               {/* 消息框 */}
               {/* 使用 betterscroll 渲染消息列表 */}
               <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2" style={{ height: '300px', overflow: 'hidden' }}>
-                <div className="h-full overflow-auto" ref={containerRef} onScroll={onScroll}>
+                <div className="h-full w-full overflow-auto" ref={containerRef} onScroll={onScroll}>
                   {roomMessageList[currentChatRoom.id]?.map((list, index) => {
                     return (
-                      <div key={index}>
+                      <div key={index} className="p-2">
                         <MessageBubble
                           key={index}
                           message={list.message}
