@@ -11,13 +11,15 @@ import {
 import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
-import { memo, useContext, useEffect, useRef, useState } from 'react'
+import { memo, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
+import { uploadFileForm } from '../../server/apis/upload'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
+import CalcVideo from '../../utils/calcVideo'
 import Emoji, { EmojiRefCom } from '../Emoji'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
@@ -59,7 +61,7 @@ const CurrentRoom = memo(() => {
     setIsPushMessage(true)
     return false
   }
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isPushMessage) {
       queueMicrotask(() => {
         containerRef.current?.scrollTo({
@@ -79,8 +81,9 @@ const CurrentRoom = memo(() => {
     setCurrScrollHeight(e.target.scrollHeight)
     if (e.target.scrollTop === 0) {
       setIsPushMessage(false)
-      setCurrPage(currPage + 1)
       getRoomMsgListRequest(currentChatRoom.id, 20, currPage).then((res) => {
+        if (!res.data || !res.data.length) return
+        setCurrPage(currPage + 1)
         dispatch(
           unshiftRoomMessageList({
             room_id: currentChatRoom.id,
@@ -90,7 +93,6 @@ const CurrentRoom = memo(() => {
       })
     }
   }
-
   const props: UploadProps = {
     name: 'file',
     action: '/api/file/upload',
@@ -98,8 +100,34 @@ const CurrentRoom = memo(() => {
       authorization: user.token,
     },
     showUploadList: false,
+    customRequest: async (options) => {
+      const { file } = options
+      let video = new CalcVideo(file as unknown as File, 2)
+      video.metaValue.then(async (res) => {
+        const { height, width } = res
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('width', width)
+        formData.append('height', height)
+        message.loading('发送中...')
+        try {
+          const result = await uploadFileForm(formData)
+          const {
+            data: { file_url },
+          } = result
+          sendMessageContext({
+            type: MessageType.GROUP_MESSAGE,
+            message: file_url,
+            message_type: messageType,
+            group: currentChatRoom.id,
+            file_name: file_name,
+          })
+        } catch (error) {
+          message.error('发送失败，请检查网络或稍后再试')
+        }
+      })
+    },
     beforeUpload(file) {
-      message.loading('发送中...')
       setFile_name(file.name)
       if (/^image\/.*/.test(file.type)) {
         setMessageType(SystemMessageType.IMAGE)
@@ -115,22 +143,6 @@ const CurrentRoom = memo(() => {
       }
       if (/^application\/.*/.test(file!.type)) {
         setMessageType(SystemMessageType.XLSX)
-      }
-    },
-    onChange(info) {
-      if (info.file.status === 'done') {
-        const {
-          data: { file_url },
-        } = info.file.response
-        sendMessageContext({
-          type: MessageType.GROUP_MESSAGE,
-          message: file_url,
-          message_type: messageType,
-          group: currentChatRoom.id,
-          file_name: file_name,
-        })
-      } else if (info.file.status === 'error') {
-        message.loading('发送失败')
       }
     },
   }

@@ -36,7 +36,7 @@ export interface IChatMessageResponse {
   }
   user: Omit<ILoginResponse, 'token'>
 }
-export const getRoomMsgListRequest = (chat_room_id: string, limit: number, offset: number) => {
+export const getRoomMsgListRequest = (chat_room_id: string, limit: number = 20, offset: number = 1) => {
   return request.get<AxiosResponse<IChatMessageResponse[]>>({
     url: '/message/list',
     params: {

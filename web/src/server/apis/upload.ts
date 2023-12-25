@@ -8,3 +8,10 @@ export const uploadFile = (file: File) => {
     data: formData,
   })
 }
+
+export const uploadFileForm = (form: FormData) => {
+  return request.post({
+    url: '/file/upload',
+    data: form,
+  })
+}

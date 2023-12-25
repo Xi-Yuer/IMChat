@@ -25,7 +25,7 @@ const defaultOptions: Required<WebSocketOptions> = {
   onError: () => {}, //异常
   onMessage: () => {}, //消息
   reconnectInterval: 1000, //重连时长设置
-  reconnectAttempts: Number.MAX_VALUE, //最大连接范围数
+  reconnectAttempts: 1, //最大连接范围数
 }
 
 const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (message: any) => void, string, boolean] => {
@@ -39,7 +39,7 @@ const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (messa
   const [lastMessage, setLastMessage] = useState('') //最新的消息
 
   const socketRef = useRef<WebSocket>()
-  const reconnectTimerRef = useRef<number>()
+  const reconnectTimerRef = useRef<NodeJS.Timeout>()
 
   const connect = () => {
     //连接函数封装
