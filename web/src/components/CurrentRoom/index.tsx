@@ -29,7 +29,10 @@ const CurrentRoom = memo(() => {
   const emojiRef = useRef<EmojiRefCom>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState('')
+  const [hasNoMore, setHasNoMore] = useState(false)
   const [isPushMessage, setIsPushMessage] = useState(true)
+  const [loadMoreLoading, setLoadMoreLoading] = useState(false)
+  const [showBackBottomBar, setShowBackBottomBar] = useState(false)
   const [currPage, setCurrPage] = useState(2)
   const [currScrollHeight, setCurrScrollHeight] = useState(0)
   const [open, setOpen] = useState(false)
@@ -79,19 +82,39 @@ const CurrentRoom = memo(() => {
 
   const onScroll = (e: any) => {
     setCurrScrollHeight(e.target.scrollHeight)
+    setShowBackBottomBar(e.target.scrollHeight - e.target.scrollTop > 1000)
     if (e.target.scrollTop === 0) {
       setIsPushMessage(false)
-      getRoomMsgListRequest(currentChatRoom.id, 20, currPage).then((res) => {
-        if (!res.data || !res.data.length) return
-        setCurrPage(currPage + 1)
-        dispatch(
-          unshiftRoomMessageList({
-            room_id: currentChatRoom.id,
-            message: res.data,
-          })
-        )
-      })
+      setLoadMoreLoading(true)
+      if (hasNoMore) {
+        setLoadMoreLoading(false)
+        return
+      }
+      getRoomMsgListRequest(currentChatRoom.id, 20, currPage)
+        .then((res) => {
+          if (!res.data || !res.data.length) {
+            setHasNoMore(true)
+            return
+          }
+          setHasNoMore(false)
+          setCurrPage(currPage + 1)
+          dispatch(
+            unshiftRoomMessageList({
+              room_id: currentChatRoom.id,
+              message: res.data,
+            })
+          )
+        })
+        .finally(() => {
+          setLoadMoreLoading(false)
+        })
     }
+  }
+  const backBottom = () => {
+    containerRef.current?.scrollTo({
+      top: containerRef.current.scrollHeight,
+      behavior: 'smooth',
+    })
   }
   const props: UploadProps = {
     name: 'file',
@@ -171,8 +194,10 @@ const CurrentRoom = memo(() => {
             <div className="flex flex-col h-full relative">
               {/* 消息框 */}
               {/* 使用 betterscroll 渲染消息列表 */}
-              <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2" style={{ height: '300px', overflow: 'hidden' }}>
+              <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2 relative" style={{ height: '300px', overflow: 'hidden' }}>
                 <div className="h-full w-full overflow-auto" ref={containerRef} onScroll={onScroll}>
+                  <div className="w-full h-[30px] flex justify-center items-center dark:text-gray-200">{loadMoreLoading && <LoadingOutlined />}</div>
+                  <div className="w-full h-[0px] flex justify-center items-center dark:text-gray-400">{hasNoMore && '没有更多了'}</div>
                   {roomMessageList[currentChatRoom.id]?.map((list, index) => {
                     return (
                       <div key={index} className="p-2">
@@ -185,6 +210,14 @@ const CurrentRoom = memo(() => {
                       </div>
                     )
                   })}
+                  {showBackBottomBar && (
+                    <div
+                      className="absolute cursor-pointer hover:shadow-md text-gray-700 transition-colors duration-700 right-0 w-[90px] rounded-l-2xl dark:bg-opacity-80 h-[30px] bg-gray-200 bottom-[200px] text-center leading-[30px] dark:bg-[#64686f] dark:text-gray-200"
+                      onClick={backBottom}
+                    >
+                      回到底部
+                    </div>
+                  )}
                 </div>
               </div>
               <Emoji ref={emojiRef} pickEmoji={pickEmoji} />

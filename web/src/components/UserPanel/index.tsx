@@ -24,7 +24,15 @@ const UserPanel = memo((user: Omit<ILoginResponse, 'token'> & { active: boolean 
       <Popover content={moreUserInfo} placement="bottom" trigger={'click'}>
         <div className="flex items-center gap-2 my-2 cursor-pointer">
           <div className="flex items-center justify-center relative">
-            <Image src={user.profile_picture} width={30} height={30} className="rounded-full" preview={false} />
+            <Image
+              src={user.profile_picture}
+              width={30}
+              height={30}
+              className={classNames('rounded-full', {
+                grayscale: !user.active,
+              })}
+              preview={false}
+            />
             <span
               className={classNames('w-2 h-2 rounded-full absolute right-[-2px] bottom-0 transition-all duration-700', {
                 'bg-[#adff2f]': user.active,
