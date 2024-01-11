@@ -132,7 +132,11 @@ const CurrentRoom = memo(() => {
         formData.append('file', file)
         formData.append('width', width)
         formData.append('height', height)
-        message.loading('发送中...')
+        message.loading({
+          type: 'loading',
+          duration: 1000,
+          content: '正在上传...',
+        })
         try {
           const result = await uploadFileForm(formData)
           const {
@@ -147,6 +151,8 @@ const CurrentRoom = memo(() => {
           })
         } catch (error) {
           message.error('发送失败，请检查网络或稍后再试')
+        } finally {
+          message.destroy()
         }
       })
     },

@@ -79,7 +79,7 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	if err != nil {
 		return nil, err
 	}
-	tokenString, err := token.SignedString([]byte(config.SecretKey))
+	tokenString, err := token.SignedString(config.SecretKey)
 
 	if err != nil {
 		return nil, err
