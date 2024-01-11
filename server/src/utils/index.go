@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 	"mime/multipart"
+	"regexp"
 )
 
 // HashPassword 密码加密
@@ -107,4 +108,12 @@ func HandelImageUplaod(file *multipart.FileHeader) (*MediaRect, error) {
 		Width:  width,
 		Height: height,
 	}, nil
+}
+
+// IsAtRobatMessage 是否是 @ 消息
+func IsAtRobatMessage(msg string) bool {
+	pattern := `@(\w+)`
+	re := regexp.MustCompile(pattern)
+	matches := re.FindAllStringSubmatch(msg, -1)
+	return len(matches) > 0
 }

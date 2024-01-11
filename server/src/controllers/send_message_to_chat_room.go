@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	aiChat "ImChat/src/AiChat/controller"
 	"ImChat/src/config"
 	"ImChat/src/db"
 	"ImChat/src/dto"
@@ -10,7 +11,6 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
-	"fmt"
 	"log"
 	"time"
 
@@ -31,7 +31,7 @@ func HandleReceivedData(p []byte, UserID string) {
 		return
 	}
 	userResponse := getUserResponse(UserID)       // 发送者
-	messageReponse := getMessageDTO(data, UserID) // 消息
+	messageReponse := GetMessageDTO(data, UserID) // 消息
 	response := &dto.MessageResponseDTO{
 		Type: enum.GroupMessage, // 响应体
 		Data: dto.ChatMessageResponseDTO{
@@ -39,7 +39,7 @@ func HandleReceivedData(p []byte, UserID string) {
 			Message: messageReponse,
 		},
 	}
-	messageDTO := getMessageResponse(data, UserID) // 写入消息
+	messageDTO := GetMessageResponse(data, UserID) // 写入消息
 	// 将消息发送到消息管道中
 	messageStorageChannel <- messageDTO
 
@@ -50,6 +50,10 @@ func HandleReceivedData(p []byte, UserID string) {
 	responseJSON, _ := json.Marshal(response)
 	for conn, user := range models.Connection {
 		if GroupInUser(user, data.GroupID) {
+			// 开启 Ai 智能回复
+			if utils.IsAtRobatMessage(data.Message) {
+				go aiChat.ChatController(data, conn)
+			}
 			// 发送响应数据给用户所在群组的所有用户
 			err := conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
 			if err != nil {
@@ -122,9 +126,6 @@ func GroupInUser(user models.UserConnection, group string) bool {
 
 func getUserResponse(userID string) *dto.UserResponseDTO {
 	user, err := repositories.NewUserRepository(db.DB).GetUserDetailByUserID(userID)
-	fmt.Println("=======")
-	fmt.Println(user.Origin)
-	fmt.Println("=======")
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -142,7 +143,7 @@ func getUserResponse(userID string) *dto.UserResponseDTO {
 	}
 }
 
-func getMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Message {
+func GetMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Message {
 	return &models.Message{
 		Content:     data.Message,
 		MessageType: data.MessageType,
@@ -152,7 +153,7 @@ func getMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Messag
 	}
 }
 
-func getMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
+func GetMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 	// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
 	if data.MessageType == enum.IMAGE || data.MessageType == enum.MP3 || data.MessageType == enum.MP4 || data.MessageType == enum.XLSX || data.MessageType == enum.DOCX || data.MessageType == enum.EMOJI {
 		data.Message = config.AppConfig.DoMian.URL + data.Message

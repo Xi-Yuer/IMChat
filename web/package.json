@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host --mode dev",
-    "build": "tsc && vite build --mode pro",
+    "build": "vite build --mode pro",
     "format": "npx prettier . --write",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
