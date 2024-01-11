@@ -86,12 +86,10 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 	}
 	locationStr := https.GetUserOriginByIP(ip)
 	baseUrl := config.AppConfig.DoMian.URL
-	go func() {
-		err := s.userRepository.Login(u.ID, locationStr)
-		if err != nil {
-
-		}
-	}()
+	err = s.userRepository.Login(u.ID, locationStr)
+	if err != nil {
+		panic(err)
+	}
 	return &dto.UserLoginResponseDTO{
 		ID:             u.ID,
 		NickName:       u.NickName,
@@ -100,7 +98,7 @@ func (s *UserServiceImpl) Login(loginDto *dto.UserLoginDTO, ip string) (*dto.Use
 		Gender:         u.Gender,
 		Bio:            u.Bio,
 		LastLogin:      u.LastLogin,
-		Origin:         u.Origin,
+		Origin:         locationStr,
 	}, nil
 }
 

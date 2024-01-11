@@ -9,3 +9,9 @@
 - 消息列表：获取消息列表，并按照时间排序，支持分页查询
 - 消息发送：消息发送，消息发送成功后，更新消息列表，并发送给群聊成员
     - 消息的内容，消息类型，发送消息的用户信息
+
+### 打包命令运行到 Linux 中
+
+```bash
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o IMChatServer
+```

@@ -5,10 +5,12 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
+	"ImChat/src/https"
 	"ImChat/src/models"
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -88,8 +90,9 @@ func UserOnline(conn models.UserConnection, c *gin.Context) {
 	responseJSON, _ := json.Marshal(response)
 	userRepo := repositories.NewUserRepository(db.DB)
 	ip := c.ClientIP()
+	locationStr := https.GetUserOriginByIP(ip)
 	go func() {
-		err := userRepo.Login(conn.UserID, ip)
+		err := userRepo.Login(conn.UserID, locationStr)
 		if err != nil {
 
 		}
@@ -119,6 +122,9 @@ func GroupInUser(user models.UserConnection, group string) bool {
 
 func getUserResponse(userID string) *dto.UserResponseDTO {
 	user, err := repositories.NewUserRepository(db.DB).GetUserDetailByUserID(userID)
+	fmt.Println("=======")
+	fmt.Println(user.Origin)
+	fmt.Println("=======")
 	if err != nil {
 		log.Println(err)
 		return nil

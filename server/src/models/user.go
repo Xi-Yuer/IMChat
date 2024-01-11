@@ -21,15 +21,15 @@ type User struct {
 	IsAdmin        bool       `json:"is_admin" gorm:"default:false"`
 }
 
-func (User) TabelName() string {
+func (*User) TabelName() string {
 	return "users"
 }
 func (user *User) BeforeCreate(tx *gorm.DB) (err error) {
 	// 生成唯一的 UUID
-	uuid := uuid.New()
+	u := uuid.New()
 
 	// 将 UUID 分配给 'id' 列
-	user.ID = uuid.String()
+	user.ID = u.String()
 
 	return nil
 }
