@@ -111,10 +111,9 @@ class Request {
   }
 }
 
-export default new Request('/api', 100000, {
+export default new Request(import.meta.env.VITE_APP_BASEURL, 100000, {
   requestInterceptor: {
     onFulfilled(config) {
-      console.log('实例请求成功拦截')
       const token = store.getState().UserReducer?.user?.token
       if (token) {
         config.headers.Authorization = token
@@ -122,20 +121,17 @@ export default new Request('/api', 100000, {
       return config
     },
     onRejected(error) {
-      console.log('实例请求失败拦截')
       return error
     },
   },
   responseInterceptor: {
     onFulfilled(value) {
-      console.log('实例响应成功拦截')
       if (value.data.code !== 200) {
         message.error(value.data.msg)
       }
       return value.data
     },
     onRejected(error) {
-      console.log('实例响应失败拦截')
       message.error(error.response.data.msg)
       return error
     },

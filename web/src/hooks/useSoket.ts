@@ -48,14 +48,12 @@ const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (messa
     const socket = new WebSocket(url)
     socket.onopen = () => {
       //开始连接
-      console.log('WebSocket is connected')
       setIsConnected(true)
       setReconnectCount(0)
       onOpen()
     }
     socket.onclose = (event) => {
       //连接关闭
-      console.error(`WebSocket closed with code ${event.code}`)
       setIsConnected(false)
       onClose(event)
       if (reconnectCount < reconnectAttempts) {
@@ -94,7 +92,6 @@ const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (messa
   const sendMessage = (message: any) => {
     //用于发送消息
     if (isConnected && socketRef.current) {
-      console.log(`WebSocket sending message: ${JSON.stringify(message)}`)
       socketRef.current.send(JSON.stringify(message))
     } else {
       console.error('Cannot send message - WebSocket is not connected')

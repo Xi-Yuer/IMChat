@@ -30,18 +30,16 @@ const Root = memo(() => {
   const dispatch = useDispatch()
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const { user } = useSelector((state: RootState) => state.UserReducer)
-  const socketUrl = `ws://localhost:8080/ws?id=${user.id}`
+  const socketUrl = `${import.meta.env.VITE_APP_WS_BASEURL}?id=${user.id}`
 
   const [webSocket, sendMessage, lastMessage, isConnected] = useWebSocket({
     isAuthenticated: !!user.id,
     url: socketUrl, //这里放长链接
     onOpen: () => {
       //连接成功
-      console.log('WebSocket connected')
     },
     onClose: () => {
       //连接关闭
-      console.log('WebSocket disconnected')
     },
     onError: (event) => {
       //连接异常
