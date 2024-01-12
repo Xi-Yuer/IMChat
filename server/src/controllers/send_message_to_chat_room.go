@@ -62,7 +62,7 @@ func HandleReceivedData(p []byte, UserID string) {
 					Content:     messageReponse.Data.Message.Content,
 					MessageType: messageReponse.Data.Message.MessageType,
 					FileName:    messageReponse.Data.Message.FileName,
-					SenderID:    "a270e85c-a3ce-4189-92db-7cf5eef797bd",
+					SenderID:    config.AppConfig.SparkAi.RobotID,
 					ChatRoomID:  messageReponse.Data.Message.GroupID,
 				}
 			}

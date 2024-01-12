@@ -18,7 +18,7 @@ func ChatController(msg dto.MessageToRoomDTO, conn *websocket.Conn) (*dto.Messag
 	if err != nil {
 		return nil, err
 	}
-	userResponse := getUserResponse("a270e85c-a3ce-4189-92db-7cf5eef797bd")
+	userResponse := getUserResponse(config.AppConfig.SparkAi.RobotID)
 	msg.Message = response // 消息
 	messageReponse := GetMessageDTO(msg)
 	d := &dto.MessageResponseDTO{

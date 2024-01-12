@@ -34,7 +34,14 @@ type Config struct {
 	}
 	Key      string
 	IPSearch struct {
-		URL   string `mapstructure:"URL"`
+		URL string `mapstructure:"URL"`
+	}
+	SparkAi struct {
+		HostURL  string `mapstructure:"HostURL"`
+		APPID    string `mapstructure:"APPID"`
+		APIScret string `mapstructure:"APIScret"`
+		ApiKey   string `mapstructure:"ApiKey"`
+		RobotID  string `mapstructure:"RobotID"`
 	}
 }
 

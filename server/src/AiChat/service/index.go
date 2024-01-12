@@ -1,6 +1,7 @@
 package aiChat
 
 import (
+	"ImChat/src/config"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/base64"
@@ -16,10 +17,10 @@ import (
 )
 
 var (
-	hostUrl   = "wss://spark-api.xf-yun.com/v3.1/chat"
-	appid     = "0c0457e1"
-	apiSecret = "Y2U4NzYyOTcxYmFjNTFhYzVkNTZmMWUz"
-	apiKey    = "2a052c4dfa05fcf0baf9782de28a7aac"
+	hostUrl   = config.AppConfig.SparkAi.HostURL
+	appid     = config.AppConfig.SparkAi.APPID
+	apiSecret = config.AppConfig.SparkAi.APIScret
+	apiKey    = config.AppConfig.SparkAi.ApiKey
 )
 
 func AiChaService(question string) (string, error) {
