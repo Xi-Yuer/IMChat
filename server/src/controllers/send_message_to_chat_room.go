@@ -50,12 +50,22 @@ func HandleReceivedData(p []byte, UserID string) {
 	responseJSON, _ := json.Marshal(response)
 	for conn, user := range models.Connection {
 		if GroupInUser(user, data.GroupID) {
-			// 开启 Ai 智能回复
-			if utils.IsAtRobatMessage(data.Message) {
-				go aiChat.ChatController(data, conn)
-			}
 			// 发送响应数据给用户所在群组的所有用户
 			err := conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
+			// 开启 Ai 智能回复
+			if utils.IsAtRobatMessage(data.Message) {
+				messageReponse, err := aiChat.ChatController(data, conn)
+				if err != nil {
+					panic(err)
+				}
+				messageStorageChannel <- &models.Message{
+					Content:     messageReponse.Data.Message.Content,
+					MessageType: messageReponse.Data.Message.MessageType,
+					FileName:    messageReponse.Data.Message.FileName,
+					SenderID:    "a270e85c-a3ce-4189-92db-7cf5eef797bd",
+					ChatRoomID:  messageReponse.Data.Message.GroupID,
+				}
+			}
 			if err != nil {
 				return
 			}

@@ -3,44 +3,41 @@ package aiChat
 import (
 	aiChat "ImChat/src/AiChat/service"
 	"ImChat/src/config"
+	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
+	"ImChat/src/repositories"
 	"encoding/json"
-	"fmt"
 	"github.com/gorilla/websocket"
+	"log"
 	"time"
 )
 
-func ChatController(msg dto.MessageToRoomDTO, conn *websocket.Conn) {
-	fmt.Println("ss")
+func ChatController(msg dto.MessageToRoomDTO, conn *websocket.Conn) (*dto.MessageResponseDTO, error) {
 	response, err := aiChat.AiChaService(msg.Message)
 	if err != nil {
-		return
+		return nil, err
 	}
-	msg.Message = response
-	messageReponse := GetMessageDTO(msg, "001") // 消息
+	userResponse := getUserResponse("a270e85c-a3ce-4189-92db-7cf5eef797bd")
+	msg.Message = response // 消息
+	messageReponse := GetMessageDTO(msg)
 	d := &dto.MessageResponseDTO{
-		Type: enum.GroupMessage,
+		Type: enum.GroupMessage, // 响应体
 		Data: dto.ChatMessageResponseDTO{
-			User: &dto.UserResponseDTO{
-				ID:             "001",
-				Gender:         "0",
-				Bio:            "智能机器人小鱼儿",
-				Origin:         "未知",
-				NickName:       "小鱼儿",
-				ProfilePicture: "https://xiyuer.club/system/%E6%9C%BA%E5%99%A8%E4%BA%BA.png",
-			},
+			User:    userResponse,
 			Message: messageReponse,
 		},
 	}
+
 	responseJSON, _ := json.Marshal(d)
 	err = conn.WriteMessage(websocket.TextMessage, []byte(responseJSON))
 	if err != nil {
-		return
+		return nil, err
 	}
+	return d, nil
 }
 
-func GetMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
+func GetMessageDTO(data dto.MessageToRoomDTO) *dto.MessageDTO {
 	// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
 	if data.MessageType == enum.IMAGE || data.MessageType == enum.MP3 || data.MessageType == enum.MP4 || data.MessageType == enum.XLSX || data.MessageType == enum.DOCX || data.MessageType == enum.EMOJI {
 		data.Message = config.AppConfig.DoMian.URL + data.Message
@@ -51,5 +48,23 @@ func GetMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
 		GroupID:     data.GroupID,
 		FileName:    data.FileName,
 		CreatedAt:   time.Now(),
+	}
+}
+func getUserResponse(userID string) *dto.UserResponseDTO {
+	user, err := repositories.NewUserRepository(db.DB).GetUserDetailByUserID(userID)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+
+	baseUrl := config.AppConfig.DoMian.URL
+	return &dto.UserResponseDTO{
+		ID:             user.ID,
+		NickName:       user.NickName,
+		Gender:         user.Gender,
+		Bio:            user.Bio,
+		ProfilePicture: baseUrl + user.ProfilePicture,
+		LastLogin:      user.LastLogin,
+		Origin:         user.Origin,
 	}
 }
