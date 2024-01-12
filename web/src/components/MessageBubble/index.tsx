@@ -51,7 +51,17 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string }> = memo((p
               'text-start': user.id !== id,
             })}
           >
-            {user.id !== id ? `${nick_name}(${origin})` : `(${origin})${nick_name}`}
+            {user.id !== id ? (
+              <span>
+                {nick_name}
+                <span className="text-gray-400 text-[12px]">({origin})</span>
+              </span>
+            ) : (
+              <span>
+                <span className="text-gray-400 text-[12px]">({origin})</span>
+                {nick_name}
+              </span>
+            )}
           </span>
           {message_type === SystemMessageType.TEXT && (
             <div
