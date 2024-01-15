@@ -7,7 +7,7 @@ export const customDarkAlgorithm: MappingAlgorithm = (seedToken, mapToken) => {
     ...mergeToken,
     colorBgLayout: '#20252b',
     colorBgContainer: '#282c34',
-    colorBgElevated: '#32363e',
+    colorBgElevated: '#414b58',
     colorPrimary: '#e0e1e250',
     colorPrimaryHover: '#e0e1e250',
   }

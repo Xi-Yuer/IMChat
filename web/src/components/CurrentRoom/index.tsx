@@ -20,6 +20,7 @@ import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { uploadFileForm } from '../../server/apis/upload'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
 import CalcVideo from '../../utils/calcVideo'
+import { escapeHTML } from '../../utils/reg'
 import Emoji, { EmojiRefCom } from '../Emoji'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
@@ -28,6 +29,7 @@ const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
   const emojiRef = useRef<EmojiRefCom>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [inputValue, setInputValue] = useState('')
   const [hasNoMore, setHasNoMore] = useState(false)
   const [isPushMessage, setIsPushMessage] = useState(true)
@@ -55,7 +57,7 @@ const CurrentRoom = memo(() => {
     if (!inputValue) return
     sendMessageContext({
       type: MessageType.GROUP_MESSAGE,
-      message: inputValue,
+      message: escapeHTML(inputValue),
       message_type: SystemMessageType.TEXT,
       group: currentChatRoom.id,
     })
@@ -115,6 +117,11 @@ const CurrentRoom = memo(() => {
       top: containerRef.current.scrollHeight,
       behavior: 'smooth',
     })
+  }
+
+  const longPress = (user: string) => {
+    setInputValue(inputValue + '@' + user + ' ')
+    textAreaRef.current?.focus()
   }
   const props: UploadProps = {
     name: 'file',
@@ -209,6 +216,7 @@ const CurrentRoom = memo(() => {
                       <div key={index} className="p-2">
                         <MessageBubble
                           key={index}
+                          longPress={longPress}
                           message={list.message}
                           user={list.user}
                           lastMessageTime={roomMessageList[currentChatRoom.id][index - 1]?.message.created_at}
@@ -247,6 +255,7 @@ const CurrentRoom = memo(() => {
                   </div>
                 </div>
                 <TextArea
+                  ref={textAreaRef}
                   onPressEnter={(e) => sendTextMessage(e)}
                   value={inputValue}
                   placeholder="愉快的聊天吧~"
