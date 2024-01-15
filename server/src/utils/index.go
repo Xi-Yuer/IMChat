@@ -112,8 +112,10 @@ func HandelImageUplaod(file *multipart.FileHeader) (*MediaRect, error) {
 
 // IsAtRobatMessage 是否是 @ 消息
 func IsAtRobatMessage(msg string) bool {
-	pattern := `@(\w+)`
+	// 匹配以@机器人小鱼开头的消息，后面可以有任意字符
+	pattern := `@机器人小鱼\s*(.+)`
 	re := regexp.MustCompile(pattern)
 	matches := re.FindAllStringSubmatch(msg, -1)
+	// 检查是否有匹配项
 	return len(matches) > 0
 }

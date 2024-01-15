@@ -1,4 +1,4 @@
-// repositories/user_repository.go
+// Package repositories repositories/user_repository.go
 package repositories
 
 import (
@@ -15,6 +15,7 @@ type UserRepository interface {
 	GetUserDetailByUserID(userID string) (*models.User, error)
 	Login(id string, location string) error
 	Logout(account string, time time.Time) error
+	UserOnline(id string) error
 	UpdateUserDetail(user *models.User) error
 }
 
@@ -57,6 +58,10 @@ func (r *userRepository) Logout(id string, time time.Time) error {
 // Login 登录
 func (r *userRepository) Login(id string, location string) error {
 	return r.db.Model(&models.User{}).Where("id = ?", id).Update("active", true).Update("origin", location).Error
+}
+
+func (r *userRepository) UserOnline(id string) error {
+	return r.db.Model(&models.User{}).Where("id = ?", id).Update("active", true).Error
 }
 
 // GetUserList 获取用户列表

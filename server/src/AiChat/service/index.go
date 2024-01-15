@@ -23,6 +23,8 @@ var (
 	apiKey    = config.AppConfig.SparkAi.ApiKey
 )
 
+var HistoryMessage []Message
+
 func AiChaService(question string) (string, error) {
 	d := websocket.Dialer{
 		HandshakeTimeout: 5 * time.Second,
@@ -92,10 +94,14 @@ func AiChaService(question string) (string, error) {
 
 // 生成参数
 func genParams(appid, question string) map[string]interface{} { // 根据实际情况修改返回的数据结构和字段名
-
 	messages := []Message{
 		{Role: "user", Content: question},
 	}
+	// 历消息大于十条
+	if len(HistoryMessage) > 10 {
+		HistoryMessage = HistoryMessage[1:]
+	}
+	HistoryMessage = append(HistoryMessage, messages...)
 
 	data := map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
 		"header": map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
@@ -112,7 +118,7 @@ func genParams(appid, question string) map[string]interface{} { // 根据实际�
 		},
 		"payload": map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
 			"message": map[string]interface{}{ // 根据实际情况修改返回的数据结构和字段名
-				"text": messages, // 根据实际情况修改返回的数据结构和字段名
+				"text": HistoryMessage, // 根据实际情况修改返回的数据结构和字段名
 			},
 		},
 	}

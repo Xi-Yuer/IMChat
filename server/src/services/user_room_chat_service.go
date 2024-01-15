@@ -37,12 +37,12 @@ func (u *UserChatRoomServiceImpl) JoinChatRoom(userId string, chatRoomId string)
 	return errors.New("already join the chat room")
 }
 
-func (s *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) error {
-	return s.userChatRoomRepository.FindChatRoomUser(record)
+func (u *UserChatRoomServiceImpl) FindChatRoomUser(record *models.UserChatRoom) error {
+	return u.userChatRoomRepository.FindChatRoomUser(record)
 }
 
-func (s *UserChatRoomServiceImpl) FindChatRoomUsers(id string) ([]dto.ChatRoomUserListResponseDTO, error) {
-	return s.userChatRoomRepository.FindChatRoomUsers(id)
+func (u *UserChatRoomServiceImpl) FindChatRoomUsers(id string) ([]dto.ChatRoomUserListResponseDTO, error) {
+	return u.userChatRoomRepository.FindChatRoomUsers(id)
 }
 
 // func (u *UserChatRoomServiceImpl) LeaveChatRoom(userId string, chatRoomId string) error {

@@ -68,6 +68,10 @@ func HandleUserInfoAndAddToConnection(ws *websocket.Conn, c *gin.Context) error 
 func HandleReceivedMessage(p []byte, c *gin.Context) {
 	// 在这里处理接收到的 JSON 数据
 	id := c.Query("id") // 用户携带 token 之后就会有 id 信息
+	if id == "" {
+		log.Println("用户ID为空")
+		return
+	}
 	// 获取传递过来的数据 type 值
 	var MessageType struct {
 		Type string `json:"type"`
@@ -93,7 +97,6 @@ loop:
 		time.Sleep(time.Second * 20) // 每20秒发送一次Ping消息
 		err := conn.WriteControl(websocket.PingMessage, []byte("ping"), time.Time{})
 		if err != nil {
-			log.Printf("发送Ping失败：%v", err)
 			log.Println("客户端离线")
 			// 处理客户端离线业务
 			controllers.SendGroupChatNumber(conn, c, id)
