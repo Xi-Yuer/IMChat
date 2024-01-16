@@ -3,11 +3,16 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"github.com/disintegration/imaging"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/net/html"
+	"io"
 	"mime/multipart"
+	"net/http"
 	"regexp"
+	"strings"
 )
 
 // HashPassword 密码加密
@@ -118,4 +123,74 @@ func IsAtRobatMessage(msg string) bool {
 	matches := re.FindAllStringSubmatch(msg, -1)
 	// 检查是否有匹配项
 	return len(matches) > 0
+}
+
+// StringsReplacer 格式化字符创
+func stringsReplacer() *strings.Replacer {
+	replacements := []string{
+		"&", "&amp;",
+		"<", "&lt;",
+		">", "&gt;",
+		"'", "&#39;",
+		`"`, "&quot;",
+	}
+	return strings.NewReplacer(replacements...)
+}
+func EscapeHTML(str string) string {
+	replacer := stringsReplacer()
+	return replacer.Replace(str)
+}
+
+// GetHTMLTitle 解析URL网站标题
+func GetHTMLTitle(url string) (string, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return "", err
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+
+		}
+	}(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("HTTP request failed with status: %s", resp.Status)
+	}
+
+	doc, err := html.Parse(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	title, found := findHTMLTitle(doc)
+	if !found {
+		return "", err
+	}
+
+	return title, nil
+}
+
+func findHTMLTitle(n *html.Node) (string, bool) {
+	if n.Type == html.ElementNode && n.Data == "title" {
+		if n.FirstChild != nil {
+			return n.FirstChild.Data, true
+		}
+		return "", false
+	}
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if title, found := findHTMLTitle(c); found {
+			return title, true
+		}
+	}
+
+	return "", false
+}
+
+// ParseUrls 解析 URL
+func ParseUrls(text string) []string {
+	urlRegex := regexp.MustCompile(`((http|https)://)?(www\.)?([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
+	matches := urlRegex.FindAllString(text, -1)
+	return matches
 }

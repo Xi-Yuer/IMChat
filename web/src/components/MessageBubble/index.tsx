@@ -89,7 +89,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
               style={{
                 borderRadius: user.id === id ? '20px 2px 20px 20px' : '2px 20px 20px',
               }}
-              className="min-w-[60px] min-h-[30px] max-w-xs bg-slate-100 dark:bg-sky-500 p-3 transition-all duration-700"
+              className="min-w-[60px] min-h-[30px] max-w-xs bg-slate-100 dark:bg-[#484b5b] p-3 transition-all duration-700"
             >
               {message_type === SystemMessageType.TEXT && <TextMessage content={content} />}
             </div>

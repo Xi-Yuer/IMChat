@@ -3,7 +3,7 @@ import { highlightUsername } from '../../utils/reg'
 import { IMessagePanelProps } from './DocxMessage'
 
 const TextMessage: FC<IMessagePanelProps> = memo(({ content }) => {
-  return <div className="text-start" dangerouslySetInnerHTML={{ __html: highlightUsername(content) }}></div>
+  return <div className="text-start dark:text-white select-text" dangerouslySetInnerHTML={{ __html: highlightUsername(content) }}></div>
 })
 
 export default TextMessage

@@ -31,7 +31,6 @@ const CurrentRoom = memo(() => {
   const containerRef = useRef<HTMLDivElement>(null)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
   const [inputValue, setInputValue] = useState('')
-  const [hasNoMore, setHasNoMore] = useState(false)
   const [isPushMessage, setIsPushMessage] = useState(true)
   const [loadMoreLoading, setLoadMoreLoading] = useState(false)
   const [showBackBottomBar, setShowBackBottomBar] = useState(false)
@@ -89,17 +88,8 @@ const CurrentRoom = memo(() => {
     if (e.target.scrollTop === 0) {
       setIsPushMessage(false)
       setLoadMoreLoading(true)
-      if (hasNoMore) {
-        setLoadMoreLoading(false)
-        return
-      }
       getRoomMsgListRequest(currentChatRoom.id, 20, currPage)
         .then((res) => {
-          if (!res.data || !res.data.length) {
-            setHasNoMore(true)
-            return
-          }
-          setHasNoMore(false)
           setCurrPage(currPage + 1)
           dispatch(
             unshiftRoomMessageList({
@@ -205,7 +195,7 @@ const CurrentRoom = memo(() => {
                 setAtOpen(false)
               }}
             >
-              <img src={item.profile_picture} className="w-[20px] h-[20px] mr-1" alt="" />
+              <img src={item.profile_picture} className="w-[20px] h-[20px] rounded-sm mr-1" alt="" />
               <span className="truncate">{item.nick_name}</span>
             </div>
           )
@@ -236,7 +226,6 @@ const CurrentRoom = memo(() => {
               <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2 relative" style={{ height: '300px', overflow: 'hidden' }}>
                 <div className="h-full w-full overflow-auto" ref={containerRef} onScroll={onScroll}>
                   <div className="w-full h-[30px] flex justify-center items-center dark:text-gray-200">{loadMoreLoading && <LoadingOutlined />}</div>
-                  <div className="w-full h-[0px] flex justify-center items-center dark:text-gray-400">{hasNoMore && '没有更多了'}</div>
                   {roomMessageList[currentChatRoom.id]?.map((list, index) => {
                     return (
                       <div key={index} className="p-2">

@@ -11,7 +11,9 @@ import (
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +31,26 @@ func HandleReceivedData(p []byte, UserID string) {
 	if err := json.Unmarshal(p, &data); err != nil {
 		log.Println(err)
 		return
+	}
+	// 将消息中的特殊字符处理，防止 xxs 攻击
+	data.Message = utils.EscapeHTML(data.Message)
+	urls := utils.ParseUrls(data.Message)
+	if len(urls) > 0 {
+		for _, i2 := range urls {
+			title, err := utils.GetHTMLTitle(i2)
+			if err != nil {
+				log.Println(err)
+				data.Message = strings.ReplaceAll(data.Message, i2, "<a href='"+i2+"' style='padding-right: 30px;display: flex;' class='min-w-[60px] max-w-xs truncate inline-block pr-[50px] text-blue-400' target='_blank'>"+i2+"</a>")
+				continue
+			} else {
+				fmt.Println(title)
+				if title != "" {
+					data.Message = strings.ReplaceAll(data.Message, i2, "<a href='"+i2+"' style='padding-right: 30px;display: flex;' class='min-w-[60px] max-w-xs truncate inline-block pr-[50px] text-blue-400' target='_blank'>"+title+"</a>")
+				} else {
+					data.Message = strings.ReplaceAll(data.Message, i2, "<a href='"+i2+"' style='padding-right: 30px;display: flex;' class='min-w-[60px] max-w-xs truncate inline-block pr-[50px] text-blue-400' target='_blank'>"+i2+"</a>")
+				}
+			}
+		}
 	}
 	userResponse := getUserResponse(UserID)       // 发送者
 	messageReponse := GetMessageDTO(data, UserID) // 消息

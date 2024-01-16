@@ -38,7 +38,7 @@ const VoiceMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
   return (
     <div
       className={classNames(
-        'w-[250px] overflow-hidden relative rounded-md h-[80px] p-2 box-content flex items-center bg-slate-100 dark:bg-green-400 transition-all duration-700'
+        'w-[250px] overflow-hidden relative rounded-md h-[80px] p-2 box-content flex items-center bg-slate-100 dark:bg-[#5d6175] transition-all duration-700'
       )}
       style={{
         backgroundImage: `url(${VoiceImage})`,
@@ -48,10 +48,10 @@ const VoiceMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
       }}
       ref={contentRef}
     >
-      <div className="w-[70px] h-[70px] bg-[#a5dff9] flex justify-center items-center">
+      <div className="w-[70px] h-[70px] bg-[#9cd6f1] rounded-md flex justify-center items-center">
         {!isPlayed ? <PlayCircleOutlined onClick={() => handlePlay(false)} /> : <PauseCircleOutlined onClick={() => handlePlay(true)} />}
       </div>
-      <div className="transition-all duration-700 px-2 w-[150px] text-start truncate dark:text-[#414141]">{file_name}</div>
+      <div className="transition-all duration-700 px-2 w-[150px] text-start truncate">{file_name}</div>
       {isPlayed && (
         <div className=" absolute bottom-[-17px] left-0 right-0">
           <Progress percent={playPercent} status="exception" size="small" showInfo={false} />
