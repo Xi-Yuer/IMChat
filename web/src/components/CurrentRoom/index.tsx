@@ -8,7 +8,7 @@ import {
   SmileOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
-import { Drawer, Spin, Upload, UploadProps, message } from 'antd'
+import { Drawer, Popover, Spin, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useLayoutEffect, useRef, useState } from 'react'
@@ -38,6 +38,7 @@ const CurrentRoom = memo(() => {
   const [currPage, setCurrPage] = useState(2)
   const [currScrollHeight, setCurrScrollHeight] = useState(0)
   const [open, setOpen] = useState(false)
+  const [atOpen, setAtOpen] = useState(false)
   const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
   const [file_name, setFile_name] = useState('')
 
@@ -123,6 +124,10 @@ const CurrentRoom = memo(() => {
     setInputValue(inputValue + '@' + user + ' ')
     textAreaRef.current?.focus()
   }
+  const atSomeOne = (name: string) => {
+    setInputValue(inputValue + name + ' ')
+    textAreaRef.current?.focus()
+  }
   const props: UploadProps = {
     name: 'file',
     action: '/api/file/upload',
@@ -187,6 +192,27 @@ const CurrentRoom = memo(() => {
     overflow: 'hidden',
     textAlign: 'center',
   }
+  const userPopoverList = () => {
+    return (
+      <div className="w-[150px] max-h-[200px] overflow-x-hidden overflow-y-auto">
+        {currentChatRoomUserList.map((item) => {
+          return (
+            <div
+              key={item.id}
+              className="my-2 flex cursor-pointer"
+              onClick={() => {
+                atSomeOne(item.nick_name)
+                setAtOpen(false)
+              }}
+            >
+              <img src={item.profile_picture} className="w-[20px] h-[20px] mr-1" alt="" />
+              <span className="truncate">{item.nick_name}</span>
+            </div>
+          )
+        })}
+      </div>
+    )
+  }
   return (
     <>
       {currentChatRoom.id ? (
@@ -239,7 +265,12 @@ const CurrentRoom = memo(() => {
               <div className="h-[180px] border-dashed border-t dark:border-[#494b5c] transition-all duration-700">
                 <div className="w-full flex justify-between items-center px-3 pt-2">
                   <div className="flex gap-2">
-                    <SmileOutlined className="transition-all duration-700 cursor-pointer dark:text-white" onClick={() => emojiRef.current?.show()} />
+                    <Popover title="" open={atOpen} content={userPopoverList()} placement="bottomLeft">
+                      <SmileOutlined
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
+                        onClick={() => emojiRef.current?.show()}
+                      />
+                    </Popover>
                     <Upload id="picture" {...props} accept="image/*" style={{ display: 'none' }}>
                       <PictureOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
@@ -259,7 +290,14 @@ const CurrentRoom = memo(() => {
                   onPressEnter={(e) => sendTextMessage(e)}
                   value={inputValue}
                   placeholder="愉快的聊天吧~"
-                  onChange={(e) => setInputValue(e.target.value)}
+                  onChange={(e) => {
+                    if (e.target.value === '@') {
+                      setAtOpen(true)
+                    } else {
+                      setAtOpen(false)
+                    }
+                    setInputValue(e.target.value)
+                  }}
                   className=" transition-all duration-700"
                   bordered={false}
                   rows={4}

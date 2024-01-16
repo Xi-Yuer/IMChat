@@ -37,7 +37,8 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
         })}
       >
         <Popover
-          trigger="contextMenu"
+          trigger="click"
+          placement="rightTop"
           content={
             <div className="flex flex-col gap-1">
               <span className="cursor-pointer hover:text-blue-500" onClick={() => longPress(nick_name)}>
@@ -49,7 +50,6 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
               </div>
             </div>
           }
-          placement="rightTop"
         >
           <div className="relative">
             <Avatar src={profile_picture} size={30} ref={avatarRef} />
@@ -94,57 +94,18 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
               {message_type === SystemMessageType.TEXT && <TextMessage content={content} />}
             </div>
           )}
-          {message_type === SystemMessageType.IMAGE && (
-            <div
-              className={classNames('p-3', {
-                'text-start': user.id !== id,
-                'text-end': user.id === id,
-              })}
-            >
-              <ImageMessage content={content} />
-            </div>
-          )}
-          {message_type === SystemMessageType.DOCX && (
-            <div
-              className={classNames('p-3', {
-                'text-start': user.id !== id,
-                'text-end': user.id === id,
-              })}
-            >
-              <DocxMessage content={content} file_name={file_name} />
-            </div>
-          )}
-          {message_type === SystemMessageType.XLSX && (
-            <div
-              className={classNames('p-3', {
-                'text-start': user.id !== id,
-                'text-end': user.id === id,
-              })}
-            >
-              <XlsxMessage content={content} file_name={file_name} />
-            </div>
-          )}
-          {message_type === SystemMessageType.MP4 && (
-            <div
-              className={classNames('p-3', {
-                'text-start': user.id !== id,
-                'text-end': user.id === id,
-              })}
-            >
-              <VideoMessage content={content} />
-            </div>
-          )}
-
-          {message_type === SystemMessageType.MP3 && (
-            <div
-              className={classNames('p-3', {
-                'text-start': user.id !== id,
-                'text-end': user.id === id,
-              })}
-            >
-              <VoiceMessage content={content} file_name={file_name} />
-            </div>
-          )}
+          <div
+            className={classNames('p-3', {
+              'text-start': user.id !== id,
+              'text-end': user.id === id,
+            })}
+          >
+            {message_type === SystemMessageType.IMAGE && <ImageMessage content={content} />}
+            {message_type === SystemMessageType.DOCX && <DocxMessage content={content} file_name={file_name} />}
+            {message_type === SystemMessageType.XLSX && <XlsxMessage content={content} file_name={file_name} />}
+            {message_type === SystemMessageType.MP4 && <VideoMessage content={content} file_name={file_name} />}
+            {message_type === SystemMessageType.MP3 && <VoiceMessage content={content} file_name={file_name} />}
+          </div>
         </div>
       </div>
     </>
