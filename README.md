@@ -1,11 +1,9 @@
-
-
 # 搭建一个在线群聊
 
 ## 技术选型
 
 - 后端
-  - Go + Gin + GORM  + Mysql + Soket + OSS
+  - Go + Gin + GORM + Mysql + Soket + OSS
 - 前端
   - React + Ant Design + AHooks + RTK
 
@@ -14,19 +12,17 @@
 - [x] 支持群聊
 - [x] 创建群聊
 - [x] 提及功能
-- [x] ai智能助手
-- [x] 文本URL解析
+- [x] ai 智能助手
+- [x] 文本 URL 解析
 - [x] 支持图片、文件、视频、语音、表情
 - [x] 支持消息历史回滚
 - [ ] 支持私聊
-
-
 
 ## 项目运行
 
 ### 后端
 
-因为后端涉及到 `token` `密钥` 等相关环境变量配置项，git托管未将改代码上传，需根据配置 `yaml` 自行配置
+因为后端涉及到 `token` `密钥` 等相关环境变量配置项，git 托管未将改代码上传，需根据配置 `yaml` 自行配置
 
 ```yaml
 // ~server/src/config/config.yaml
@@ -42,7 +38,7 @@ Aliyun:
 DoMian:
   URL: ''
 System:
-  GroupChatID: '[默认群加入的群聊ID]'   
+  GroupChatID: '[默认群加入的群聊ID]'
 IPSearch:
   URL: 'https://tenapi.cn/v2/getip?ip='
 SparkAi:
@@ -55,7 +51,7 @@ SparkAi:
 
 **配置完成即可运行**
 
-```bash	
+```bash
 go run main.go
 ```
 
@@ -66,8 +62,6 @@ cd web
 npm install
 npm run dev
 ```
-
-
 
 ## 项目部署
 
@@ -112,13 +106,13 @@ CMD ["./main"]
 
 ```
 
-**构建Docker镜像**： 打开终端，进入项目根目录，运行以下命令构建Docker镜像：
+**构建 Docker 镜像**： 打开终端，进入项目根目录，运行以下命令构建 Docker 镜像：
 
 ```bash
 docker build -t your-image-name .
 ```
 
-**运行Docker容器：** 构建完成后，可以使用以下命令在Docker容器中运行你的Go Gin应用：
+**运行 Docker 容器：** 构建完成后，可以使用以下命令在 Docker 容器中运行你的 Go Gin 应用：
 
 ```bash
 docker run -p 8080:8080 your-image-name
@@ -139,83 +133,78 @@ location /api/ {
 }
 ```
 
-
-
 ## 项目结构
 
 ### 后端
 
 ```
 .
-├── AiChat           																// AiChat 模块
+├── AiChat        // AiChat 模块
 │   └── ...
-├── IMChatServer     																// IMChatServer 模块
+├── IMChatServer  // IMChatServer 模块
 │   └── ...
-├── common           																// 通用工具
+├── common        // 通用工具
 │   └── ...
-├── config          																// 配置文件
+├── config        // 配置文件
 │   └── ...
-├── controllers      																// 请求处理器/控制器
+├── controllers   // 请求处理器/控制器
 │   └── ...
-├── db               																// 与数据库相关的代码
+├── db            // 与数据库相关的代码
 │   └── ...
-├── dto              																// 数据传输对象 (DTOs)
+├── dto           // 数据传输对象 (DTOs)
 │   └── ...
-├── enum             																// 枚举
+├── enum          // 枚举
 │   └── ...
-├── handlers         																// HTTP 处理器
+├── handlers      // HTTP 处理器
 │   └── ...
-├── https            																// HTTPS 相关的代码
+├── https         // HTTPS 相关的代码
 │   └── ...
-├── main             																// 主应用逻辑
+├── main          // 主应用逻辑
 │   └── ...
-├── main.go          																// 主入口点
-├── middlewares      																// 中间件函数
+├── main.go       // 主入口点
+├── middlewares   // 中间件函数
 │   └── ...
-├── models           																// 数据模型
+├── models        // 数据模型
 │   └── ...
-├── repositories     																// 数据库仓库
+├── repositories  // 数据库仓库
 │   └── ...
-├── routes           																// API 路由
+├── routes        // API 路由
 │   └── ...
-├── services         																// 业务逻辑服务
+├── services      // 业务逻辑服务
 │   └── ...
-├── utils            																// 工具函数
+├── utils         // 工具函数
 │   └── ...
-└── ws               																// WebSocket 相关的代码
+└── ws            // WebSocket 相关的代码
     └── ...
 
 ```
-
-
 
 ### 前端
 
 ```
 .
-├── README.md                                         // 说明文档
-├── index.html																				// 模板根目录
-├── src																								// 源码目录
-│   ├── App.tsx																				// 根组件
-│   ├── assets																				// 静态资源目录
-│   ├── components																		// 组件目录
-│   ├── config																				// 项目配置文件
-│   ├── enum																					// 枚举文件
-│   ├── hooks																					// Hooks封装
-│   ├── main.tsx																			// 入口文件
-│   ├── routes																				// 路由表映射
-│   ├── server																				// 网络请求相关
-│   │   ├── apis																			// 接口
-│   │   └── request																		// axios封装
-│   ├── store																					// 状态管理库
-│   │   ├── index.ts																	// 统一导出管理
-│   │   └── modules																		// 模块划分
-│   ├── style																					// 全局样式
-│   ├── theme																					// 主题样式
-│   │   ├── dark.ts																		// 暗黑主题
-│   │   └── light.ts																	// 亮色主题
-│   ├── utils																					// 工具函数封装
-│   ├── views																					// 页面
+├── README.md          // 说明文档
+├── index.html				 // 模板根目录
+├── src								 // 源码目录
+│   ├── App.tsx				 // 根组件
+│   ├── assets				 // 静态资源目录
+│   ├── components		 // 组件目录
+│   ├── config				 // 项目配置文件
+│   ├── enum					 // 枚举文件
+│   ├── hooks					 // Hooks封装
+│   ├── main.tsx			 // 入口文件
+│   ├── routes				 // 路由表映射
+│   ├── server				 // 网络请求相关
+│   │   ├── apis			 // 接口
+│   │   └── request		 // axios封装
+│   ├── store					 // 状态管理库
+│   │   ├── index.ts	 // 统一导出管理
+│   │   └── modules		 // 模块划分
+│   ├── style					 // 全局样式
+│   ├── theme					 // 主题样式
+│   │   ├── dark.ts		 // 暗黑主题
+│   │   └── light.ts	 // 亮色主题
+│   ├── utils					 // 工具函数封装
+│   ├── views					 // 页面
 
 ```
-
