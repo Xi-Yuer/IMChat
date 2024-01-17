@@ -192,29 +192,28 @@ location /api/ {
 
 ```
 .
-├── README.md                                         // 说明文档
-├── index.html																				// 模板根目录
-├── src																								// 源码目录
-│   ├── App.tsx																				// 根组件
-│   ├── assets																				// 静态资源目录
-│   ├── components																		// 组件目录
-│   ├── config																				// 项目配置文件
-│   ├── enum																					// 枚举文件
-│   ├── hooks																					// Hooks封装
-│   ├── main.tsx																			// 入口文件
-│   ├── routes																				// 路由表映射
-│   ├── server																				// 网络请求相关
-│   │   ├── apis																			// 接口
-│   │   └── request																		// axios封装
-│   ├── store																					// 状态管理库
-│   │   ├── index.ts																	// 统一导出管理
-│   │   └── modules																		// 模块划分
-│   ├── style																					// 全局样式
-│   ├── theme																					// 主题样式
-│   │   ├── dark.ts																		// 暗黑主题
-│   │   └── light.ts																	// 亮色主题
-│   ├── utils																					// 工具函数封装
-│   ├── views																					// 页面
-
+├── README.md          // 项目说明文档
+├── index.html         // 模板根目录
+├── src                // 源码目录
+│   ├── App.tsx       // 根组件
+│   ├── assets        // 静态资源目录
+│   ├── components    // 组件目录
+│   ├── config        // 项目配置文件
+│   ├── enum          // 枚举文件
+│   ├── hooks         // Hooks封装
+│   ├── main.tsx      // 入口文件
+│   ├── routes        // 路由表映射
+│   ├── server        // 网络请求相关
+│   │   ├── apis      // 接口
+│   │   └── request   // axios封装
+│   ├── store         // 状态管理库
+│   │   ├── index.ts  // 统一导出管理
+│   │   └── modules   // 模块划分
+│   ├── style         // 全局样式
+│   ├── theme         // 主题样式
+│   │   ├── dark.ts   // 暗黑主题
+│   │   └── light.ts  // 亮色主题
+│   ├── utils         // 工具函数封装
+│   └── views         // 页面
 ```
 
