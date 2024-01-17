@@ -182,9 +182,9 @@ location /api/ {
 
 ```
 .
-├── README.md          // 项目说明文档
-├── index.html         // 模板根目录
-├── src                // 源码目录
+├── README.md         // 项目说明文档
+├── index.html        // 模板根目录
+├── src               // 源码目录
 │   ├── App.tsx       // 根组件
 │   ├── assets        // 静态资源目录
 │   ├── components    // 组件目录
