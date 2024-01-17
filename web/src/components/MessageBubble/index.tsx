@@ -6,6 +6,7 @@ import classNames from 'classnames'
 import { FC, memo, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { SystemMessageType } from '../../enum/messageType'
+import { useScreen } from '../../hooks/useScreen'
 import { RoomMessageType } from '../../store/modules/socket'
 import { formatDateV2, isBefore30Minutes } from '../../utils/format'
 import DocxMessage from '../TypesMessage/DocxMessage'
@@ -24,6 +25,7 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
   } = props
   const avatarRef = useRef<HTMLButtonElement>(null)
   const { user } = useSelector((state: RootState) => state.UserReducer)
+  const { isMobile } = useScreen()
   useLongPress(() => longPress(nick_name), avatarRef)
 
   return (
@@ -89,7 +91,10 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
               style={{
                 borderRadius: user.id === id ? '20px 2px 20px 20px' : '2px 20px 20px',
               }}
-              className="min-w-[60px] min-h-[30px] max-w-xs bg-slate-100 dark:bg-[#484b5b] p-3 transition-all duration-700"
+              className={classNames('min-w-[60px] min-h-[30px] bg-slate-100 dark:bg-[#484b5b] p-3 transition-all duration-700', {
+                'max-w-[250px]': isMobile,
+                'max-w-xs': !isMobile,
+              })}
             >
               {message_type === SystemMessageType.TEXT && <TextMessage content={content} />}
             </div>

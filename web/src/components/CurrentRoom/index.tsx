@@ -1,5 +1,6 @@
 import { RootState } from '@/store'
 import {
+  AlignLeftOutlined,
   CustomerServiceOutlined,
   FolderOpenOutlined,
   LoadingOutlined,
@@ -19,6 +20,7 @@ import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { uploadFileForm } from '../../server/apis/upload'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
+import { changeShowProfileMenuSide } from '../../store/modules/ui'
 import CalcVideo from '../../utils/calcVideo'
 import { escapeHTML } from '../../utils/reg'
 import Emoji, { EmojiRefCom } from '../Emoji'
@@ -44,7 +46,7 @@ const CurrentRoom = memo(() => {
   const dispatch = useDispatch()
   const { isMobile } = useScreen()
   const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
-  const { currentRoomUserListLoading, currentRoomLoading } = useSelector((state: RootState) => state.UIReducer)
+  const { currentRoomUserListLoading, currentRoomLoading, showProfileMenuSide } = useSelector((state: RootState) => state.UIReducer)
   const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
   const { user } = useSelector((state: RootState) => state.UserReducer)
 
@@ -203,6 +205,10 @@ const CurrentRoom = memo(() => {
       </div>
     )
   }
+
+  const openProfile = () => {
+    dispatch(changeShowProfileMenuSide(!showProfileMenuSide))
+  }
   return (
     <>
       {currentChatRoom.id ? (
@@ -210,7 +216,10 @@ const CurrentRoom = memo(() => {
           <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
             <div className="flex items-center justify-between border-dashed border-b dark:border-[#494d5f] transition-all duration-700">
               <div className="flex items-center">
-                <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">{currentChatRoom.name}</h2>
+                <AlignLeftOutlined className="ml-2 dark:text-gray-200 text-lg cursor-pointer" onClick={openProfile} />
+                <h2 className="dark:text-gray-200 text-lg p-2 transition-all duration-700">
+                  {currentChatRoom.name}({currentChatRoomUserList.length})
+                </h2>
                 <div className=" ml-2 dark:text-gray-200">{currentRoomLoading && <LoadingOutlined />}</div>
               </div>
               <div

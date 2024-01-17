@@ -5,6 +5,7 @@ interface IUIState {
   roomListLoading: boolean
   currentRoomLoading: boolean
   currentRoomUserListLoading: boolean
+  showProfileMenuSide: boolean
   theme: ThemeMode
   value: string[]
 }
@@ -13,6 +14,7 @@ const initialState = {
   roomListLoading: false,
   currentRoomLoading: false,
   currentRoomUserListLoading: false,
+  showProfileMenuSide: true,
   theme: 'dark',
 } as IUIState
 
@@ -38,8 +40,12 @@ export const UIStore = createSlice({
     changeCurrentRoomUserListLoading(state, action) {
       state.currentRoomUserListLoading = action.payload
     },
+    changeShowProfileMenuSide(state, action) {
+      state.showProfileMenuSide = action.payload
+    },
   },
 })
 
-export const { themeChange, changeRoomListLoading, changeCurrentRoomLoading, changeCurrentRoomUserListLoading } = UIStore.actions
+export const { themeChange, changeRoomListLoading, changeCurrentRoomLoading, changeCurrentRoomUserListLoading, changeShowProfileMenuSide } =
+  UIStore.actions
 export default UIStore.reducer

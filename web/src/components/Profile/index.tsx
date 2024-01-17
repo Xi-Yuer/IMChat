@@ -20,6 +20,7 @@ const Profile = memo(() => {
   const theme = useSelector((state: RootState) => state.UIReducer.theme)
   const roomList = useSelector((state: RootState) => state.UserReducer.roomList)
   const loading = useSelector((state: RootState) => state.UIReducer.roomListLoading)
+  const showProfileMenuSide = useSelector((state: RootState) => state.UIReducer.showProfileMenuSide)
   const [currentActive, setCurrentActive] = useState(1)
 
   const chatRoomList = () => {
@@ -44,13 +45,13 @@ const Profile = memo(() => {
   const avatarType = () => {
     return user.nick_name ? (
       <Avatar
-        size={45}
+        size={40}
         src={<img src={user.profile_picture} alt="avatar" />}
         className="cursor-pointer bg-gray-200 text-black"
         onClick={avatarImgClickHandle}
       />
     ) : (
-      <Avatar size={45} icon={<UserOutlined />} className="cursor-pointer bg-gray-200 text-black" onClick={loginImgClickHandle} />
+      <Avatar size={40} icon={<UserOutlined />} className="cursor-pointer bg-gray-200 text-black" onClick={loginImgClickHandle} />
     )
   }
 
@@ -63,8 +64,16 @@ const Profile = memo(() => {
 
   return (
     <>
-      <div className="w-[80px] h-full flex justify-between px-4 flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700">
-        <div className="flex items-center flex-col gap-4">
+      <div
+        className={classNames(
+          'h-full flex overflow-hidden justify-between  flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700',
+          {
+            'w-[80px] px-4': showProfileMenuSide,
+            'w-0 px-0': !showProfileMenuSide,
+          }
+        )}
+      >
+        <div className="flex items-center flex-col gap-4 overflow-hidden">
           {avatarType()}
           <div
             className={classNames(
@@ -93,7 +102,7 @@ const Profile = memo(() => {
             </Popover>
           </div>
         </div>
-        <div className="flex items-center flex-col gap-4 cursor-pointer">
+        <div className="flex items-center flex-col gap-4 cursor-pointer overflow-hidden">
           <div className="mb-4" onClick={thmeChangeAction}>
             {theme === 'dark' ? (
               <img src={darkImg} alt="" className="w-[25px] h-[25px]" />
@@ -104,6 +113,7 @@ const Profile = memo(() => {
           <GithubFilled className="text-3xl transition-all duration-700 dark:text-gray-200" />
         </div>
       </div>
+
       <Login ref={LoginRef} />
       <MinePanel ref={ProfilePanelRef} />
     </>
