@@ -39,7 +39,7 @@ const useWebSocket = (options: WebSocketOptions): [WebSocket | undefined, (messa
   const [lastMessage, setLastMessage] = useState('') //最新的消息
 
   const socketRef = useRef<WebSocket>()
-  const reconnectTimerRef = useRef<NodeJS.Timeout>()
+  const reconnectTimerRef = useRef<number>()
 
   const connect = () => {
     //连接函数封装

@@ -190,7 +190,8 @@ func findHTMLTitle(n *html.Node) (string, bool) {
 
 // ParseUrls 解析 URL
 func ParseUrls(text string) []string {
-	urlRegex := regexp.MustCompile(`((http|https)://)?(www\.)?([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
+	// ((http|https)://)?(www\.)?([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?
+	urlRegex := regexp.MustCompile(`((http|https)://)(www\.)?([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
 	matches := urlRegex.FindAllString(text, -1)
 	return matches
 }

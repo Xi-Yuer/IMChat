@@ -35,6 +35,7 @@ func HandleReceivedData(p []byte, UserID string) {
 	// 将消息中的特殊字符处理，防止 xxs 攻击
 	data.Message = utils.EscapeHTML(data.Message)
 	urls := utils.ParseUrls(data.Message)
+	fmt.Println("urls", urls)
 	if len(urls) > 0 {
 		for _, i2 := range urls {
 			title, err := utils.GetHTMLTitle(i2)
