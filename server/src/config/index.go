@@ -16,6 +16,9 @@ type Config struct {
 	Database struct {
 		URL string `mapstructure:"URL"`
 	}
+	Redis struct {
+		URL string `mapstructure:"URL"`
+	}
 	API struct {
 		Key string `mapstructure:"Key"`
 	}

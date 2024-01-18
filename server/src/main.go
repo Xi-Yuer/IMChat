@@ -3,6 +3,7 @@ package main
 import (
 	_ "ImChat/src/config"
 	"ImChat/src/middlewares"
+	_ "ImChat/src/redis"
 	"ImChat/src/routes"
 	"github.com/didip/tollbooth"
 	"github.com/gin-gonic/gin"

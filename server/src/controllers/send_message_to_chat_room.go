@@ -8,6 +8,7 @@ import (
 	"ImChat/src/enum"
 	"ImChat/src/https"
 	"ImChat/src/models"
+	"ImChat/src/redis"
 	"ImChat/src/repositories"
 	"ImChat/src/utils"
 	"encoding/json"
@@ -35,7 +36,6 @@ func HandleReceivedData(p []byte, UserID string) {
 	// 将消息中的特殊字符处理，防止 xxs 攻击
 	data.Message = utils.EscapeHTML(data.Message)
 	urls := utils.ParseUrls(data.Message)
-	fmt.Println("urls", urls)
 	if len(urls) > 0 {
 		for _, i2 := range urls {
 			title, err := utils.GetHTMLTitle(i2)
@@ -209,6 +209,18 @@ func messageStorageWorker() {
 
 // 将消息存储到数据库
 func storageMessage(message *models.Message) {
+	// 存储消息到 Redis 数据库 数据库
+	redisMessage := &dto.ChatMessageResponseDTO{
+		User: getUserResponse(message.SenderID),
+		Message: &dto.MessageDTO{
+			Content:     message.Content,
+			MessageType: message.MessageType,
+			FileName:    message.FileName,
+			CreatedAt:   message.CreatedAt,
+		}}
+	redisMessageStr, _ := json.Marshal(redisMessage)
+	redis.LPush(message.ChatRoomID, string(redisMessageStr))
+	// 存储消息到 MySQL 数据库
 	db.DB.Create(message)
 	// 更新群聊信息
 	db.DB.Model(&models.ChatRoom{}).Where("id = ?", message.ChatRoomID).Update("current_msg", message.Content).Update("current_msg_time", message.CreatedAt)

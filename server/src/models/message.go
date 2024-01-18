@@ -20,12 +20,12 @@ type Message struct {
 	ChatRoom  ChatRoom `gorm:"foreignkey:ChatRoomID"` // 外键关联
 }
 
-func (Message) TabelName() string {
+func (*Message) TabelName() string {
 	return "message"
 }
 
 func (m *Message) BeforeCreate(tx *gorm.DB) (err error) {
-	uuid := uuid.New()
-	m.ID = uuid.String()
+	u := uuid.New()
+	m.ID = u.String()
 	return nil
 }
