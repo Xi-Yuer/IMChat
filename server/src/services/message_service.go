@@ -10,7 +10,7 @@ import (
 
 type MessageService interface {
 	CreateMessage(message *dto.CreateMessageDTO, senderID string) error
-	GetChatRoomMessageList(chatRoomID string, limit, page *int) ([]*dto.ChatMessageResponseDTO, error)
+	GetChatRoomMessageList(chatRoomID string, limit, page *int, length int) ([]*dto.ChatMessageResponseDTO, error)
 }
 
 type MessageServiceImpl struct {
@@ -31,8 +31,8 @@ func (m MessageServiceImpl) CreateMessage(message *dto.CreateMessageDTO, senderI
 	return m.messageRepository.CreateMessage(record)
 }
 
-func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, page *int) ([]*dto.ChatMessageResponseDTO, error) {
-	messages, err := m.messageRepository.GetChatRoomMessageList(chatRoomID, limit, page)
+func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, page *int, length int) ([]*dto.ChatMessageResponseDTO, error) {
+	messages, err := m.messageRepository.GetChatRoomMessageList(chatRoomID, limit, page, length)
 	if err != nil {
 		return nil, err
 	}

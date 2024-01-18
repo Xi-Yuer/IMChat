@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"container/list"
 	"crypto/rand"
 	"encoding/base64"
 	"fmt"
@@ -194,4 +195,13 @@ func ParseUrls(text string) []string {
 	urlRegex := regexp.MustCompile(`((http|https)://)(www\.)?([\w_-]+(?:\.[\w_-]+)+)([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?`)
 	matches := urlRegex.FindAllString(text, -1)
 	return matches
+}
+
+// ReverseList 翻转列表
+func ReverseList(l *list.List) *list.List {
+	reversedList := list.New()
+	for e := l.Back(); e != nil; e = e.Prev() {
+		reversedList.PushBack(e.Value)
+	}
+	return reversedList
 }

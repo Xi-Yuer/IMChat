@@ -75,7 +75,6 @@ func LPush(key string, value string) (bool, error) {
 	// 限制 300 条数据
 	//err = RDB.LTrim(context.Background(), key, 0, 299).Err()
 	if err != nil {
-		fmt.Println("发送消息失败", err)
 		return false, err
 	}
 	return val == 1, nil
@@ -92,9 +91,7 @@ func RPop(key string) (string, error) {
 func LRange(key string, start int64, end int64) ([]string, error) {
 	// 获取列表中的元素
 	val, err := RDB.LRange(context.Background(), key, start, end).Result()
-	fmt.Println("获取Redis列表中的元素参数", key, start-1, end)
 	if err != nil {
-		fmt.Println("获取Redis列表中的元素失败", err)
 		return nil, err
 	}
 	return val, nil
