@@ -12,7 +12,7 @@ const RoomList = memo(() => {
   const { isMobile } = useScreen()
   return (
     <>
-      {!isMobile && (
+      {!isMobile && list.length > 0 && (
         <Spin spinning={loading}>
           <div className="hidden lg:block w-[250px] h-full flex-col gap-4 py-4 px-2 overflow-hidden transition-all duration-700">
             {list.map((room) => {

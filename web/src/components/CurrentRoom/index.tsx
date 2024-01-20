@@ -1,6 +1,7 @@
 import { RootState } from '@/store'
 import {
   AlignLeftOutlined,
+  AudioOutlined,
   CustomerServiceOutlined,
   FolderOpenOutlined,
   LoadingOutlined,
@@ -9,23 +10,25 @@ import {
   SmileOutlined,
   TeamOutlined,
 } from '@ant-design/icons'
-import { Drawer, Popover, Spin, Upload, UploadProps, message } from 'antd'
+import { useLongPress } from 'ahooks'
+import { Drawer, Popover, Spin, Tooltip, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
 import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
+import { useRecording } from '../../hooks/useRecording'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
 import { uploadFileForm } from '../../server/apis/upload'
 import { unshiftRoomMessageList } from '../../store/modules/socket'
 import { changeShowProfileMenuSide } from '../../store/modules/ui'
 import CalcVideo from '../../utils/calcVideo'
-import { escapeHTML } from '../../utils/reg'
 import Emoji, { EmojiRefCom } from '../Emoji'
 import MessageBubble from '../MessageBubble'
 import UserPanel from '../UserPanel'
+import VoiceSpectrum from '../VoiceSpectrum'
 
 const CurrentRoom = memo(() => {
   const { sendMessage: sendMessageContext } = useContext(WebSocketContext)
@@ -40,8 +43,43 @@ const CurrentRoom = memo(() => {
   const [currScrollHeight, setCurrScrollHeight] = useState(0)
   const [open, setOpen] = useState(false)
   const [atOpen, setAtOpen] = useState(false)
+  const [voiceSpecOpen, setVoiceSpecOpen] = useState(false)
   const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
   const [file_name, setFile_name] = useState('')
+  const voiceSpecRef = useRef<HTMLButtonElement>(null)
+  const { start, stop } = useRecording(async (file, second) => {
+    if (second <= 1) {
+      message.error('录音时间太短')
+      return
+    }
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('width', second + '')
+    formData.append('height', '0')
+    const result = await uploadFileForm(formData)
+    const {
+      data: { file_url },
+    } = result
+    sendMessageContext({
+      type: MessageType.GROUP_MESSAGE,
+      message: file_url,
+      message_type: SystemMessageType.VOICE,
+      group: currentChatRoom.id,
+      file_name: 'voice',
+    })
+  })
+
+  useLongPress(() => {
+    // 开始录音
+    setVoiceSpecOpen(true)
+    start()
+  }, voiceSpecRef)
+
+  // 结束录音
+  const handleStopRecord = () => {
+    setVoiceSpecOpen(false)
+    stop()
+  }
 
   const dispatch = useDispatch()
   const { isMobile } = useScreen()
@@ -59,7 +97,7 @@ const CurrentRoom = memo(() => {
     if (!inputValue) return
     sendMessageContext({
       type: MessageType.GROUP_MESSAGE,
-      message: escapeHTML(inputValue),
+      message: inputValue,
       message_type: SystemMessageType.TEXT,
       group: currentChatRoom.id,
     })
@@ -257,6 +295,12 @@ const CurrentRoom = memo(() => {
                     </div>
                   )}
                 </div>
+                {/* 音频指示区域 */}
+                {voiceSpecOpen && (
+                  <div className=" flex items-center justify-center absolute left-1/2 transition-all duration-700 top-1/2 translate-x-[-50%] rounded-sm bg-[#f2f5f9] bg-opacity-80 dark:bg-opacity-80 dark:bg-[#494b5a] shadow-sm w-[200px] h-[80px]">
+                    <VoiceSpectrum />
+                  </div>
+                )}
               </div>
               <Emoji ref={emojiRef} pickEmoji={pickEmoji} />
               {/* 输入框 */}
@@ -278,6 +322,14 @@ const CurrentRoom = memo(() => {
                     <Upload id="file" {...props} style={{ display: 'none' }} accept=".doc,.docx,.xlsx,.pdf,.xls,audio/*,video/*">
                       <FolderOpenOutlined className="transition-all duration-700 cursor-pointer dark:text-white" />
                     </Upload>
+                    <Tooltip placement="top" title={'长按录音'}>
+                      <AudioOutlined
+                        className="transition-all duration-700 cursor-pointer dark:text-white"
+                        ref={voiceSpecRef}
+                        onMouseUp={handleStopRecord}
+                        onMouseLeave={handleStopRecord}
+                      />
+                    </Tooltip>
                   </div>
                   <div onClick={() => sendTextMessage()}>
                     <SendOutlined className=" transition-all duration-700 cursor-pointer dark:text-white" />

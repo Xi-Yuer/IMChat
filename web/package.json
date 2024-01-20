@@ -24,6 +24,7 @@
     "classnames": "^2.3.2",
     "dayjs": "^1.11.10",
     "emoji-picker-react": "^4.5.16",
+    "lamejs": "^1.2.0",
     "normalize.css": "^8.0.1",
     "particles-bg": "^2.5.5",
     "react": "^18.2.0",

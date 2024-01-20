@@ -17,24 +17,35 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
     if (roomMessageList[id]?.length > 0) {
       if (roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.TEXT) {
         return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
           msg: roomMessageList[id][roomMessageList[id].length - 1].message.content,
+          time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
+        }
+      }
+      if (roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.VOICE) {
+        return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
+          msg: '[语音]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
         }
       }
       if (roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.IMAGE) {
         return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
           msg: '[图片]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
         }
       }
       if (roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.MP3) {
         return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
           msg: '[音频文件]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
         }
       }
       if (roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.MP4) {
         return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
           msg: '[视频文件]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
         }
@@ -44,6 +55,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
         roomMessageList[id][roomMessageList[id].length - 1].message.message_type === SystemMessageType.DOCX
       ) {
         return {
+          user: roomMessageList[id][roomMessageList[id].length - 1].user.nick_name + '：',
           msg: '[文档]',
           time: roomMessageList[id][roomMessageList[id].length - 1].message.created_at,
         }
@@ -65,7 +77,10 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
       </div>
       <div className="flex flex-col justify-between w-[100px] ml-[-20px]">
         <span className="font-bold text-sm dark:text-gray-200 transition-all duration-700">{name}</span>
-        <span className="truncate text-xs dark:text-gray-400 transition-all duration-700">{recentMessage()?.msg}</span>
+        <span className="truncate text-xs dark:text-gray-400 transition-all duration-700 w-[120px]">
+          {recentMessage()?.user}
+          {recentMessage()?.msg}
+        </span>
       </div>
       <div className="flex-1 text-end">
         <span className="text-xs dark:text-gray-200 transition-all duration-700">{formatDate(recentMessage()!.time, 'HH:mm')}</span>

@@ -39,7 +39,7 @@ func ChatController(msg dto.MessageToRoomDTO, conn *websocket.Conn) (*dto.Messag
 
 func GetMessageDTO(data dto.MessageToRoomDTO) *dto.MessageDTO {
 	// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
-	if data.MessageType == enum.IMAGE || data.MessageType == enum.MP3 || data.MessageType == enum.MP4 || data.MessageType == enum.XLSX || data.MessageType == enum.DOCX || data.MessageType == enum.EMOJI {
+	if data.MessageType == enum.IMAGE || data.MessageType == enum.MP3 || data.MessageType == enum.VOICE || data.MessageType == enum.MP4 || data.MessageType == enum.XLSX || data.MessageType == enum.DOCX || data.MessageType == enum.EMOJI {
 		data.Message = config.AppConfig.DoMian.URL + data.Message
 	}
 	return &dto.MessageDTO{

@@ -66,9 +66,10 @@ const Profile = memo(() => {
     <>
       <div
         className={classNames(
-          'h-full flex overflow-hidden justify-between  flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700',
+          'h-full flex overflow-hidden justify-between flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700',
           {
-            'w-[80px] px-4': showProfileMenuSide,
+            'md:w-[100px]': !user.nick_name,
+            'sm:w-[80px] lg:w-[90px]': showProfileMenuSide,
             'w-0 px-0': !showProfileMenuSide,
           }
         )}

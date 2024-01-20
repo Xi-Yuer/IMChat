@@ -1,0 +1,52 @@
+@keyframes dounce_h {
+  0% {
+    height: 5px;
+  }
+  80% {
+    height: 20px;
+  }
+  100% {
+    height: 5px;
+  }
+}
+.dounce_h {
+  transition: all;
+  animation: dounce_h 1s infinite;
+}
+/* 延迟 */
+.delay_100ms {
+  animation-delay: 1.1s;
+}
+.delay_200ms {
+  animation-delay: 1.2s;
+}
+.delay_300ms {
+  animation-delay: 1.3s;
+}
+.delay_400ms {
+  animation-delay: 1.4s;
+}
+.delay_500ms {
+  animation-delay: 0.5s;
+}
+.delay_600ms {
+  animation-delay: 0.6s;
+}
+.delay_700ms {
+  animation-delay: 0.7s;
+}
+.delay_800ms {
+  animation-delay: 0.8s;
+}
+.delay_900ms {
+  animation-delay: 0.9s;
+}
+.delay_1000ms {
+  animation-delay: 1s;
+}
+.delay_1100ms {
+  animation-delay: 1.1s;
+}
+.delay_1200ms {
+  animation-delay: 1.2s;
+}

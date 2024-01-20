@@ -31,3 +31,13 @@ export const parseUrls = (text: string): string[] => {
 
   return urls
 }
+
+export function getUrlQueryParams(url = location.search) {
+  const params: any = {}
+  const keys: any = url.match(/([^?&]+)(?==)/g)
+  const values: any = url.match(/(?<==)([^&]*)/g)
+  for (const index in keys) {
+    params[keys[index]] = values[index]
+  }
+  return params
+}

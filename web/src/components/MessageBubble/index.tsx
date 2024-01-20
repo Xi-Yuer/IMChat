@@ -11,6 +11,7 @@ import { RoomMessageType } from '../../store/modules/socket'
 import { formatDateV2, isBefore30Minutes } from '../../utils/format'
 import DocxMessage from '../TypesMessage/DocxMessage'
 import ImageMessage from '../TypesMessage/ImageMessage'
+import MusicMessage from '../TypesMessage/MusicMessage'
 import TextMessage from '../TypesMessage/TextMessage'
 import VideoMessage from '../TypesMessage/VideoMessage'
 import VoiceMessage from '../TypesMessage/VoiceMessage'
@@ -109,7 +110,8 @@ const MessageBubble: FC<RoomMessageType & { lastMessageTime: string; longPress: 
             {message_type === SystemMessageType.DOCX && <DocxMessage content={content} file_name={file_name} />}
             {message_type === SystemMessageType.XLSX && <XlsxMessage content={content} file_name={file_name} />}
             {message_type === SystemMessageType.MP4 && <VideoMessage content={content} file_name={file_name} />}
-            {message_type === SystemMessageType.MP3 && <VoiceMessage content={content} file_name={file_name} />}
+            {message_type === SystemMessageType.MP3 && <MusicMessage content={content} file_name={file_name} />}
+            {message_type === SystemMessageType.VOICE && <VoiceMessage content={content} file_name={file_name} id={id} />}
           </div>
         </div>
       </div>

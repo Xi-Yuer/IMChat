@@ -1,5 +1,4 @@
 import { RootState } from '@/store'
-import ParticlesBg from 'particles-bg'
 import { memo } from 'react'
 import { useSelector } from 'react-redux'
 import CurrentRoom from '../../components/CurrentRoom/index'
@@ -14,7 +13,6 @@ const Home = memo(() => {
   const { isMobile } = useScreen()
   return (
     <div className={WrapperStyle(isMobile)}>
-      {!isMobile && <ParticlesBg type="tadpole" bg={true} />}
       <div className={InnerStyle(isMobile)}>
         <Profile />
         <RoomList />

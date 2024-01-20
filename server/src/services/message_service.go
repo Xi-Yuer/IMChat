@@ -40,7 +40,7 @@ func (m MessageServiceImpl) GetChatRoomMessageList(chatRoomID string, limit, pag
 	baseUrl := config.AppConfig.DoMian.URL
 	for _, message := range messages {
 		// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
-		if message.MessageType == enum.IMAGE || message.MessageType == enum.MP3 || message.MessageType == enum.MP4 || message.MessageType == enum.XLSX || message.MessageType == enum.DOCX || message.MessageType == enum.EMOJI {
+		if message.MessageType == enum.IMAGE || message.MessageType == enum.MP3 || message.MessageType == enum.VOICE || message.MessageType == enum.MP4 || message.MessageType == enum.XLSX || message.MessageType == enum.DOCX || message.MessageType == enum.EMOJI {
 			message.Content = config.AppConfig.DoMian.URL + message.Content
 		}
 		chatMessageResponseDTO := &dto.ChatMessageResponseDTO{

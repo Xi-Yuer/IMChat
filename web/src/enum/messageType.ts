@@ -22,4 +22,6 @@ export enum SystemMessageType {
   MP4 = 'mp4',
   // voice
   MP3 = 'mp3',
+  // 语音消息
+  VOICE = 'voice',
 }

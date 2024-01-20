@@ -13,4 +13,5 @@ const (
 	XLSX         = "xlsx"          // xlsx
 	MP4          = "mp4"           // video
 	MP3          = "mp3"           // voice
+	VOICE        = "voice"         // voice
 )
