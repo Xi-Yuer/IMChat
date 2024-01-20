@@ -60,6 +60,7 @@ const CurrentRoom = memo(() => {
     const {
       data: { file_url },
     } = result
+    setIsPushMessage(true)
     sendMessageContext({
       type: MessageType.GROUP_MESSAGE,
       message: file_url,
@@ -191,6 +192,7 @@ const CurrentRoom = memo(() => {
             group: currentChatRoom.id,
             file_name: file_name,
           })
+          setIsPushMessage(true)
         } catch (error) {
           message.error('发送失败，请检查网络或稍后再试')
         } finally {
