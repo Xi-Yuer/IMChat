@@ -4,7 +4,7 @@
 
 ## 技术选型
 - 后端
-  - Go + Gin + GORM  + Mysql + Soket + OSS
+  - Go + Gin + GORM  + Mysql + Redis + Soket + OSS
 - 前端
     - React + Ant Design + AHooks + RTK
 
@@ -33,6 +33,8 @@ Server:
   Port: '8080'
 Database:
   URL: 'root:[MySQL密码]@tcp([MySQL服务器地址])/im_chat?charset=utf8mb4&parseTime=True&loc=Local'
+Redis:
+  URL: ''
 Aliyun:
   AccessKeyId: ''
   AccessKeySecret: ''
@@ -146,42 +148,42 @@ location /api/ {
 
 ```
 .
-├── AiChat           																// AiChat 模块
+├── AiChat           // AiChat 模块
 │   └── ...
-├── IMChatServer     																// IMChatServer 模块
+├── IMChatServer     // IMChatServer 模块
 │   └── ...
-├── common           																// 通用工具
+├── common           // 通用工具
 │   └── ...
-├── config          																// 配置文件
+├── config           // 配置文件
 │   └── ...
-├── controllers      																// 请求处理器/控制器
+├── controllers      // 请求处理器/控制器
 │   └── ...
-├── db               																// 与数据库相关的代码
+├── db               // 与数据库相关的代码
 │   └── ...
-├── dto              																// 数据传输对象 (DTOs)
+├── dto              // 数据传输对象 (DTOs)
 │   └── ...
-├── enum             																// 枚举
+├── enum             // 枚举
 │   └── ...
-├── handlers         																// HTTP 处理器
+├── handlers         // HTTP 处理器
 │   └── ...
-├── https            																// HTTPS 相关的代码
+├── https            // HTTPS 相关的代码
 │   └── ...
-├── main             																// 主应用逻辑
+├── main             // 主应用逻辑
 │   └── ...
-├── main.go          																// 主入口点
-├── middlewares      																// 中间件函数
+├── main.go          // 主入口点
+├── middlewares      // 中间件函数
 │   └── ...
-├── models           																// 数据模型
+├── models           // 数据模型
 │   └── ...
-├── repositories     																// 数据库仓库
+├── repositories     // 数据库仓库
 │   └── ...
-├── routes           																// API 路由
+├── routes           // API 路由
 │   └── ...
-├── services         																// 业务逻辑服务
+├── services         // 业务逻辑服务
 │   └── ...
-├── utils            																// 工具函数
+├── utils            // 工具函数
 │   └── ...
-└── ws               																// WebSocket 相关的代码
+└── ws               // WebSocket 相关的代码
     └── ...
 
 ```
