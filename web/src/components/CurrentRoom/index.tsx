@@ -3,6 +3,7 @@ import {
   AlignLeftOutlined,
   AudioOutlined,
   CustomerServiceOutlined,
+  FileTextOutlined,
   FolderOpenOutlined,
   LoadingOutlined,
   PictureOutlined,
@@ -11,13 +12,15 @@ import {
   TeamOutlined,
 } from '@ant-design/icons'
 import { useLongPress } from 'ahooks'
-import { Drawer, Popover, Spin, Tooltip, Upload, UploadProps, message } from 'antd'
+import { Button, Drawer, Popover, Spin, Tooltip, Upload, UploadProps, message } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import { RcFile } from 'antd/lib/upload'
 import { EmojiClickData } from 'emoji-picker-react'
 import { memo, useContext, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { WebSocketContext } from '../../App'
 import { MessageType, SystemMessageType } from '../../enum/messageType'
+import { useAreaUpload } from '../../hooks/useAreaUpload'
 import { useRecording } from '../../hooks/useRecording'
 import { useScreen } from '../../hooks/useScreen'
 import { getRoomMsgListRequest } from '../../server/apis/chatRoom'
@@ -44,9 +47,24 @@ const CurrentRoom = memo(() => {
   const [open, setOpen] = useState(false)
   const [atOpen, setAtOpen] = useState(false)
   const [voiceSpecOpen, setVoiceSpecOpen] = useState(false)
-  const [messageType, setMessageType] = useState<SystemMessageType>(SystemMessageType.IMAGE)
-  const [file_name, setFile_name] = useState('')
+  const messageType = useRef<SystemMessageType>(SystemMessageType.IMAGE)
+  const file_name = useRef<string>('')
   const voiceSpecRef = useRef<HTMLButtonElement>(null)
+
+  const dispatch = useDispatch()
+  const { isMobile } = useScreen()
+  const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
+  const { currentRoomUserListLoading, currentRoomLoading, showProfileMenuSide } = useSelector((state: RootState) => state.UIReducer)
+  const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
+  const { user } = useSelector((state: RootState) => state.UserReducer)
+  const { onDragEnter, onDragOver, onDragleave, onDrop, fileDragEnter, fileDragDrop, setFileDragDrop, setFileDragEnter, file } = useAreaUpload()
+
+  // 发送 emoji
+  const pickEmoji = (emoji: EmojiClickData) => {
+    emojiRef.current?.hidden()
+    setInputValue(emoji.emoji)
+  }
+  // 发送语音消息
   const { start, stop } = useRecording(async (file, second) => {
     if (second <= 1) {
       message.error('录音时间太短')
@@ -69,7 +87,6 @@ const CurrentRoom = memo(() => {
       file_name: 'voice',
     })
   })
-
   useLongPress(() => {
     // 开始录音
     setVoiceSpecOpen(true)
@@ -81,18 +98,7 @@ const CurrentRoom = memo(() => {
     setVoiceSpecOpen(false)
     stop()
   }
-
-  const dispatch = useDispatch()
-  const { isMobile } = useScreen()
-  const { currentChatRoom, currentChatRoomUserList } = useSelector((state: RootState) => state.ChatRoomReducer)
-  const { currentRoomUserListLoading, currentRoomLoading, showProfileMenuSide } = useSelector((state: RootState) => state.UIReducer)
-  const { roomMessageList } = useSelector((state: RootState) => state.SocketReducer)
-  const { user } = useSelector((state: RootState) => state.UserReducer)
-
-  const pickEmoji = (emoji: EmojiClickData) => {
-    emojiRef.current?.hidden()
-    setInputValue(emoji.emoji)
-  }
+  // 发送文本消息
   const sendTextMessage = (e?: any) => {
     e?.preventDefault()
     if (!inputValue) return
@@ -144,6 +150,8 @@ const CurrentRoom = memo(() => {
         })
     }
   }
+
+  // 平滑滚动到底部
   const backBottom = () => {
     containerRef.current?.scrollTo({
       top: containerRef.current.scrollHeight,
@@ -151,6 +159,7 @@ const CurrentRoom = memo(() => {
     })
   }
 
+  // @ 某人
   const longPress = (user: string) => {
     setInputValue(inputValue + '@' + user + ' ')
     textAreaRef.current?.focus()
@@ -159,6 +168,60 @@ const CurrentRoom = memo(() => {
     setInputValue(inputValue + name + ' ')
     textAreaRef.current?.focus()
   }
+
+  const beforeUpload = (file: File) => {
+    file_name.current = file.name
+    if (/^image\/.*/.test(file.type)) {
+      messageType.current = SystemMessageType.IMAGE
+    }
+    if (/^(doc|docx)$/i.test(file.type)) {
+      messageType.current = SystemMessageType.DOCX
+    }
+    if (/^audio\/.*/.test(file!.type)) {
+      messageType.current = SystemMessageType.MP3
+    }
+    if (/^video\/.*/.test(file!.type)) {
+      messageType.current = SystemMessageType.MP4
+    }
+    if (/^application\/.*/.test(file!.type)) {
+      messageType.current = SystemMessageType.XLSX
+    }
+  }
+  const sendMediaTypeMessage = (file: string | Blob | RcFile) => {
+    let video = new CalcVideo(file as unknown as File, 2)
+    video.metaValue.then(async (res) => {
+      const { height, width } = res
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('width', width)
+      formData.append('height', height)
+      message.loading({
+        type: 'loading',
+        duration: 1000,
+        content: '正在上传...',
+      })
+      try {
+        const result = await uploadFileForm(formData)
+        const {
+          data: { file_url },
+        } = result
+        sendMessageContext({
+          type: MessageType.GROUP_MESSAGE,
+          message: file_url,
+          message_type: messageType.current,
+          group: currentChatRoom.id,
+          file_name: file_name.current,
+        })
+        setIsPushMessage(true)
+      } catch (error) {
+        message.error('发送失败，请检查网络或稍后再试')
+      } finally {
+        message.destroy()
+      }
+    })
+  }
+
+  // 文件上传
   const props: UploadProps = {
     name: 'file',
     action: '/api/file/upload',
@@ -168,56 +231,16 @@ const CurrentRoom = memo(() => {
     showUploadList: false,
     customRequest: async (options) => {
       const { file } = options
-      let video = new CalcVideo(file as unknown as File, 2)
-      video.metaValue.then(async (res) => {
-        const { height, width } = res
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('width', width)
-        formData.append('height', height)
-        message.loading({
-          type: 'loading',
-          duration: 1000,
-          content: '正在上传...',
-        })
-        try {
-          const result = await uploadFileForm(formData)
-          const {
-            data: { file_url },
-          } = result
-          sendMessageContext({
-            type: MessageType.GROUP_MESSAGE,
-            message: file_url,
-            message_type: messageType,
-            group: currentChatRoom.id,
-            file_name: file_name,
-          })
-          setIsPushMessage(true)
-        } catch (error) {
-          message.error('发送失败，请检查网络或稍后再试')
-        } finally {
-          message.destroy()
-        }
-      })
+      sendMediaTypeMessage(file)
     },
-    beforeUpload(file) {
-      setFile_name(file.name)
-      if (/^image\/.*/.test(file.type)) {
-        setMessageType(SystemMessageType.IMAGE)
-      }
-      if (/^(doc|docx)$/i.test(file.type)) {
-        setMessageType(SystemMessageType.DOCX)
-      }
-      if (/^audio\/.*/.test(file!.type)) {
-        setMessageType(SystemMessageType.MP3)
-      }
-      if (/^video\/.*/.test(file!.type)) {
-        setMessageType(SystemMessageType.MP4)
-      }
-      if (/^application\/.*/.test(file!.type)) {
-        setMessageType(SystemMessageType.XLSX)
-      }
-    },
+    beforeUpload: beforeUpload,
+  }
+
+  const UploadFile = () => {
+    if (file) {
+      beforeUpload(file)
+      sendMediaTypeMessage(file)
+    }
   }
   const containerStyle: React.CSSProperties = {
     position: 'relative',
@@ -253,7 +276,17 @@ const CurrentRoom = memo(() => {
     <>
       {currentChatRoom.id ? (
         <div className="p-1 flex-1 flex h-[100%] relative border-none focus:outline-none" style={containerStyle}>
-          <div className="flex-1 lg:border-r h-[100%] lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700">
+          <div
+            className="flex-1 lg:border-r h-[100%] relative lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700"
+            onDragEnter={onDragEnter}
+            onDragOver={onDragOver}
+            onDragLeave={onDragleave}
+            onDrop={onDrop}
+            onClickCapture={() => {
+              setFileDragDrop(false)
+              setFileDragEnter(false)
+            }}
+          >
             <div className="flex items-center justify-between border-dashed border-b dark:border-[#494d5f] transition-all duration-700">
               <div className="flex items-center">
                 <AlignLeftOutlined className="ml-2 dark:text-gray-200 text-lg cursor-pointer" onClick={openProfile} />
@@ -271,7 +304,7 @@ const CurrentRoom = memo(() => {
             </div>
             <div className="flex flex-col h-full relative">
               {/* 消息框 */}
-              {/* 使用 betterscroll 渲染消息列表 */}
+              {/* 使用 betterscroll 渲染消息列表，虚拟列表渲染列表 */}
               <div className="flex-1 w-full h-full overflow-y-auto no-scrollbar py-2 relative" style={{ height: '300px', overflow: 'hidden' }}>
                 <div className="h-full w-full overflow-auto" ref={containerRef} onScroll={onScroll}>
                   <div className="w-full h-[30px] flex justify-center items-center dark:text-gray-200">{loadMoreLoading && <LoadingOutlined />}</div>
@@ -357,6 +390,23 @@ const CurrentRoom = memo(() => {
                 />
               </div>
             </div>
+            {fileDragEnter && (
+              <div className="absolute flex justify-center left-0 right-0 bottom-0 top-0 bg-black bg-opacity-30">
+                {fileDragDrop && (
+                  <div className="mt-[30%] dark:text-gray-200 w-1/2 h-[150px] bg-white dark:bg-[#3f4250] rounded-lg truncate pt-4 px-4">
+                    <div className="dark:text-gray-200 text-start mb-4">发送文件</div>
+                    <div className="truncate">
+                      <FileTextOutlined className="mx-2" />
+                      {file?.name}
+                    </div>
+                    <div className="mt-8 text-end">
+                      <Button className="mr-4">取消</Button>
+                      <Button onClickCapture={UploadFile}>确认</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           {/* 侧边栏用户列表 */}
           {!isMobile ? (

@@ -39,10 +39,13 @@ const VoiceMessage: FC<IMessagePanelProps & { id: string }> = memo(({ content, i
       style={{
         borderRadius: user.id === id ? '20px 2px 20px 20px' : '2px 20px 20px',
       }}
-      className={classNames('min-w-[60px] flex items-center min-h-[30px] bg-slate-100 dark:bg-[#484b5b] p-3 transition-all duration-700', {
-        'max-w-[250px]': isMobile,
-        'max-w-xs': !isMobile,
-      })}
+      className={classNames(
+        'min-w-[60px] cursor-pointer flex items-center min-h-[30px] bg-slate-100 dark:bg-[#484b5b] p-3 transition-all duration-700',
+        {
+          'max-w-[250px]': isMobile,
+          'max-w-xs': !isMobile,
+        }
+      )}
     >
       <div className="mr-2 text-[#6c727f] dark:text-gray-200 text-lg">{params?.width}"</div>
       <div className="flex items-center justify-center h-[20px]" onClick={() => handlePlay(false)}>
