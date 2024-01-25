@@ -18,6 +18,13 @@ const Home = memo(() => {
         <RoomList />
         {currentChatRoom?.id ? <CurrentRoom /> : <Empty />}
       </div>
+      {!isMobile && (
+        <div className=" absolute bottom-[20px] dark:text-gray-200 w-full flex justify-center">
+          <a href="https://beian.miit.gov.cn/#/Integrated/index" target="_blank">
+            备案号： 蜀ICP备2022015920号-1
+          </a>
+        </div>
+      )}
     </div>
   )
 })

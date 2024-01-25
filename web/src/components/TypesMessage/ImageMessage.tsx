@@ -9,7 +9,7 @@ const ImageMessage: FC<IMessagePanelProps> = memo(({ content }) => {
   const { isMobile } = useScreen()
   return (
     <div style={{ height: params?.height || '100%' }}>
-      <Image className="shadow-lg" width={isMobile ? '70%' : '50%'} src={content}></Image>
+      <Image width={isMobile ? '70%' : '50%'} src={content}></Image>
     </div>
   )
 })

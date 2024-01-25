@@ -8,13 +8,13 @@ const UserPanel = memo((user: Omit<ILoginResponse, 'token'> & { active: boolean 
     return (
       <div className="w-[150px] max-w-[200px]">
         <div>
-          <span>性别：{user.gender === '1' ? '男' : '女'}</span>
+          <span className="text-xs">性别：{user.gender === '1' ? '男' : '女'}</span>
         </div>
         <div>
-          <span>归属地：{user.origin}</span>
+          <span className="text-xs">归属地：{user.origin}</span>
         </div>
         <div className="whitespace-normal">
-          <span>签名：{user.bio}</span>
+          <span className="text-xs">签名：{user.bio}</span>
         </div>
       </div>
     )

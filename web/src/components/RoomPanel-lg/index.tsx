@@ -77,7 +77,7 @@ const RoomPanel: FC<IChatRoomResponse> = memo((room) => {
       </div>
       <div className="flex flex-col justify-between w-[100px] ml-[-20px]">
         <span className="font-bold text-sm dark:text-gray-200 transition-all duration-700">{name}</span>
-        <span className="truncate text-xs dark:text-gray-400 transition-all duration-700 w-[120px]">
+        <span className="truncate text-[10px] dark:text-gray-400 transition-all duration-700 w-[120px]">
           {recentMessage()?.user}
           {recentMessage()?.msg}
         </span>

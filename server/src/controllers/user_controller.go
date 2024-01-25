@@ -62,7 +62,13 @@ func (c *UserController) Login(ctx *gin.Context) {
 		return
 	}
 	// 获取用户的 IP 地址
-	ip := ctx.ClientIP()
+	ip := ctx.Request.Header.Get("X-Forwarded-For")
+	if ip == "" {
+		ip = ctx.Request.Header.Get("X-Real-IP")
+	}
+	if ip == "" {
+		ip = ctx.ClientIP()
+	}
 	userResponse, err := c.userService.Login(&userLoginDTO, ip)
 	if err != nil {
 		// 处理登录错误

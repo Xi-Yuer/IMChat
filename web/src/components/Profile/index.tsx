@@ -69,7 +69,7 @@ const Profile = memo(() => {
           'h-full flex overflow-hidden justify-between flex-col py-4 border-dashed border-r dark:border-[#464958] transition-all duration-700',
           {
             'md:w-[100px]': !user.nick_name,
-            'sm:w-[80px] lg:w-[90px]': showProfileMenuSide,
+            'w-[80px] lg:w-[80px]': showProfileMenuSide,
             'w-0 px-0': !showProfileMenuSide,
           }
         )}

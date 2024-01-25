@@ -1,2 +1,2 @@
-VITE_APP_BASEURL = "http://112.124.28.77:8080"
-VITE_APP_WS_BASEURL = "ws://112.124.28.77:8080/ws"
+VITE_APP_BASEURL = "/api"
+VITE_APP_WS_BASEURL = "wss://xiyuer.club/ws"

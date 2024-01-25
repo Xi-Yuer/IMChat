@@ -6,7 +6,6 @@ import (
 	"ImChat/src/db"
 	"ImChat/src/dto"
 	"ImChat/src/enum"
-	"ImChat/src/https"
 	"ImChat/src/models"
 	"ImChat/src/redis"
 	"ImChat/src/repositories"
@@ -125,15 +124,6 @@ func UserOnline(conn models.UserConnection, c *gin.Context) {
 		Type: enum.UserOnline, // 响应体
 	}
 	responseJSON, _ := json.Marshal(response)
-	userRepo := repositories.NewUserRepository(db.DB)
-	ip := c.ClientIP()
-	locationStr := https.GetUserOriginByIP(ip)
-	go func() {
-		err := userRepo.Login(conn.UserID, locationStr)
-		if err != nil {
-
-		}
-	}()
 	for _, v := range models.Connection {
 		if utils.FirstArrayInLastArray(v.Groups, conn.Groups) {
 			// 发送响应数据给用户所在群组的所有用户
