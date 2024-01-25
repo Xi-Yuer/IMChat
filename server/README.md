@@ -13,5 +13,5 @@
 ### 打包命令运行到 Linux 中
 
 ```bash
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o IMChatServer
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
 ```

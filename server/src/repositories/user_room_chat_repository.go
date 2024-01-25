@@ -73,6 +73,7 @@ func (r *userRoomChatRepository) FindChatRoomUsers(chatRoomId string) ([]dto.Cha
 			LastLogin:      user.LastLogin,
 			Active:         user.Active,
 			IsAdmin:        user.IsAdmin,
+			Origin:         user.Origin,
 			NickName:       user.NickName,
 		})
 	}
