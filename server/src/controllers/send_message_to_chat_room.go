@@ -177,8 +177,9 @@ func GetMessageResponse(data dto.MessageToRoomDTO, UserID string) *models.Messag
 }
 
 func GetMessageDTO(data dto.MessageToRoomDTO, userID string) *dto.MessageDTO {
-	// TOODO: 在这里需要处理不用类型的消息，比如图片-语言-文字-表情-视频等....
-	if data.MessageType == enum.IMAGE || data.MessageType == enum.MP3 || data.MessageType == enum.VOICE || data.MessageType == enum.MP4 || data.MessageType == enum.XLSX || data.MessageType == enum.DOCX || data.MessageType == enum.EMOJI {
+	// TODO: 在这里需要处理不用类型的消息，比如图片-语音-文字-表情-视频等....
+	switch data.MessageType {
+	case enum.IMAGE, enum.MP3, enum.VOICE, enum.MP4, enum.XLSX, enum.DOCX, enum.EMOJI:
 		data.Message = config.AppConfig.DoMian.URL + data.Message
 	}
 	return &dto.MessageDTO{
@@ -200,9 +201,9 @@ func messageStorageWorker() {
 // 将消息存储到数据库
 func storageMessage(message *models.Message) {
 	// 存储消息到 Redis 数据库 数据库
-	if message.MessageType == enum.IMAGE || message.MessageType == enum.MP3 || message.MessageType == enum.VOICE || message.MessageType == enum.MP4 || message.MessageType == enum.XLSX || message.MessageType == enum.DOCX || message.MessageType == enum.EMOJI {
-		message.Content = config.AppConfig.DoMian.URL + message.Content
-	}
+	//if message.MessageType == enum.IMAGE || message.MessageType == enum.MP3 || message.MessageType == enum.VOICE || message.MessageType == enum.MP4 || message.MessageType == enum.XLSX || message.MessageType == enum.DOCX || message.MessageType == enum.EMOJI {
+	//	message.Content = config.AppConfig.DoMian.URL + message.Content
+	//}
 	redisMessage := &dto.ChatMessageResponseDTO{
 		User: getUserResponse(message.SenderID),
 		Message: &dto.MessageDTO{

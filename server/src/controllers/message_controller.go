@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"ImChat/src/config"
 	"ImChat/src/dto"
+	"ImChat/src/enum"
 	"ImChat/src/handlers"
 	"ImChat/src/redis"
 	"ImChat/src/services"
@@ -27,7 +29,6 @@ func (c *MessageController) GetChatRoomMessageList(ctx *gin.Context) {
 	}
 	var MessagesList []*dto.ChatMessageResponseDTO
 	// 先从 Redis 中获取数据
-	//redisCacheMessageListStr, err := redis.LRange(messageDTO.ChatRoomID, int64((*messageDTO.Offset-1)*(*messageDTO.Limit)), int64((*messageDTO.Offset-1)*(*messageDTO.Limit)+(*messageDTO.Limit)-1))
 	startIndex := (*messageDTO.Offset - 1) * *messageDTO.Limit
 	endIndex := startIndex + *messageDTO.Limit - 1
 	redisCacheMessageListStr, err := redis.LRange(messageDTO.ChatRoomID, int64(startIndex), int64(endIndex))
@@ -39,6 +40,11 @@ func (c *MessageController) GetChatRoomMessageList(ctx *gin.Context) {
 			if err != nil {
 				continue
 			}
+			switch redisMessageSlice.Message.MessageType {
+			case enum.IMAGE, enum.MP3, enum.VOICE, enum.MP4, enum.XLSX, enum.DOCX, enum.EMOJI:
+				redisMessageSlice.Message.Content = config.AppConfig.DoMian.URL + redisMessageSlice.Message.Content
+			}
+
 			redisList.PushBack(redisMessageSlice)
 		}
 		redisList = utils.ReverseList(redisList)
@@ -59,6 +65,10 @@ func (c *MessageController) GetChatRoomMessageList(ctx *gin.Context) {
 	}
 	// 将消息追加到列表头部
 	MessagesList = append(mysqlResponse, MessagesList...)
-	//MessagesList = append(MessagesList, mysqlResponse...)
-	handlers.Success(ctx, "获取成功", MessagesList)
+	if len(MessagesList) == 0 {
+		handlers.Success(ctx, "获取成功", []dto.ChatMessageResponseDTO{})
+		return
+	} else {
+		handlers.Success(ctx, "获取成功", MessagesList)
+	}
 }
