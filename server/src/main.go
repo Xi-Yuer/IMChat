@@ -11,7 +11,6 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.Use(middlewares.Cors())
 	// 限制每秒请求次数为 10
 	limiter := tollbooth.NewLimiter(10, nil)
 	r.Use(middlewares.Limiter(limiter))

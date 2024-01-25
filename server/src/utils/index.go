@@ -129,7 +129,6 @@ func IsAtRobatMessage(msg string) bool {
 // StringsReplacer 格式化字符创
 func stringsReplacer() *strings.Replacer {
 	replacements := []string{
-		"&", "&amp;",
 		"<", "&lt;",
 		">", "&gt;",
 		"'", "&#39;",
