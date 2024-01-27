@@ -111,7 +111,9 @@ const Profile = memo(() => {
               <img src={lightImg} alt="" className="w-[25px] h-[25px]" />
             )}
           </div>
-          <GithubFilled className="text-3xl transition-all duration-700 dark:text-gray-200" />
+          <a href="https://github.com/Xi-Yuer/IMChat" target='_blank'>
+            <GithubFilled className="text-3xl transition-all duration-700 dark:text-gray-200" />
+          </a>
         </div>
       </div>
 
