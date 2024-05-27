@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 import request from '../request'
 
-interface IRegisterParmas {
+export interface IRegisterParmas {
   account: string
   password: string
   avatar_id?: number
