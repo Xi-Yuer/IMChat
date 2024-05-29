@@ -2,7 +2,7 @@ import { RootState } from '@/store'
 import { memo, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Md5 } from 'ts-md5'
-import { useParams, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import CurrentRoom from '../../components/CurrentRoom/index'
 import Empty from '../../components/Empty'
 import Profile from '../../components/Profile'
@@ -17,11 +17,8 @@ import { changeRoomListLoading } from '../../store/modules/ui'
 const Home = memo(() => {
   const { currentChatRoom } = useSelector((state: RootState) => state.ChatRoomReducer)
   const { isMobile } = useScreen()
-  
-  const [ searchParams ] = useSearchParams()
-  const params = useParams()
-  console.log('params',params);
-  
+
+  const [searchParams] = useSearchParams()
   const account = searchParams.get('account') || ''
   const password = Md5.hashStr(searchParams.get('password') || '')
   const dispatch = useDispatch()
@@ -40,7 +37,7 @@ const Home = memo(() => {
           })
       }
     })
-  },[account, password])
+  }, [account, password])
   return (
     <div className={WrapperStyle(isMobile)}>
       <div className={InnerStyle(isMobile)}>
