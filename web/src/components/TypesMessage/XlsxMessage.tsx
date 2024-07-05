@@ -8,7 +8,7 @@ const VoiceMessage: FC<IMessagePanelProps> = memo(({ content, file_name }) => {
   return (
     <div
       className={classNames(
-        'w-[250px] overflow-hidden relative rounded-md h-[80px] p-2 box-content flex items-center bg-slate-100 dark:bg-green-400 transition-all duration-700'
+        'w-[180px] sm:w-[250px] overflow-hidden relative rounded-md h-[80px] p-2 box-content flex items-center bg-slate-100 dark:bg-green-400 transition-all duration-700'
       )}
       style={{
         backgroundImage: `url(${XlsxImage})`,
