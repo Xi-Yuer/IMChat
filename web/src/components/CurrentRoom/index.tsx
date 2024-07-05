@@ -277,7 +277,7 @@ const CurrentRoom = memo(() => {
       {currentChatRoom.id ? (
         <div className="p-1 flex-1 flex h-[100%] relative border-none focus:outline-none" style={containerStyle}>
           <div
-            className="flex-1 lg:border-r h-[100%] relative lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700"
+            className="flex-1 overflow-hidden lg:border-r h-[100%] relative lg:border-l border-dashed dark:border-[#3b3d4b] transition-all duration-700"
             onDragEnter={onDragEnter}
             onDragOver={onDragOver}
             onDragLeave={onDragleave}
