@@ -1,6 +1,7 @@
-
-
 # 搭建一个在线群聊
+
+![image](https://github.com/user-attachments/assets/f70f5346-a721-4bad-9aae-77dc8e12b5c1)
+
 
 ## 技术选型
 - 后端
